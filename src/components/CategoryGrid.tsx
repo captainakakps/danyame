@@ -45,7 +45,7 @@ export default function CategoryGrid() {
             alt=""
             fill
             className="object-cover"
-            priority={index === 1}
+            sizes="(max-width: 1024px) 100vw, 25vw"
           />
           <div className="absolute inset-0 bg-black/40" />
         </div>

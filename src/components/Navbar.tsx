@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   navItems,
@@ -37,10 +38,13 @@ export default function Navbar({ variant = "light" }: NavbarProps) {
   return (
     <div className="relative z-10 flex w-full shrink-0 items-center justify-between px-6 py-6 md:px-10 md:py-8 lg:px-14">
       <Link href="/" aria-label="Danyame home">
-        <img
+        <Image
           src={logo}
           alt="Danyame Recreational Village"
-          className="h-[40px] w-[83px] object-cover md:h-[50px] md:w-[104px]"
+          width={104}
+          height={50}
+          priority
+          className="h-[40px] w-[83px] object-contain md:h-[50px] md:w-[104px]"
         />
       </Link>
 

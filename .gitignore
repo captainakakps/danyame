@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+public/assets/_originals/
 
 # debug
 npm-debug.log*

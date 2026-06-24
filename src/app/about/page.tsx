@@ -28,7 +28,7 @@ export default function AboutPage() {
       {/* ── Hero ── */}
       <section className="relative w-full overflow-hidden text-white">
         {/* Background */}
-        <Image src={heroBg} alt="" fill priority className="object-cover" />
+        <Image src={heroBg} alt="" fill priority className="object-cover" sizes="100vw" />
         <div className="absolute inset-0 bg-black/20" />
 
         {/* Navbar */}
@@ -106,7 +106,7 @@ export default function AboutPage() {
 
       {/* ── Quote / location section ── */}
       <section className="relative w-full overflow-hidden">
-        <Image src={quoteBg} alt="" fill className="object-cover" />
+        <Image src={quoteBg} alt="" fill className="object-cover" sizes="100vw" />
         <div className="absolute inset-0 bg-black/30" />
 
         {/* Content container */}

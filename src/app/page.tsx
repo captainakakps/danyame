@@ -625,6 +625,7 @@ export default function HomePage() {
               width={486}
               height={362}
               className="h-full w-full object-cover"
+              sizes="(max-width: 1024px) 100vw, 37vw"
             />
           </div>
           <div className="aspect-[1/1.3] overflow-hidden rounded-[20px]">
@@ -696,6 +697,7 @@ export default function HomePage() {
                 alt="Gallery image 1"
                 fill
                 className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 37vw"
               />
             </div>
             <div
@@ -707,6 +709,7 @@ export default function HomePage() {
                 alt="Gallery image 2"
                 fill
                 className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 46vw"
               />
             </div>
           </div>
@@ -723,6 +726,7 @@ export default function HomePage() {
                   alt="Gallery image 3"
                   fill
                   className="object-cover"
+                  sizes="(max-width: 1024px) 50vw, 23vw"
                 />
               </div>
               <div className="relative h-full flex-1 overflow-hidden rounded-[20px]">
@@ -731,6 +735,7 @@ export default function HomePage() {
                   alt="Gallery image 4"
                   fill
                   className="object-cover"
+                  sizes="(max-width: 1024px) 50vw, 23vw"
                 />
               </div>
             </div>
@@ -743,6 +748,7 @@ export default function HomePage() {
                 alt="Gallery image 5"
                 fill
                 className="object-cover"
+                sizes="(max-width: 1024px) 100vw, 33vw"
               />
             </div>
           </div>
@@ -759,6 +765,7 @@ export default function HomePage() {
                   alt="Gallery image 6"
                   fill
                   className="object-cover"
+                  sizes="(max-width: 1024px) 50vw, 23vw"
                 />
               </div>
               <div className="relative h-full flex-1 overflow-hidden rounded-[20px]">
@@ -767,6 +774,7 @@ export default function HomePage() {
                   alt="Gallery image 7"
                   fill
                   className="object-cover"
+                  sizes="(max-width: 1024px) 50vw, 23vw"
                 />
               </div>
             </div>

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -21,6 +21,10 @@ export const metadata: Metadata = {
     locale: "en_GH",
     siteName: "Danyame Recreational Village",
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#125E65",
 };
 
 export default function RootLayout({

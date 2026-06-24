@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Danyame">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#125E65" />
+      <stop offset="100%" stop-color="#0d4a50" />
+    </linearGradient>
+    <linearGradient id="sun" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#C84F38" />
+      <stop offset="100%" stop-color="#F39D57" />
+    </linearGradient>
+    <linearGradient id="dFill" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="100%" stop-color="#e8f3f4" />
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" rx="112" fill="url(#bg)" />
+
+  <circle cx="148" cy="148" r="52" fill="url(#sun)" />
+  <g stroke="#F39D57" stroke-width="10" stroke-linecap="round" opacity="0.85">
+    <line x1="148" y1="62" x2="148" y2="82" />
+    <line x1="148" y1="214" x2="148" y2="234" />
+    <line x1="62" y1="148" x2="82" y2="148" />
+    <line x1="214" y1="148" x2="234" y2="148" />
+    <line x1="87" y1="87" x2="101" y2="101" />
+    <line x1="195" y1="195" x2="209" y2="209" />
+    <line x1="209" y1="87" x2="195" y2="101" />
+    <line x1="101" y1="195" x2="87" y2="209" />
+  </g>
+
+  <path
+    fill="url(#dFill)"
+    d="M176 128h96c72 0 128 48 128 128s-56 128-128 128h-96V128zm48 48v160h48c48 0 80-32 80-80s-32-80-80-80h-48z"
+  />
+
+  <path
+    fill="#125E65"
+    d="M248 232h32v80h-32v-80zm-16 80h64v16h-64v-16zm8-24l24-20 24 20v8h-48v-8z"
+  />
+  <path
+    fill="#125E65"
+    d="M312 288c0-8 6-12 12-8 4 2 6 8 4 12-2 6-8 8-14 4-2-2-2-6 0-8z"
+  />
+</svg>
