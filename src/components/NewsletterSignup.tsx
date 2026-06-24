@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 
 export default function NewsletterSignup() {
   const [email, setEmail] = useState("");
+  const [website, setWebsite] = useState("");
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">(
     "idle"
   );
@@ -21,9 +22,20 @@ export default function NewsletterSignup() {
     setStatus("submitting");
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 600));
+      const response = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, website }),
+      });
+
+      if (!response.ok) {
+        setStatus("error");
+        return;
+      }
+
       setStatus("success");
       setEmail("");
+      setWebsite("");
     } catch {
       setStatus("error");
     }
@@ -46,6 +58,19 @@ export default function NewsletterSignup() {
       <p className="text-white" style={{ fontFamily: "var(--font-body)" }}>
         Subscribe to our newsletter
       </p>
+
+      <div className="absolute left-[-9999px] h-0 w-0 overflow-hidden" aria-hidden>
+        <label htmlFor="newsletter-website">Website</label>
+        <input
+          id="newsletter-website"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          value={website}
+          onChange={(e) => setWebsite(e.target.value)}
+        />
+      </div>
+
       <div className="flex flex-col gap-2 sm:flex-row">
         <input
           type="email"

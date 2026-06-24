@@ -66,6 +66,7 @@ export default function ContactForm() {
     preferredDate: "",
     message: "",
   });
+  const [website, setWebsite] = useState("");
   const [errors, setErrors] = useState<FormErrors>({});
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">(
     "idle"
@@ -94,9 +95,25 @@ export default function ContactForm() {
     setStatus("submitting");
 
     try {
-      // Placeholder until backend integration — simulates a successful send
-      await new Promise((resolve) => setTimeout(resolve, 800));
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          phone: formData.phone.trim().startsWith("+233")
+            ? formData.phone.trim()
+            : `+233 ${formData.phone.trim()}`,
+          website,
+        }),
+      });
+
+      if (!response.ok) {
+        setStatus("error");
+        return;
+      }
+
       setStatus("success");
+      setWebsite("");
       setFormData({
         fullName: "",
         email: "",
@@ -155,6 +172,20 @@ export default function ContactForm() {
           Something went wrong. Please try again.
         </p>
       )}
+
+      {/* Honeypot — hidden from users, bots may fill it */}
+      <div className="absolute left-[-9999px] h-0 w-0 overflow-hidden" aria-hidden>
+        <label htmlFor="website">Website</label>
+        <input
+          id="website"
+          type="text"
+          name="website"
+          tabIndex={-1}
+          autoComplete="off"
+          value={website}
+          onChange={(e) => setWebsite(e.target.value)}
+        />
+      </div>
 
       <div className="flex flex-col gap-2">
         <label htmlFor="fullName" className={labelClassName} style={{ fontFamily: "var(--font-body)" }}>
