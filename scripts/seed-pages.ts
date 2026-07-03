@@ -1,0 +1,252 @@
+import path from "path";
+import { fileURLToPath } from "url";
+
+import config from "@/payload.config";
+import { staticAboutPage } from "@/lib/pages/about";
+import { staticContactPageHero } from "@/lib/pages/contact-page";
+import { staticEventsHubPage } from "@/lib/pages/events-hub";
+import { staticExperiencesPage } from "@/lib/pages/experiences";
+import { staticGalleryPageHero } from "@/lib/pages/gallery-page";
+import { staticHostEventPage } from "@/lib/pages/host-event";
+import { getPayload } from "payload";
+
+const filename = fileURLToPath(import.meta.url);
+const dirname = path.dirname(filename);
+const projectRoot = path.resolve(dirname, "..");
+
+function publicAssetToFilePath(publicPath: string): string {
+  const relativePath = publicPath.replace(/^\//, "");
+  return path.join(projectRoot, "public", relativePath);
+}
+
+async function getOrCreateMedia(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+  publicPath: string,
+  alt: string,
+): Promise<number> {
+  const filePath = publicAssetToFilePath(publicPath);
+
+  const existing = await payload.find({
+    collection: "media",
+    limit: 1,
+    overrideAccess: true,
+    where: { caption: { equals: publicPath } },
+  });
+
+  if (existing.docs[0]) {
+    console.log(`  ↳ reusing media: ${publicPath}`);
+    return existing.docs[0].id;
+  }
+
+  const media = await payload.create({
+    collection: "media",
+    data: { alt, caption: publicPath },
+    filePath,
+    overrideAccess: true,
+  });
+
+  console.log(`  ↳ created media: ${publicPath}`);
+  return media.id;
+}
+
+async function seedExperiencesPage(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+): Promise<void> {
+  const categories = await Promise.all(
+    staticExperiencesPage.categories.map(async (category) => ({
+      label: category.label,
+      title: category.title,
+      description: category.description,
+      image: await getOrCreateMedia(payload, category.image, category.label),
+    })),
+  );
+
+  await payload.updateGlobal({
+    slug: "experiences-page",
+    overrideAccess: true,
+    data: {
+      heroImage: await getOrCreateMedia(
+        payload,
+        staticExperiencesPage.hero.image,
+        "Experiences hero",
+      ),
+      heroTitle: staticExperiencesPage.hero.title,
+      taglinePrimary: staticExperiencesPage.tagline.primary,
+      taglineSecondary: staticExperiencesPage.tagline.secondary,
+      categories,
+      finalCtaLine1: staticExperiencesPage.finalCta.line1,
+      finalCtaLine2: staticExperiencesPage.finalCta.line2,
+      finalCtaLine3: staticExperiencesPage.finalCta.line3,
+      finalCtaLine4: staticExperiencesPage.finalCta.line4,
+      finalCtaBody: staticExperiencesPage.finalCta.body,
+      finalCtaSecondaryLabel: staticExperiencesPage.finalCta.secondaryLabel,
+      finalCtaSecondaryHref: staticExperiencesPage.finalCta.secondaryHref,
+      finalCtaPrimaryLabel: staticExperiencesPage.finalCta.primaryLabel,
+      finalCtaPrimaryHref: staticExperiencesPage.finalCta.primaryHref,
+    },
+  });
+
+  console.log("  ✓ experiences page updated");
+}
+
+async function seedAboutPage(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+): Promise<void> {
+  const stripImages = await Promise.all(
+    staticAboutPage.stripImages.map(async (image) => ({
+      alt: image.alt,
+      image: await getOrCreateMedia(payload, image.src, image.alt),
+    })),
+  );
+
+  await payload.updateGlobal({
+    slug: "about-page",
+    overrideAccess: true,
+    data: {
+      heroImage: await getOrCreateMedia(
+        payload,
+        staticAboutPage.hero.image,
+        "About hero",
+      ),
+      heroTitle: staticAboutPage.hero.title,
+      heroDescription: staticAboutPage.hero.description,
+      bodyParagraphs: staticAboutPage.bodyParagraphs.map((text) => ({ text })),
+      stripImages,
+      quoteBackgroundImage: await getOrCreateMedia(
+        payload,
+        staticAboutPage.quote.backgroundImage,
+        "About quote background",
+      ),
+      quoteText: staticAboutPage.quote.text,
+    },
+  });
+
+  console.log("  ✓ about page updated");
+}
+
+async function seedGalleryPage(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+): Promise<void> {
+  await payload.updateGlobal({
+    slug: "gallery-page",
+    overrideAccess: true,
+    data: {
+      heroTitle: staticGalleryPageHero.title,
+      heroIntro: staticGalleryPageHero.intro,
+    },
+  });
+
+  console.log("  ✓ gallery page updated");
+}
+
+async function seedEventsHubPage(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+): Promise<void> {
+  const hostImageId = await getOrCreateMedia(
+    payload,
+    staticEventsHubPage.hostCard.image,
+    staticEventsHubPage.hostCard.imageAlt,
+  );
+  const attendImageId = await getOrCreateMedia(
+    payload,
+    staticEventsHubPage.attendCard.image,
+    staticEventsHubPage.attendCard.imageAlt,
+  );
+
+  await payload.updateGlobal({
+    slug: "events-hub-page",
+    overrideAccess: true,
+    data: {
+      heroImage: await getOrCreateMedia(
+        payload,
+        staticEventsHubPage.hero.image,
+        staticEventsHubPage.hero.imageAlt,
+      ),
+      heroImageAlt: staticEventsHubPage.hero.imageAlt,
+      heroTitle: staticEventsHubPage.hero.title,
+      heroBody: staticEventsHubPage.hero.body,
+      heroHostCtaLabel: staticEventsHubPage.hero.hostCtaLabel,
+      heroHostCtaHref: staticEventsHubPage.hero.hostCtaHref,
+      heroAttendCtaLabel: staticEventsHubPage.hero.attendCtaLabel,
+      heroAttendCtaHref: staticEventsHubPage.hero.attendCtaHref,
+      sectionTitle: staticEventsHubPage.section.title,
+      sectionIntro: staticEventsHubPage.section.intro,
+      hostCard: {
+        image: hostImageId,
+        imageAlt: staticEventsHubPage.hostCard.imageAlt,
+        title: staticEventsHubPage.hostCard.title,
+        body: staticEventsHubPage.hostCard.body,
+        ctaLabel: staticEventsHubPage.hostCard.ctaLabel,
+        ctaHref: staticEventsHubPage.hostCard.ctaHref,
+      },
+      attendCard: {
+        image: attendImageId,
+        imageAlt: staticEventsHubPage.attendCard.imageAlt,
+        title: staticEventsHubPage.attendCard.title,
+        body: staticEventsHubPage.attendCard.body,
+        ctaLabel: staticEventsHubPage.attendCard.ctaLabel,
+        ctaHref: staticEventsHubPage.attendCard.ctaHref,
+      },
+    },
+  });
+
+  console.log("  ✓ events hub page updated");
+}
+
+async function seedHostEventPage(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+): Promise<void> {
+  await payload.updateGlobal({
+    slug: "host-event-page",
+    overrideAccess: true,
+    data: {
+      title: staticHostEventPage.title,
+      body: staticHostEventPage.body,
+      heroImage: await getOrCreateMedia(
+        payload,
+        staticHostEventPage.image,
+        staticHostEventPage.imageAlt,
+      ),
+      heroImageAlt: staticHostEventPage.imageAlt,
+      primaryCtaLabel: staticHostEventPage.primaryCtaLabel,
+      primaryCtaHref: staticHostEventPage.primaryCtaHref,
+      secondaryCtaLabel: staticHostEventPage.secondaryCtaLabel,
+      secondaryCtaHref: staticHostEventPage.secondaryCtaHref,
+    },
+  });
+
+  console.log("  ✓ host event page updated");
+}
+
+async function seedContactPage(
+  payload: Awaited<ReturnType<typeof getPayload>>,
+): Promise<void> {
+  await payload.updateGlobal({
+    slug: "contact-page",
+    overrideAccess: true,
+    data: {
+      headlineLine1: staticContactPageHero.headlineLine1,
+      headlineLine2: staticContactPageHero.headlineLine2,
+      intro: staticContactPageHero.intro,
+    },
+  });
+
+  console.log("  ✓ contact page updated");
+}
+
+async function seedPagesData(): Promise<void> {
+  const payload = await getPayload({ config });
+
+  console.log("Seeding page globals...\n");
+
+  await seedExperiencesPage(payload);
+  await seedAboutPage(payload);
+  await seedGalleryPage(payload);
+  await seedEventsHubPage(payload);
+  await seedHostEventPage(payload);
+  await seedContactPage(payload);
+
+  console.log("\nPage globals seed complete.");
+}
+
+await seedPagesData();
