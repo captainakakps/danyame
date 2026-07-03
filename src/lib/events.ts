@@ -10,6 +10,7 @@ export interface FeaturedEvent {
     time: string;
   };
   hasTickets: boolean;
+  ticketUrl?: string;
 }
 
 export interface Event {
@@ -24,6 +25,9 @@ export interface Event {
   image: string;
   hasTickets: boolean;
   ticketLabel?: string;
+  ticketUrl?: string;
+  isFeatured?: boolean;
+  eventDateISO?: string;
 }
 
 /** Highlighted on the Attend Event page hero */

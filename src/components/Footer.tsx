@@ -1,14 +1,16 @@
 import Link from "next/link";
-import { site } from "@/lib/site";
-import { pages } from "@/lib/tokens";
-import NewsletterSignup from "@/components/NewsletterSignup";
 
-export default function Footer() {
+import NewsletterSignup from "@/components/NewsletterSignup";
+import { getSiteSettings } from "@/lib/cms/site-settings";
+import { pages } from "@/lib/tokens";
+
+export default async function Footer() {
+  const site = await getSiteSettings();
+
   return (
     <footer className="bg-teal overflow-hidden">
       <div className="px-6 py-12 md:px-10 md:py-16 lg:px-14">
         <div className="grid grid-cols-1 gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-12">
-          {/* Follow Us */}
           <div>
             <p
               className="mb-4 text-xs uppercase tracking-widest text-white/40"
@@ -33,7 +35,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Explore + Contact */}
           <div>
             <p
               className="mb-4 text-xs uppercase tracking-widest text-white/40"
@@ -77,7 +78,6 @@ export default function Footer() {
             </a>
           </div>
 
-          {/* Newsletter + Legal */}
           <div>
             <p
               className="mb-4 text-xs uppercase tracking-widest text-white/40"
@@ -114,7 +114,7 @@ export default function Footer() {
           className="inline-block animate-[marquee_20s_linear_infinite] text-[clamp(6rem,18vw,16rem)] font-semibold tracking-wide text-white/10"
           style={{ fontFamily: "var(--font-heading)" }}
         >
-          DANYAME RECREATIONAL VILLAGE &nbsp;&nbsp; DANYAME RECREATIONAL VILLAGE
+          {site.name.toUpperCase()} &nbsp;&nbsp; {site.name.toUpperCase()}
           &nbsp;&nbsp;
         </p>
       </div>

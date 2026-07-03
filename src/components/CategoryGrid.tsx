@@ -4,32 +4,15 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-const categories = [
-  {
-    title: "Events & Celebrations",
-    image: "/assets/experiences/events.jpg",
-    href: "/experiences#events",
-  },
-  {
-    title: "Poolside & Chill",
-    image: "/assets/experiences/pool.jpg",
-    href: "/experiences#pool",
-  },
-  {
-    title: "Food & Nightlife",
-    image: "/assets/experiences/food.jpg",
-    href: "/experiences#food",
-  },
-  {
-    title: "Games & Activities",
-    image: "/assets/experiences/games.jpg",
-    href: "/experiences#games",
-  },
-];
+import type { HomeCategoryItem } from "@/lib/pages/home";
 
-export default function CategoryGrid() {
-  // Default to poolside (index 1)
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(1);
+type CategoryGridProps = {
+  categories: HomeCategoryItem[];
+};
+
+export default function CategoryGrid({ categories }: CategoryGridProps) {
+  const defaultIndex = Math.min(1, Math.max(0, categories.length - 1));
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(defaultIndex);
 
   return (
     <section className="relative min-h-[400px] w-full overflow-hidden lg:h-[900px]">
@@ -58,7 +41,7 @@ export default function CategoryGrid() {
             key={cat.title}
             className="group relative flex min-h-[250px] flex-col items-center justify-between py-8 sm:min-h-[350px] sm:py-10 lg:min-h-0 lg:py-10"
             onMouseEnter={() => setHoveredIndex(index)}
-            onMouseLeave={() => setHoveredIndex(1)}
+            onMouseLeave={() => setHoveredIndex(defaultIndex)}
           >
             {/* Vertical divider line - only on desktop */}
             {index > 0 && (

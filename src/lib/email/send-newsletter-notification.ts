@@ -1,4 +1,4 @@
-import { site } from "@/lib/site";
+import { getSiteSettings } from "@/lib/cms/site-settings";
 import {
   getContactFromEmail,
   getContactToEmail,
@@ -10,6 +10,7 @@ import {
 } from "@/lib/email/templates/newsletter-email";
 
 export async function sendNewsletterNotification(email: string) {
+  const site = await getSiteSettings();
   const resend = getResendClient();
   const to = getContactToEmail();
   const from = getContactFromEmail();

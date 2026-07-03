@@ -2,15 +2,31 @@
   "name": "danyame",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev --no-server-fast-refresh",
+    "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
+    "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
     "lint": "eslint",
-    "generate:favicons": "node scripts/generate-favicons.mjs"
+    "generate:favicons": "node scripts/generate-favicons.mjs",
+    "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
+    "generate:types": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
+    "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
+    "seed:events": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed-events.ts",
+    "seed:menu": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed-menu.ts",
+    "seed:gallery": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed-gallery.ts",
+    "seed:home": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed-home.ts",
+    "seed:pages": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed-pages.ts"
   },
   "dependencies": {
+    "@payloadcms/db-postgres": "^3.85.2",
+    "@payloadcms/next": "^3.85.2",
+    "@payloadcms/richtext-lexical": "^3.85.2",
+    "cross-env": "^10.1.0",
+    "graphql": "^16.14.2",
     "next": "16.2.9",
+    "payload": "^3.85.2",
+    "qrcode": "^1.5.4",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "resend": "^6.14.0"
@@ -18,6 +34,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

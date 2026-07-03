@@ -1,4 +1,4 @@
-import { site } from "@/lib/site";
+import { getSiteSettings } from "@/lib/cms/site-settings";
 import type { ContactPayload } from "@/lib/validation/contact";
 import {
   getContactFromEmail,
@@ -11,6 +11,7 @@ import {
 } from "@/lib/email/templates/contact-email";
 
 export async function sendContactEmail(payload: ContactPayload) {
+  const site = await getSiteSettings();
   const resend = getResendClient();
   const to = getContactToEmail();
   const from = getContactFromEmail();
