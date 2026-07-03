@@ -29,4 +29,19 @@ export const site = {
   copyrightYear: 2026,
 } as const;
 
-export type SiteConfig = typeof site;
+export type SiteConfig = {
+  name: string;
+  shortName: string;
+  location: string;
+  contact: {
+    email: string;
+    phone: string;
+    phoneHref: string;
+  };
+  social: { label: string; href: string }[];
+  exploreLinks: { label: string; href: string }[];
+  copyrightYear: number;
+  openingHours?: string;
+  logoUrl?: string;
+  logoDarkUrl?: string;
+};

@@ -110,6 +110,7 @@ export const pages = {
   hostEvent: "/host-event",
   privacy: "/privacy",
   contact: "/contact",
+  menu: "/menu",
 } as const;
 
 export type PageKey = keyof typeof pages;
