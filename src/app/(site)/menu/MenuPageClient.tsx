@@ -1,127 +1,123 @@
 "use client";
 
+import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
 
 import {
   type MenuCategory,
   type MenuItem,
   type MenuSettingsData,
-  type MenuTag,
 } from "@/lib/menu";
 import type { SiteConfig } from "@/lib/site";
 
-type MenuPageClientProps = {
+const logoLight = "/assets/logo.png";
+
+type MenuPageClientProps = Readonly<{
   settings: MenuSettingsData;
   categories: MenuCategory[];
   featuredItems: MenuItem[];
   site: SiteConfig;
-};
+}>;
 
-const tagLabels: Record<MenuTag, string> = {
-  popular: "Popular",
-  new: "New",
-  spicy: "Spicy",
-  vegetarian: "Vegetarian",
-  alcoholic: "Alcoholic",
-  "non-alcoholic": "Non-alcoholic",
-};
-
-function formatMenuPrice(price: number, currency: string): string {
+function formatPrice(price: number | string, currency: string): string {
+  if (typeof price === "string") {
+    return `${currency} ${price}`;
+  }
   const formatted = Number.isInteger(price) ? String(price) : price.toFixed(2);
-  return `${currency}${formatted}`;
-}
-
-function MenuTagBadge({ tag }: { tag: MenuTag }) {
-  const styles: Partial<Record<MenuTag, string>> = {
-    popular: "bg-rust/10 text-rust",
-    new: "bg-teal/10 text-teal",
-    spicy: "bg-crimson/10 text-crimson",
-    vegetarian: "bg-teal-50 text-teal-800",
-  };
-
-  return (
-    <span
-      className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${styles[tag] ?? "bg-surface-2 text-subtext"}`}
-      style={{ fontFamily: "var(--font-body)" }}
-    >
-      {tagLabels[tag]}
-    </span>
-  );
+  return `${currency} ${formatted}`;
 }
 
 function MenuItemRow({
   item,
   currency,
   showUnavailableItems,
-}: {
+}: Readonly<{
   item: MenuItem;
   currency: string;
   showUnavailableItems: boolean;
-}) {
-  const unavailable = !item.isAvailable;
-  const dimmed = unavailable && showUnavailableItems;
+}>) {
+  if (!item.isAvailable && !showUnavailableItems) return null;
 
   return (
-    <article
-      className={`flex gap-4 border-b border-muted/60 py-4 last:border-b-0 ${dimmed ? "opacity-50" : ""}`}
-    >
-      {item.image ? (
-        <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-[12px] bg-surface-2">
-          <Image
-            src={item.image}
-            alt={item.name}
-            fill
-            className="object-cover"
-            sizes="80px"
-          />
-        </div>
+    <div className={`flex flex-col gap-3 ${!item.isAvailable ? "opacity-40" : ""}`}>
+      <div className="flex items-baseline justify-between gap-6">
+        <p
+          className="text-[22px] uppercase leading-none text-white sm:text-[26px] lg:text-[32px]"
+          style={{ fontFamily: "var(--font-heading)" }}
+        >
+          {item.name}
+        </p>
+        <p
+          className="shrink-0 text-[22px] font-medium leading-none text-white sm:text-[26px] lg:text-[32px]"
+          style={{ fontFamily: "var(--font-heading)" }}
+        >
+          {formatPrice(item.price, currency)}
+        </p>
+      </div>
+      {item.description ? (
+        <p
+          className="text-base leading-[1.2] text-white/80 sm:text-lg lg:text-[20px]"
+          style={{ fontFamily: "var(--font-body)" }}
+        >
+          {item.description}
+        </p>
       ) : null}
+    </div>
+  );
+}
 
-      <div className="min-w-0 flex-1">
-        <div className="flex items-start justify-between gap-3">
-          <div className="min-w-0">
-            <h3
-              className="text-base font-medium text-ink sm:text-lg"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              {item.name}
-            </h3>
-            {unavailable && showUnavailableItems ? (
-              <p
-                className="mt-0.5 text-xs font-medium uppercase tracking-wide text-crimson"
-                style={{ fontFamily: "var(--font-body)" }}
-              >
-                Sold out
-              </p>
-            ) : null}
-          </div>
+function CategoryRow({
+  category,
+  currency,
+  showUnavailableItems,
+}: Readonly<{
+  category: MenuCategory;
+  currency: string;
+  showUnavailableItems: boolean;
+}>) {
+  const visibleItems = category.items.filter(
+    (item) => item.isAvailable || showUnavailableItems,
+  );
+  if (visibleItems.length === 0) return null;
+
+  return (
+    <div
+      id={category.slug}
+      className="scroll-mt-8 grid border-t border-white/20 lg:grid-cols-[280px_1px_1fr] xl:grid-cols-[320px_1px_1fr]"
+    >
+      {/* Category name — left */}
+      <div className="py-10 lg:sticky lg:top-0 lg:self-start lg:py-12 lg:pr-12">
+        <h2
+          className="text-[28px] uppercase leading-none text-white sm:text-[34px] lg:text-[40px]"
+          style={{ fontFamily: "var(--font-heading)" }}
+        >
+          {category.name}
+        </h2>
+        {category.description ? (
           <p
-            className="shrink-0 text-base font-semibold text-teal sm:text-lg"
+            className="mt-3 text-sm leading-snug text-white/60"
             style={{ fontFamily: "var(--font-body)" }}
           >
-            {formatMenuPrice(item.price, currency)}
+            {category.description}
           </p>
-        </div>
-
-        {item.description ? (
-          <p
-            className="mt-1 text-sm leading-relaxed text-subtext"
-            style={{ fontFamily: "var(--font-body)" }}
-          >
-            {item.description}
-          </p>
-        ) : null}
-
-        {item.tags.length > 0 ? (
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {item.tags.map((tag) => (
-              <MenuTagBadge key={tag} tag={tag} />
-            ))}
-          </div>
         ) : null}
       </div>
-    </article>
+
+      {/* Vertical divider — desktop */}
+      <div className="hidden bg-white/20 lg:block" />
+
+      {/* Items — right */}
+      <div className="flex flex-col gap-10 pb-12 lg:gap-12 lg:pl-12 lg:pt-12">
+        {visibleItems.map((item) => (
+          <MenuItemRow
+            key={item.slug}
+            item={item}
+            currency={currency}
+            showUnavailableItems={showUnavailableItems}
+          />
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -131,197 +127,122 @@ export default function MenuPageClient({
   featuredItems,
   site,
 }: MenuPageClientProps) {
-  const [activeSlug, setActiveSlug] = useState(categories[0]?.slug ?? "");
-  const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
+  const openingHours = site.openingHours ?? [];
 
-  const categorySlugs = useMemo(
-    () => categories.map((category) => category.slug),
-    [categories],
-  );
-
-  useEffect(() => {
-    if (!categorySlugs.length) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-
-        const topEntry = visible[0];
-        if (topEntry?.target.id) {
-          setActiveSlug(topEntry.target.id);
-        }
-      },
-      {
-        rootMargin: "-120px 0px -55% 0px",
-        threshold: [0, 0.25, 0.5, 1],
-      },
-    );
-
-    for (const slug of categorySlugs) {
-      const section = sectionRefs.current[slug];
-      if (section) {
-        observer.observe(section);
-      }
-    }
-
-    return () => observer.disconnect();
-  }, [categorySlugs]);
-
-  function scrollToCategory(slug: string) {
-    setActiveSlug(slug);
-    sectionRefs.current[slug]?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  }
+  const allCategories: MenuCategory[] = featuredItems.length > 0
+    ? [
+        {
+          slug: "featured",
+          name: "Featured",
+          sortOrder: -1,
+          items: featuredItems,
+        },
+        ...categories,
+      ]
+    : categories;
 
   return (
-    <div className="min-h-full bg-white text-ink">
-      <header className="sticky top-0 z-20 border-b border-muted/70 bg-white/95 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-2xl items-center gap-3 px-4 py-3 sm:px-6">
-          <img
-            src="/assets/logo.png"
-            alt={site.shortName}
-            className="h-8 w-auto"
+    <div className="min-h-screen bg-linear-to-b from-[#e97d25] to-[#c84f38]">
+      {/* Navbar */}
+      <div className="relative z-20 flex w-full items-center justify-between px-6 py-6 md:px-10 lg:px-14">
+        <Link href="/" aria-label="Danyame home">
+          <Image
+            src={logoLight}
+            alt="Danyame Recreational Village"
+            width={104}
+            height={50}
+            priority
+            className="h-[40px] w-[83px] object-contain md:h-[50px] md:w-[104px]"
           />
-          <div className="min-w-0">
+        </Link>
+        <Link
+          href="/host-event"
+          className="flex h-[44px] items-center justify-center rounded-pill bg-white/20 px-6 text-sm font-medium text-white backdrop-blur-sm transition-colors hover:bg-white/30 md:h-[50px] md:text-base"
+          style={{ fontFamily: "var(--font-body)" }}
+        >
+          Host an Event
+        </Link>
+      </div>
+
+      {/* Hero header */}
+      <div className="flex items-end justify-between px-6 pb-10 pt-6 md:px-10 md:pt-10 lg:px-14 lg:pb-14 lg:pt-16">
+        <h1
+          className="text-[80px] font-semibold uppercase leading-none text-white sm:text-[110px] md:text-[130px] lg:text-[148px]"
+          style={{ fontFamily: "var(--font-heading)" }}
+        >
+          Menu
+        </h1>
+
+        {/* Contact & hours */}
+        <div className="hidden flex-col items-end gap-5 pb-2 text-right md:flex">
+          <div className="flex flex-col items-end gap-1">
             <p
-              className="truncate text-lg font-semibold text-teal"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              {settings.pageTitle}
-            </p>
-            {settings.introText ? (
-              <p
-                className="truncate text-xs text-subtext sm:text-sm"
-                style={{ fontFamily: "var(--font-body)" }}
-              >
-                {settings.introText}
-              </p>
-            ) : null}
-          </div>
-        </div>
-
-        {categories.length > 0 ? (
-          <nav
-            aria-label="Menu categories"
-            className="mx-auto max-w-2xl overflow-x-auto px-4 pb-3 sm:px-6"
-          >
-            <div className="flex gap-2">
-              {categories.map((category) => {
-                const isActive = activeSlug === category.slug;
-
-                return (
-                  <button
-                    key={category.slug}
-                    type="button"
-                    onClick={() => scrollToCategory(category.slug)}
-                    className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium transition-colors duration-150 ${
-                      isActive
-                        ? "bg-teal text-white"
-                        : "bg-surface-2 text-ink hover:bg-teal/10"
-                    }`}
-                    style={{ fontFamily: "var(--font-body)" }}
-                  >
-                    {category.name}
-                  </button>
-                );
-              })}
-            </div>
-          </nav>
-        ) : null}
-      </header>
-
-      <main className="mx-auto max-w-2xl px-4 py-6 sm:px-6 sm:py-8">
-        {featuredItems.length > 0 ? (
-          <section className="mb-8">
-            <h2
-              className="mb-4 text-sm font-semibold uppercase tracking-wide text-subtext"
+              className="text-[11px] uppercase tracking-widest text-white/60"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              Featured
-            </h2>
-            <div className="rounded-[16px] border border-teal/15 bg-teal-50/40 p-4">
-              {featuredItems.map((item) => (
-                <MenuItemRow
-                  key={`featured-${item.slug}`}
-                  item={item}
-                  currency={settings.currency}
-                  showUnavailableItems={settings.showUnavailableItems}
-                />
-              ))}
-            </div>
-          </section>
-        ) : null}
-
-        {categories.length === 0 ? (
-          <p
-            className="py-12 text-center text-subtext"
-            style={{ fontFamily: "var(--font-body)" }}
-          >
-            Menu items will appear here once they are published in the admin
-            dashboard.
-          </p>
-        ) : (
-          categories.map((category) => (
-            <section
-              key={category.slug}
-              id={category.slug}
-              ref={(node) => {
-                sectionRefs.current[category.slug] = node;
-              }}
-              className="scroll-mt-36 pb-8"
+              Contact
+            </p>
+            <a
+              href={site.contact.phoneHref}
+              className="text-sm leading-snug text-white transition-opacity hover:opacity-80"
+              style={{ fontFamily: "var(--font-heading)" }}
             >
-              <div className="mb-4">
-                <h2
-                  className="text-2xl font-semibold text-ink"
+              {site.contact.phone}
+            </a>
+            {site.contact.secondaryPhone ? (
+              <a
+                href={site.contact.secondaryPhoneHref}
+                className="text-sm leading-snug text-white transition-opacity hover:opacity-80"
+                style={{ fontFamily: "var(--font-heading)" }}
+              >
+                {site.contact.secondaryPhone}
+              </a>
+            ) : null}
+          </div>
+          {openingHours.length > 0 ? (
+            <div className="flex flex-col items-end gap-1">
+              <p
+                className="text-[11px] uppercase tracking-widest text-white/60"
+                style={{ fontFamily: "var(--font-body)" }}
+              >
+                Opening Hours
+              </p>
+              {openingHours.map((row) => (
+                <p
+                  key={row.label}
+                  className="text-sm leading-snug text-white"
                   style={{ fontFamily: "var(--font-heading)" }}
                 >
-                  {category.name}
-                </h2>
-                {category.description ? (
-                  <p
-                    className="mt-1 text-sm text-subtext"
-                    style={{ fontFamily: "var(--font-body)" }}
-                  >
-                    {category.description}
-                  </p>
-                ) : null}
-              </div>
+                  {row.label}&nbsp;&nbsp;{row.hours}
+                </p>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      </div>
 
-              <div>
-                {category.items.map((item) => (
-                  <MenuItemRow
-                    key={item.slug}
-                    item={item}
-                    currency={settings.currency}
-                    showUnavailableItems={settings.showUnavailableItems}
-                  />
-                ))}
-              </div>
-            </section>
+      {/* Menu content */}
+      <main className="px-6 pb-24 md:px-10 lg:px-14">
+        {allCategories.length === 0 ? (
+          <div className="border-t border-white/20 py-20 text-center">
+            <p
+              className="text-lg text-white/60"
+              style={{ fontFamily: "var(--font-body)" }}
+            >
+              Menu items will appear here once published in the admin dashboard.
+            </p>
+          </div>
+        ) : (
+          allCategories.map((category) => (
+            <CategoryRow
+              key={category.slug}
+              category={category}
+              currency={settings.currency}
+              showUnavailableItems={settings.showUnavailableItems}
+            />
           ))
         )}
       </main>
-
-      <footer className="border-t border-muted/70 bg-surface-2 px-4 py-6 sm:px-6">
-        <div
-          className="mx-auto flex max-w-2xl flex-col gap-2 text-sm text-subtext sm:flex-row sm:items-center sm:justify-between"
-          style={{ fontFamily: "var(--font-body)" }}
-        >
-          <p>{site.name}</p>
-          <a
-            href={site.contact.phoneHref}
-            className="font-medium text-teal transition-colors duration-150 hover:text-teal-800"
-          >
-            {site.contact.phone}
-          </a>
-        </div>
-      </footer>
     </div>
   );
 }

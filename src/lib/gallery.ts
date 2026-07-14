@@ -40,9 +40,31 @@ export const staticGalleryCategories: GalleryCategoryData[] = [
     },
   },
   {
+    name: "Lodgings",
+    slug: "lodgings",
+    sortOrder: 1,
+    set: {
+      rows: [
+        [
+          { src: "/assets/gallery/lodgings/1.jpg", alt: "Lodging room interior" },
+          { src: "/assets/gallery/lodgings/2.jpg", alt: "Lodging hallway" },
+        ],
+        [
+          { src: "/assets/gallery/lodgings/3.jpg", alt: "Lodging exterior" },
+          { src: "/assets/gallery/lodgings/4.jpg", alt: "Lodging pathway" },
+          { src: "/assets/gallery/lodgings/5.jpg", alt: "Lodging cabin exterior" },
+        ],
+        [
+          { src: "/assets/gallery/lodgings/6.jpg", alt: "Lodging cabin in nature" },
+          { src: "/assets/gallery/lodgings/7.jpg", alt: "Lodging living room" },
+        ],
+      ],
+    },
+  },
+  {
     name: "Pool",
     slug: "pool",
-    sortOrder: 1,
+    sortOrder: 2,
     set: {
       rows: [
         [
@@ -64,7 +86,7 @@ export const staticGalleryCategories: GalleryCategoryData[] = [
   {
     name: "Food & Nightlife",
     slug: "food-nightlife",
-    sortOrder: 2,
+    sortOrder: 3,
     set: {
       rows: [
         [
@@ -86,7 +108,7 @@ export const staticGalleryCategories: GalleryCategoryData[] = [
   {
     name: "Games",
     slug: "games",
-    sortOrder: 3,
+    sortOrder: 4,
     set: {
       rows: [
         [
@@ -108,7 +130,7 @@ export const staticGalleryCategories: GalleryCategoryData[] = [
   {
     name: "Outdoor",
     slug: "outdoor",
-    sortOrder: 4,
+    sortOrder: 5,
     set: {
       rows: [
         [

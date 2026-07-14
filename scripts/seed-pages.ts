@@ -54,6 +54,7 @@ async function seedExperiencesPage(
 ): Promise<void> {
   const categories = await Promise.all(
     staticExperiencesPage.categories.map(async (category) => ({
+      slug: category.slug,
       label: category.label,
       title: category.title,
       description: category.description,
@@ -74,6 +75,17 @@ async function seedExperiencesPage(
       taglinePrimary: staticExperiencesPage.tagline.primary,
       taglineSecondary: staticExperiencesPage.tagline.secondary,
       categories,
+      exploreMoreTitle: staticExperiencesPage.exploreMore.title,
+      exploreMoreIntro: staticExperiencesPage.exploreMore.intro,
+      exploreMoreItems: await Promise.all(
+        staticExperiencesPage.exploreMore.items.map(async (item) => ({
+          name: item.name,
+          tagline: item.tagline,
+          image: await getOrCreateMedia(payload, item.image, item.imageAlt),
+          imageAlt: item.imageAlt,
+          href: item.href,
+        })),
+      ),
       finalCtaLine1: staticExperiencesPage.finalCta.line1,
       finalCtaLine2: staticExperiencesPage.finalCta.line2,
       finalCtaLine3: staticExperiencesPage.finalCta.line3,
@@ -110,14 +122,65 @@ async function seedAboutPage(
       ),
       heroTitle: staticAboutPage.hero.title,
       heroDescription: staticAboutPage.hero.description,
-      bodyParagraphs: staticAboutPage.bodyParagraphs.map((text) => ({ text })),
-      stripImages,
-      quoteBackgroundImage: await getOrCreateMedia(
+      introLabel: staticAboutPage.intro.label,
+      introWelcomeHeading: staticAboutPage.intro.welcomeHeading,
+      introPrimaryImage: await getOrCreateMedia(
         payload,
-        staticAboutPage.quote.backgroundImage,
-        "About quote background",
+        staticAboutPage.intro.primaryImage,
+        staticAboutPage.intro.primaryImageAlt,
       ),
-      quoteText: staticAboutPage.quote.text,
+      introPrimaryImageAlt: staticAboutPage.intro.primaryImageAlt,
+      introSinceCardImage: await getOrCreateMedia(
+        payload,
+        staticAboutPage.intro.sinceCard.image,
+        "Since 2024 card",
+      ),
+      introSinceCardLabel: staticAboutPage.intro.sinceCard.label,
+      introSinceCardText: staticAboutPage.intro.sinceCard.text,
+      introParagraph: staticAboutPage.intro.paragraph,
+      leadershipIntro: staticAboutPage.leadership.intro,
+      leadershipImage: await getOrCreateMedia(
+        payload,
+        staticAboutPage.leadership.image,
+        staticAboutPage.leadership.imageAlt,
+      ),
+      leadershipImageAlt: staticAboutPage.leadership.imageAlt,
+      leadershipParagraphs: staticAboutPage.leadership.paragraphs.map((text) => ({
+        text,
+      })),
+      stripImages,
+      missionIcon: await getOrCreateMedia(
+        payload,
+        staticAboutPage.missionVision.mission.icon,
+        "Mission icon",
+      ),
+      missionTitle: staticAboutPage.missionVision.mission.title,
+      missionText: staticAboutPage.missionVision.mission.text,
+      visionIcon: await getOrCreateMedia(
+        payload,
+        staticAboutPage.missionVision.vision.icon,
+        "Vision icon",
+      ),
+      visionTitle: staticAboutPage.missionVision.vision.title,
+      visionText: staticAboutPage.missionVision.vision.text,
+      locationBackgroundImage: await getOrCreateMedia(
+        payload,
+        staticAboutPage.location.backgroundImage,
+        "About location background",
+      ),
+      locationPinIcon: await getOrCreateMedia(
+        payload,
+        staticAboutPage.location.pinIcon,
+        "Location pin icon",
+      ),
+      locationText: staticAboutPage.location.text,
+      mapTitle: staticAboutPage.map.title,
+      mapImage: await getOrCreateMedia(
+        payload,
+        staticAboutPage.map.image,
+        "About map",
+      ),
+      mapLink: staticAboutPage.map.link,
     },
   });
 

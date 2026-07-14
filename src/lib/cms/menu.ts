@@ -204,7 +204,10 @@ export function getMenuQrTargetUrl(settings: MenuSettingsData): string {
   return `${siteUrl.replace(/\/$/, "")}/menu`;
 }
 
-export function formatMenuPrice(price: number, currency: string): string {
+export function formatMenuPrice(price: number | string, currency: string): string {
+  if (typeof price === "string") {
+    return `${currency}${price}`;
+  }
   const formatted = Number.isInteger(price) ? String(price) : price.toFixed(2);
   return `${currency}${formatted}`;
 }

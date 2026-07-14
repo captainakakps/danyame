@@ -4,6 +4,14 @@ import { isAdmin } from "@/access/isAdmin";
 import { publicRead } from "@/access/publicRead";
 
 const categoryFields = [
+  {
+    name: "slug",
+    type: "text" as const,
+    required: true,
+    admin: {
+      description: "URL anchor for this section, e.g. events, pool, food, games.",
+    },
+  },
   { name: "label", type: "text" as const, required: true },
   { name: "title", type: "text" as const, required: true },
   { name: "description", type: "textarea" as const, required: true },
@@ -54,6 +62,43 @@ export const ExperiencesPage: GlobalConfig = {
               minRows: 1,
               maxRows: 6,
               fields: categoryFields,
+            },
+          ],
+        },
+        {
+          label: "Explore More",
+          fields: [
+            {
+              name: "exploreMoreTitle",
+              type: "text",
+              defaultValue: "Explore More at Danyame",
+              required: true,
+            },
+            {
+              name: "exploreMoreIntro",
+              type: "textarea",
+              defaultValue:
+                "Beyond our signature experiences, discover the facilities and services that make every visit more convenient, enjoyable, and memorable. Tap any service to learn more, view pricing, and make an enquiry.",
+              required: true,
+            },
+            {
+              name: "exploreMoreItems",
+              type: "array",
+              labels: { singular: "Facility", plural: "Facilities" },
+              fields: [
+                { name: "name", type: "text", required: true },
+                { name: "tagline", type: "text", required: true },
+                {
+                  name: "image",
+                  type: "upload",
+                  relationTo: "media",
+                  admin: {
+                    description: "Preview image shown on hover (desktop).",
+                  },
+                },
+                { name: "imageAlt", type: "text" },
+                { name: "href", type: "text" },
+              ],
             },
           ],
         },

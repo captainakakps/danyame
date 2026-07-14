@@ -4,6 +4,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CategoryGrid from "@/components/CategoryGrid";
+import TestimonialsSection from "@/components/home/TestimonialsSection";
 import type { EventCountdown, HomePageData } from "@/lib/pages/home";
 
 type HomePageViewProps = {
@@ -803,6 +804,12 @@ export default function HomePageView({ page, countdown }: HomePageViewProps) {
           {page.gallery.ctaLabel}
         </Link>
       </section>
+
+      <TestimonialsSection
+        title={page.testimonials.title}
+        backgroundImage={page.testimonials.backgroundImage}
+        items={page.testimonials.items}
+      />
 
       {/* ── Ready For Your Next Experience Section ── */}
       <section className="relative bg-white px-6 py-16 md:px-10 lg:h-[796px] lg:px-14 lg:py-0 lg:pt-[130px]">

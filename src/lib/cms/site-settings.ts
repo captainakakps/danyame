@@ -21,6 +21,7 @@ function getStaticSiteConfig(): SiteConfig {
     social: staticSite.social.map((link) => ({ ...link })),
     exploreLinks: staticSite.exploreLinks.map((link) => ({ ...link })),
     copyrightYear: staticSite.copyrightYear,
+    openingHours: staticSite.openingHours.map((row) => ({ ...row })),
   };
 }
 
@@ -29,31 +30,52 @@ function mapSiteSettings(doc: SiteSetting | null): SiteConfig {
     return getStaticSiteConfig();
   }
 
-  const social =
+  const fallback = getStaticSiteConfig();
+
+  const cmsSocial =
     doc.socialLinks?.map((link) => ({
       label: link.label,
       href: link.href,
-    })) ?? getStaticSiteConfig().social;
+    })) ?? [];
 
-  const exploreLinks =
-    doc.footerLinks?.map((link) => ({
-      label: link.label,
-      href: link.href,
-    })) ?? getStaticSiteConfig().exploreLinks;
+  const social =
+    cmsSocial.length > 0
+      ? [
+          ...cmsSocial,
+          ...fallback.social.filter(
+            (link) => !cmsSocial.some((item) => item.label === link.label),
+          ),
+        ]
+      : fallback.social;
 
   return {
     name: doc.siteName,
     shortName: doc.shortName,
     location: doc.location,
     contact: {
-      email: doc.email,
-      phone: doc.phone,
-      phoneHref: doc.phoneHref,
+      email: doc.email || fallback.contact.email,
+      phone: doc.phone || fallback.contact.phone,
+      phoneHref: doc.phoneHref || fallback.contact.phoneHref,
+      secondaryPhone: doc.secondaryPhone || fallback.contact.secondaryPhone,
+      secondaryPhoneHref:
+        doc.secondaryPhoneHref || fallback.contact.secondaryPhoneHref,
+      whatsappHref: doc.whatsappHref || fallback.contact.whatsappHref,
+      whatsappLabel: doc.whatsappLabel || fallback.contact.whatsappLabel,
     },
     social,
-    exploreLinks,
+    exploreLinks:
+      doc.footerLinks?.map((link) => ({
+        label: link.label,
+        href: link.href,
+      })) ?? fallback.exploreLinks,
     copyrightYear: doc.copyrightYear,
-    openingHours: doc.openingHours || undefined,
+    openingHours:
+      doc.openingHoursRows?.length
+        ? doc.openingHoursRows.map((row) => ({
+            label: row.label,
+            hours: row.hours,
+          }))
+        : fallback.openingHours,
     logoUrl: getMediaUrl(doc.logo),
     logoDarkUrl: getMediaUrl(doc.logoDark),
   };

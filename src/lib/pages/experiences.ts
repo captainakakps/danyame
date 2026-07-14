@@ -1,13 +1,28 @@
-import { pages } from "@/lib/tokens";
 import { staticHomePage } from "@/lib/pages/home";
+import {
+  withExploreMoreModalContent,
+  type ExploreMoreModalContent,
+} from "@/lib/pages/explore-more-modal-content";
 import type { FinalCtaData } from "@/lib/pages/shared";
+import { pages } from "@/lib/tokens";
 
 export type ExperienceCategory = {
+  slug: string;
   label: string;
   title: string;
   description: string;
   image: string;
 };
+
+export type ExploreMoreItem = {
+  name: string;
+  tagline: string;
+  image: string;
+  imageAlt: string;
+  href?: string;
+} & ExploreMoreModalContent;
+
+type ExploreMoreItemBase = Omit<ExploreMoreItem, keyof ExploreMoreModalContent>;
 
 export type ExperiencesPageData = {
   hero: {
@@ -19,8 +34,93 @@ export type ExperiencesPageData = {
     secondary: string;
   };
   categories: ExperienceCategory[];
+  exploreMore: {
+    title: string;
+    intro: string;
+    items: ExploreMoreItem[];
+  };
   finalCta: FinalCtaData;
 };
+
+const exploreMoreBaseItems: ExploreMoreItemBase[] = [
+  {
+    name: "Hotel",
+    tagline: "Stay & Relax",
+    image: "/assets/experiences/explore-more/hotel.jpg",
+    imageAlt: "Hotel room at Danyame",
+    href: pages.contact,
+  },
+  {
+    name: "Conference Halls",
+    tagline: "Business & Events",
+    image: "/assets/experiences/explore-more/conference-halls.jpg",
+    imageAlt: "Conference hall at Danyame",
+    href: pages.contact,
+  },
+  {
+    name: "Aqua Cuisine",
+    tagline: "Signature Dining",
+    image: "/assets/experiences/explore-more/aqua-cuisine.jpg",
+    imageAlt: "Aqua Cuisine dining",
+    href: pages.contact,
+  },
+  {
+    name: "Night Club",
+    tagline: "Weekend Vibes",
+    image: "/assets/experiences/explore-more/night-club.jpg",
+    imageAlt: "Night club atmosphere",
+    href: pages.contact,
+  },
+  {
+    name: "Indoor Event Centre",
+    tagline: "Elegant Celebrations",
+    image: "/assets/experiences/explore-more/indoor-event-centre.jpg",
+    imageAlt: "Indoor event centre",
+    href: pages.contact,
+  },
+  {
+    name: "Outdoor Event Centre",
+    tagline: "Large Gatherings",
+    image: "/assets/experiences/explore-more/outdoor-event-centre.jpg",
+    imageAlt: "Outdoor event centre",
+    href: pages.contact,
+  },
+  {
+    name: "Astro Turf",
+    tagline: "Football & Recreation",
+    image: "/assets/experiences/explore-more/astro-turf.jpg",
+    imageAlt: "Astro turf pitch",
+    href: pages.contact,
+  },
+  {
+    name: "Game Centre",
+    tagline: "Fun for Everyone",
+    image: "/assets/experiences/explore-more/game-centre.jpg",
+    imageAlt: "Game centre",
+    href: pages.contact,
+  },
+  {
+    name: "Swimming Pool",
+    tagline: "Cool Off & Unwind",
+    image: "/assets/experiences/explore-more/swimming-pool.jpg",
+    imageAlt: "Swimming pool",
+    href: pages.contact,
+  },
+  {
+    name: "Bar & restaurant",
+    tagline: "Food & Cocktails",
+    image: "/assets/experiences/explore-more/bar-restaurant.jpg",
+    imageAlt: "Bar and restaurant",
+    href: pages.contact,
+  },
+  {
+    name: "VIP Lounge",
+    tagline: "Premium Experience",
+    image: "/assets/experiences/explore-more/vip-lounge.jpg",
+    imageAlt: "VIP lounge",
+    href: pages.contact,
+  },
+];
 
 export const staticExperiencesPage: ExperiencesPageData = {
   hero: {
@@ -34,6 +134,7 @@ export const staticExperiencesPage: ExperiencesPageData = {
   },
   categories: [
     {
+      slug: "events",
       label: "Events & Celebrations",
       title: "EVENTS & CELEBRATIONS",
       description:
@@ -41,6 +142,7 @@ export const staticExperiencesPage: ExperiencesPageData = {
       image: "/assets/experiences/events.jpg",
     },
     {
+      slug: "pool",
       label: "Poolside & Chill",
       title: "POOLSIDE EXPERIENCE",
       description:
@@ -48,6 +150,7 @@ export const staticExperiencesPage: ExperiencesPageData = {
       image: "/assets/experiences/pool.jpg",
     },
     {
+      slug: "food",
       label: "Food & Nightlife",
       title: "FOOD & NIGHTLIFE",
       description:
@@ -55,6 +158,7 @@ export const staticExperiencesPage: ExperiencesPageData = {
       image: "/assets/experiences/food.jpg",
     },
     {
+      slug: "games",
       label: "Games & Activities",
       title: "GAMES & ACTIVITIES",
       description:
@@ -62,5 +166,11 @@ export const staticExperiencesPage: ExperiencesPageData = {
       image: "/assets/experiences/games.jpg",
     },
   ],
+  exploreMore: {
+    title: "Explore More at Danyame",
+    intro:
+      "Beyond our signature experiences, discover the facilities and services that make every visit more convenient, enjoyable, and memorable. Tap any service to learn more, view pricing, and make an enquiry.",
+    items: exploreMoreBaseItems.map(withExploreMoreModalContent),
+  },
   finalCta: staticHomePage.finalCta,
 };

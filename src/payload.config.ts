@@ -78,6 +78,8 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URI || "",
     },
+    // Avoid interactive Drizzle "create vs rename" prompts that hang `next dev`.
+    push: false,
   }),
   sharp,
 });

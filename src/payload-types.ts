@@ -783,6 +783,19 @@ export interface HomePage {
     | null;
   galleryCtaLabel: string;
   galleryCtaHref: string;
+  testimonialsTitle: string;
+  testimonialsBackgroundImage?: (number | null) | Media;
+  testimonialsItems?:
+    | {
+        name: string;
+        role: string;
+        quote: string;
+        image: number | Media;
+        imageAlt: string;
+        cardStyle: 'light' | 'dark';
+        id?: string | null;
+      }[]
+    | null;
   finalCtaLine1: string;
   finalCtaLine2: string;
   finalCtaLine3: string;
@@ -807,10 +820,29 @@ export interface ExperiencesPage {
   taglineSecondary: string;
   categories?:
     | {
+        /**
+         * URL anchor for this section, e.g. events, pool, food, games.
+         */
+        slug: string;
         label: string;
         title: string;
         description: string;
         image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  exploreMoreTitle: string;
+  exploreMoreIntro: string;
+  exploreMoreItems?:
+    | {
+        name: string;
+        tagline: string;
+        /**
+         * Preview image shown on hover (desktop).
+         */
+        image?: (number | null) | Media;
+        imageAlt?: string | null;
+        href?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -835,7 +867,18 @@ export interface AboutPage {
   heroImage?: (number | null) | Media;
   heroTitle: string;
   heroDescription: string;
-  bodyParagraphs?:
+  introLabel: string;
+  introWelcomeHeading: string;
+  introPrimaryImage?: (number | null) | Media;
+  introPrimaryImageAlt?: string | null;
+  introSinceCardImage?: (number | null) | Media;
+  introSinceCardLabel?: string | null;
+  introSinceCardText?: string | null;
+  introParagraph: string;
+  leadershipIntro: string;
+  leadershipImage?: (number | null) | Media;
+  leadershipImageAlt?: string | null;
+  leadershipParagraphs?:
     | {
         text: string;
         id?: string | null;
@@ -848,8 +891,18 @@ export interface AboutPage {
         id?: string | null;
       }[]
     | null;
-  quoteBackgroundImage?: (number | null) | Media;
-  quoteText: string;
+  missionIcon?: (number | null) | Media;
+  missionTitle: string;
+  missionText: string;
+  visionIcon?: (number | null) | Media;
+  visionTitle: string;
+  visionText: string;
+  locationBackgroundImage?: (number | null) | Media;
+  locationPinIcon?: (number | null) | Media;
+  locationText: string;
+  mapTitle: string;
+  mapImage?: (number | null) | Media;
+  mapLink: string;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -962,9 +1015,29 @@ export interface SiteSetting {
   location: string;
   phone: string;
   phoneHref: string;
+  /**
+   * Second phone number shown in the footer.
+   */
+  secondaryPhone?: string | null;
+  secondaryPhoneHref?: string | null;
+  /**
+   * WhatsApp link for the secondary phone number.
+   */
+  whatsappHref?: string | null;
+  whatsappLabel?: string | null;
   email: string;
   /**
-   * Optional opening hours shown on the site.
+   * Opening hours shown in the footer.
+   */
+  openingHoursRows?:
+    | {
+        label: string;
+        hours: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Deprecated. Use Opening Hours rows instead.
    */
   openingHours?: string | null;
   socialLinks?:
@@ -1055,6 +1128,19 @@ export interface HomePageSelect<T extends boolean = true> {
       };
   galleryCtaLabel?: T;
   galleryCtaHref?: T;
+  testimonialsTitle?: T;
+  testimonialsBackgroundImage?: T;
+  testimonialsItems?:
+    | T
+    | {
+        name?: T;
+        role?: T;
+        quote?: T;
+        image?: T;
+        imageAlt?: T;
+        cardStyle?: T;
+        id?: T;
+      };
   finalCtaLine1?: T;
   finalCtaLine2?: T;
   finalCtaLine3?: T;
@@ -1080,10 +1166,23 @@ export interface ExperiencesPageSelect<T extends boolean = true> {
   categories?:
     | T
     | {
+        slug?: T;
         label?: T;
         title?: T;
         description?: T;
         image?: T;
+        id?: T;
+      };
+  exploreMoreTitle?: T;
+  exploreMoreIntro?: T;
+  exploreMoreItems?:
+    | T
+    | {
+        name?: T;
+        tagline?: T;
+        image?: T;
+        imageAlt?: T;
+        href?: T;
         id?: T;
       };
   finalCtaLine1?: T;
@@ -1107,7 +1206,18 @@ export interface AboutPageSelect<T extends boolean = true> {
   heroImage?: T;
   heroTitle?: T;
   heroDescription?: T;
-  bodyParagraphs?:
+  introLabel?: T;
+  introWelcomeHeading?: T;
+  introPrimaryImage?: T;
+  introPrimaryImageAlt?: T;
+  introSinceCardImage?: T;
+  introSinceCardLabel?: T;
+  introSinceCardText?: T;
+  introParagraph?: T;
+  leadershipIntro?: T;
+  leadershipImage?: T;
+  leadershipImageAlt?: T;
+  leadershipParagraphs?:
     | T
     | {
         text?: T;
@@ -1120,8 +1230,18 @@ export interface AboutPageSelect<T extends boolean = true> {
         alt?: T;
         id?: T;
       };
-  quoteBackgroundImage?: T;
-  quoteText?: T;
+  missionIcon?: T;
+  missionTitle?: T;
+  missionText?: T;
+  visionIcon?: T;
+  visionTitle?: T;
+  visionText?: T;
+  locationBackgroundImage?: T;
+  locationPinIcon?: T;
+  locationText?: T;
+  mapTitle?: T;
+  mapImage?: T;
+  mapLink?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
@@ -1229,7 +1349,18 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   location?: T;
   phone?: T;
   phoneHref?: T;
+  secondaryPhone?: T;
+  secondaryPhoneHref?: T;
+  whatsappHref?: T;
+  whatsappLabel?: T;
   email?: T;
+  openingHoursRows?:
+    | T
+    | {
+        label?: T;
+        hours?: T;
+        id?: T;
+      };
   openingHours?: T;
   socialLinks?:
     | T
