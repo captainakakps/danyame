@@ -2,7 +2,11 @@
 
 import { useState, type FormEvent } from "react";
 
-export default function NewsletterSignup() {
+type NewsletterSignupProps = {
+  variant?: "default" | "footer";
+};
+
+export default function NewsletterSignup({ variant = "default" }: NewsletterSignupProps) {
   const [email, setEmail] = useState("");
   const [website, setWebsite] = useState("");
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">(
@@ -44,20 +48,24 @@ export default function NewsletterSignup() {
   if (status === "success") {
     return (
       <p
-        className="text-sm text-white/80"
+        className={`${variant === "footer" ? "text-[20px] leading-[1.2] text-white" : "text-sm text-white/80"}`}
         role="status"
-        style={{ fontFamily: "var(--font-body)" }}
+        style={{ fontFamily: variant === "footer" ? "var(--font-heading)" : "var(--font-body)" }}
       >
         You&apos;re on the list. We&apos;ll be in touch soon.
       </p>
     );
   }
 
+  const isFooter = variant === "footer";
+
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-      <p className="text-white" style={{ fontFamily: "var(--font-body)" }}>
-        Subscribe to our newsletter
-      </p>
+      {!isFooter && (
+        <p className="text-white" style={{ fontFamily: "var(--font-body)" }}>
+          Subscribe to our newsletter
+        </p>
+      )}
 
       <div className="absolute left-[-9999px] h-0 w-0 overflow-hidden" aria-hidden>
         <label htmlFor="newsletter-website">Website</label>
@@ -71,7 +79,7 @@ export default function NewsletterSignup() {
         />
       </div>
 
-      <div className="flex flex-col gap-2 sm:flex-row">
+      <div className={`flex flex-col gap-2 ${isFooter ? "" : "sm:flex-row"}`}>
         <input
           type="email"
           value={email}
@@ -81,13 +89,17 @@ export default function NewsletterSignup() {
           }}
           placeholder="Your email address"
           aria-label="Email address for newsletter"
-          className="h-11 min-w-0 flex-1 rounded-[100px] border border-white/20 bg-white/10 px-4 text-sm text-white placeholder:text-white/40 focus:border-white/40 focus:outline-none"
+          className={`min-w-0 flex-1 rounded-[100px] border border-white/20 bg-white/10 px-4 text-white placeholder:text-white/40 focus:border-white/40 focus:outline-none ${
+            isFooter ? "h-10 text-[16px]" : "h-11 text-sm"
+          }`}
           style={{ fontFamily: "var(--font-body)" }}
         />
         <button
           type="submit"
           disabled={status === "submitting"}
-          className="h-11 shrink-0 rounded-[100px] bg-rust px-5 text-sm font-medium text-white transition-colors duration-150 hover:bg-rust/90 disabled:opacity-60"
+          className={`shrink-0 rounded-[100px] bg-rust font-medium text-white transition-colors duration-150 hover:bg-rust/90 disabled:opacity-60 ${
+            isFooter ? "h-10 px-4 text-[16px]" : "h-11 px-5 text-sm"
+          }`}
           style={{ fontFamily: "var(--font-body)" }}
         >
           {status === "submitting" ? "Joining..." : "Subscribe"}

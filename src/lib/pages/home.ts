@@ -11,6 +11,15 @@ export type HomeGalleryImage = {
   alt: string;
 };
 
+export type HomeTestimonial = {
+  name: string;
+  role: string;
+  quote: string;
+  image: string;
+  imageAlt: string;
+  cardStyle: "light" | "dark";
+};
+
 export type HomePageData = {
   hero: {
     image: string;
@@ -64,6 +73,11 @@ export type HomePageData = {
     images: HomeGalleryImage[];
     ctaLabel: string;
     ctaHref: string;
+  };
+  testimonials: {
+    title: string;
+    backgroundImage: string;
+    items: HomeTestimonial[];
   };
   finalCta: {
     line1: string;
@@ -168,6 +182,39 @@ export const staticHomePage: HomePageData = {
     ],
     ctaLabel: "View Full Gallery",
     ctaHref: pages.gallery,
+  },
+  testimonials: {
+    title: "What People Are Saying",
+    backgroundImage: "/assets/home/testimonials/section-bg.jpg",
+    items: [
+      {
+        name: "Ama Boateng",
+        role: "Weekend Guest",
+        quote:
+          "Our family had an incredible time at Danyame. The pool, games, food, and peaceful atmosphere made it the perfect place to relax and reconnect. We'll definitely be back.",
+        image: "/assets/home/testimonials/ama-boateng.jpg",
+        imageAlt: "Ama Boateng smiling",
+        cardStyle: "light",
+      },
+      {
+        name: "Kwame & Efua",
+        role: "Wedding Couple",
+        quote:
+          "Everything from the venue setup to the service was exceptional. Our guests couldn't stop talking about how beautiful the place looked and how smoothly everything went.",
+        image: "/assets/home/testimonials/kwame-efua.jpg",
+        imageAlt: "Kwame and Efua at their wedding",
+        cardStyle: "light",
+      },
+      {
+        name: "Ama Boateng",
+        role: "Weekend Guest",
+        quote:
+          "Our family had an incredible time at Danyame. The pool, games, food, and peaceful atmosphere made it the perfect place to relax and reconnect. We'll definitely be back.",
+        image: "/assets/home/testimonials/ama-boateng-alt.jpg",
+        imageAlt: "Guest portrait at Danyame",
+        cardStyle: "dark",
+      },
+    ],
   },
   finalCta: {
     line1: "READY",

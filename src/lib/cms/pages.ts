@@ -16,6 +16,7 @@ import {
   staticExperiencesPage,
   type ExperiencesPageData,
 } from "@/lib/pages/experiences";
+import { withExploreMoreModalContent } from "@/lib/pages/explore-more-modal-content";
 import {
   staticGalleryPageHero,
   type GalleryPageHeroData,
@@ -96,13 +97,19 @@ function mapExperiencesPage(doc: ExperiencesPageDoc | null): ExperiencesPageData
 
   const categories = doc.categories?.length
     ? doc.categories
-        .map((item) => {
+        .map((item, index) => {
           const image = getMediaUrl(item.image);
-          if (!item.label || !item.title || !item.description || !image) {
+          const slug =
+            item.slug ||
+            staticExperiencesPage.categories[index]?.slug ||
+            item.label?.toLowerCase().replace(/\s+/g, "-");
+
+          if (!slug || !item.label || !item.title || !item.description || !image) {
             return null;
           }
 
           return {
+            slug,
             label: item.label,
             title: item.title,
             description: item.description,
@@ -111,6 +118,34 @@ function mapExperiencesPage(doc: ExperiencesPageDoc | null): ExperiencesPageData
         })
         .filter((item): item is ExperiencesPageData["categories"][number] => item !== null)
     : staticExperiencesPage.categories;
+
+  const exploreMoreItems: ExperiencesPageData["exploreMore"]["items"] =
+    doc.exploreMoreItems?.length
+      ? doc.exploreMoreItems.flatMap((item, index) => {
+          if (!item.name || !item.tagline) {
+            return [];
+          }
+
+          const staticItem = staticExperiencesPage.exploreMore.items.find(
+            (entry) => entry.name === item.name,
+          );
+
+          return [
+            withExploreMoreModalContent({
+              name: item.name,
+              tagline: item.tagline,
+              href: item.href || undefined,
+              image:
+                staticItem?.image ??
+                getMediaUrl(item.image) ??
+                staticExperiencesPage.exploreMore.items[index]?.image ??
+                staticExperiencesPage.exploreMore.items[0].image,
+              imageAlt:
+                item.imageAlt || staticItem?.imageAlt || item.name,
+            }),
+          ];
+        })
+      : [];
 
   return {
     hero: {
@@ -122,6 +157,14 @@ function mapExperiencesPage(doc: ExperiencesPageDoc | null): ExperiencesPageData
       secondary: doc.taglineSecondary || staticExperiencesPage.tagline.secondary,
     },
     categories: categories.length > 0 ? categories : staticExperiencesPage.categories,
+    exploreMore: {
+      title: doc.exploreMoreTitle || staticExperiencesPage.exploreMore.title,
+      intro: doc.exploreMoreIntro || staticExperiencesPage.exploreMore.intro,
+      items:
+        exploreMoreItems.length > 0
+          ? exploreMoreItems
+          : staticExperiencesPage.exploreMore.items,
+    },
     finalCta: mapFinalCta(doc, staticExperiencesPage.finalCta),
   };
 }
@@ -131,16 +174,18 @@ function mapAboutPage(doc: AboutPageDoc | null): AboutPageData {
     return staticAboutPage;
   }
 
-  const bodyParagraphs = doc.bodyParagraphs?.length
-    ? doc.bodyParagraphs
+  const leadershipParagraphs = doc.leadershipParagraphs?.length
+    ? doc.leadershipParagraphs
         .map((item) => item.text)
         .filter((text): text is string => Boolean(text))
-    : staticAboutPage.bodyParagraphs;
+    : staticAboutPage.leadership.paragraphs;
 
   const stripImages = doc.stripImages?.length
     ? doc.stripImages
-        .map((item) => {
-          const src = getMediaUrl(item.image);
+        .map((item, index) => {
+          const cmsSrc = getMediaUrl(item.image);
+          const fallback = staticAboutPage.stripImages[index];
+          const src = cmsSrc ?? fallback?.src;
           if (!src || !item.alt) {
             return null;
           }
@@ -156,15 +201,65 @@ function mapAboutPage(doc: AboutPageDoc | null): AboutPageData {
       title: doc.heroTitle || staticAboutPage.hero.title,
       description: doc.heroDescription || staticAboutPage.hero.description,
     },
-    bodyParagraphs:
-      bodyParagraphs.length > 0 ? bodyParagraphs : staticAboutPage.bodyParagraphs,
+    intro: {
+      label: doc.introLabel || staticAboutPage.intro.label,
+      welcomeHeading:
+        doc.introWelcomeHeading || staticAboutPage.intro.welcomeHeading,
+      primaryImage:
+        getMediaUrl(doc.introPrimaryImage) ?? staticAboutPage.intro.primaryImage,
+      primaryImageAlt:
+        doc.introPrimaryImageAlt || staticAboutPage.intro.primaryImageAlt,
+      sinceCard: {
+        image:
+          getMediaUrl(doc.introSinceCardImage) ??
+          staticAboutPage.intro.sinceCard.image,
+        label:
+          doc.introSinceCardLabel || staticAboutPage.intro.sinceCard.label,
+        text: doc.introSinceCardText || staticAboutPage.intro.sinceCard.text,
+      },
+      paragraph: doc.introParagraph || staticAboutPage.intro.paragraph,
+    },
+    leadership: {
+      intro: doc.leadershipIntro || staticAboutPage.leadership.intro,
+      image:
+        getMediaUrl(doc.leadershipImage) ?? staticAboutPage.leadership.image,
+      imageAlt:
+        doc.leadershipImageAlt || staticAboutPage.leadership.imageAlt,
+      paragraphs:
+        leadershipParagraphs.length > 0
+          ? leadershipParagraphs
+          : staticAboutPage.leadership.paragraphs,
+    },
     stripImages:
       stripImages.length > 0 ? stripImages : staticAboutPage.stripImages,
-    quote: {
+    missionVision: {
+      mission: {
+        icon:
+          getMediaUrl(doc.missionIcon) ??
+          staticAboutPage.missionVision.mission.icon,
+        title: doc.missionTitle || staticAboutPage.missionVision.mission.title,
+        text: doc.missionText || staticAboutPage.missionVision.mission.text,
+      },
+      vision: {
+        icon:
+          getMediaUrl(doc.visionIcon) ??
+          staticAboutPage.missionVision.vision.icon,
+        title: doc.visionTitle || staticAboutPage.missionVision.vision.title,
+        text: doc.visionText || staticAboutPage.missionVision.vision.text,
+      },
+    },
+    location: {
       backgroundImage:
-        getMediaUrl(doc.quoteBackgroundImage) ??
-        staticAboutPage.quote.backgroundImage,
-      text: doc.quoteText || staticAboutPage.quote.text,
+        getMediaUrl(doc.locationBackgroundImage) ??
+        staticAboutPage.location.backgroundImage,
+      pinIcon:
+        getMediaUrl(doc.locationPinIcon) ?? staticAboutPage.location.pinIcon,
+      text: doc.locationText || staticAboutPage.location.text,
+    },
+    map: {
+      title: doc.mapTitle || staticAboutPage.map.title,
+      image: getMediaUrl(doc.mapImage) ?? staticAboutPage.map.image,
+      link: doc.mapLink || staticAboutPage.map.link,
     },
   };
 }

@@ -35,26 +35,77 @@ export const SiteSettings: GlobalConfig = {
     {
       name: "phone",
       type: "text",
-      defaultValue: "+233 24 894 9895",
+      defaultValue: "+233 55 364 7512",
       required: true,
     },
     {
       name: "phoneHref",
       type: "text",
-      defaultValue: "tel:+233248949895",
+      defaultValue: "tel:+233553647512",
       required: true,
+    },
+    {
+      name: "secondaryPhone",
+      type: "text",
+      defaultValue: "+233 55 383 7811",
+      admin: {
+        description: "Second phone number shown in the footer.",
+      },
+    },
+    {
+      name: "secondaryPhoneHref",
+      type: "text",
+      defaultValue: "tel:+233553837811",
+    },
+    {
+      name: "whatsappHref",
+      type: "text",
+      defaultValue: "https://wa.me/233553837811",
+      admin: {
+        description: "WhatsApp link for the secondary phone number.",
+      },
+    },
+    {
+      name: "whatsappLabel",
+      type: "text",
+      defaultValue: "(click to chat on whatsapp)",
     },
     {
       name: "email",
       type: "email",
-      defaultValue: "danyamevillage@gmail.com",
+      defaultValue: "danyamerecreationalvillage@gmail.com",
       required: true,
+    },
+    {
+      name: "openingHoursRows",
+      type: "array",
+      labels: {
+        singular: "Opening Hours Row",
+        plural: "Opening Hours",
+      },
+      admin: {
+        description: "Opening hours shown in the footer.",
+      },
+      fields: [
+        {
+          name: "label",
+          type: "text",
+          required: true,
+        },
+        {
+          name: "hours",
+          type: "text",
+          required: true,
+        },
+      ],
     },
     {
       name: "openingHours",
       type: "textarea",
       admin: {
-        description: "Optional opening hours shown on the site.",
+        hidden: true,
+        readOnly: true,
+        description: "Deprecated. Use Opening Hours rows instead.",
       },
     },
     {

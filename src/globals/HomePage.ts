@@ -22,6 +22,29 @@ const categoryFields = [
   },
 ];
 
+const testimonialFields = [
+  { name: "name", type: "text" as const, required: true },
+  { name: "role", type: "text" as const, required: true },
+  { name: "quote", type: "textarea" as const, required: true },
+  {
+    name: "image",
+    type: "upload" as const,
+    relationTo: "media" as const,
+    required: true,
+  },
+  { name: "imageAlt", type: "text" as const, required: true },
+  {
+    name: "cardStyle",
+    type: "select" as const,
+    defaultValue: "light",
+    options: [
+      { label: "Light", value: "light" },
+      { label: "Dark", value: "dark" },
+    ],
+    required: true,
+  },
+];
+
 const galleryImageFields = [
   {
     name: "image",
@@ -273,7 +296,7 @@ export const HomePage: GlobalConfig = {
           ],
         },
         {
-          label: "Gallery & CTA",
+          label: "Gallery",
           fields: [
             {
               name: "galleryTitle",
@@ -317,6 +340,36 @@ export const HomePage: GlobalConfig = {
               defaultValue: "/gallery",
               required: true,
             },
+          ],
+        },
+        {
+          label: "Testimonials",
+          fields: [
+            {
+              name: "testimonialsTitle",
+              type: "text",
+              defaultValue: "What People Are Saying",
+              required: true,
+            },
+            {
+              name: "testimonialsBackgroundImage",
+              type: "upload",
+              relationTo: "media",
+              label: "Section background",
+            },
+            {
+              name: "testimonialsItems",
+              type: "array",
+              label: "Testimonials",
+              minRows: 1,
+              maxRows: 12,
+              fields: testimonialFields,
+            },
+          ],
+        },
+        {
+          label: "Final CTA",
+          fields: [
             {
               name: "finalCtaLine1",
               type: "text",

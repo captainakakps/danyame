@@ -119,5 +119,19 @@ async function getPayloadGalleryData(): Promise<GalleryCategoryData[] | null> {
 
 export async function getGalleryCategories(): Promise<GalleryCategoryData[]> {
   const cmsCategories = await getPayloadGalleryData();
-  return cmsCategories ?? staticGalleryCategories;
+
+  if (!cmsCategories) {
+    return staticGalleryCategories;
+  }
+
+  // Supplement CMS categories with any static categories not yet in the CMS,
+  // so new tabs appear immediately without requiring a seed/admin step.
+  const cmsSlugs = new Set(cmsCategories.map((c) => c.slug));
+  const missingStatic = staticGalleryCategories.filter(
+    (c) => !cmsSlugs.has(c.slug),
+  );
+
+  return [...cmsCategories, ...missingStatic].sort(
+    (a, b) => a.sortOrder - b.sortOrder,
+  );
 }

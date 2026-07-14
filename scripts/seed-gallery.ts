@@ -164,7 +164,15 @@ async function seedSiteSettings(
       location: staticSite.location,
       phone: staticSite.contact.phone,
       phoneHref: staticSite.contact.phoneHref,
+      secondaryPhone: staticSite.contact.secondaryPhone,
+      secondaryPhoneHref: staticSite.contact.secondaryPhoneHref,
+      whatsappHref: staticSite.contact.whatsappHref,
+      whatsappLabel: staticSite.contact.whatsappLabel,
       email: staticSite.contact.email,
+      openingHoursRows: staticSite.openingHours.map((row) => ({
+        label: row.label,
+        hours: row.hours,
+      })),
       socialLinks: staticSite.social.map((link) => ({
         label: link.label,
         href: link.href,

@@ -104,6 +104,44 @@ function mapManualGalleryImages(
   return mapped.length >= 7 ? mapped.slice(0, 7) : fallback;
 }
 
+function mapTestimonials(
+  doc: HomePageDoc,
+  fallback: HomePageData["testimonials"],
+): HomePageData["testimonials"] {
+  const backgroundImage =
+    getMediaUrl(doc.testimonialsBackgroundImage) ?? fallback.backgroundImage;
+
+  if (!doc.testimonialsItems?.length) {
+    return { ...fallback, backgroundImage };
+  }
+
+  const items = doc.testimonialsItems
+    .map((item) => {
+      const image = getMediaUrl(item.image);
+      if (!item.name || !item.role || !item.quote || !image) {
+        return null;
+      }
+
+      return {
+        name: item.name,
+        role: item.role,
+        quote: item.quote,
+        image,
+        imageAlt: item.imageAlt || item.name,
+        cardStyle: (item.cardStyle === "dark" ? "dark" : "light") as
+          | "light"
+          | "dark",
+      };
+    })
+    .filter((item): item is HomePageData["testimonials"]["items"][number] => item !== null);
+
+  return {
+    title: doc.testimonialsTitle || fallback.title,
+    backgroundImage,
+    items: items.length > 0 ? items : fallback.items,
+  };
+}
+
 function mapHomePageDoc(doc: HomePageDoc | null): HomePageData {
   if (!doc) {
     return staticHomePage;
@@ -186,6 +224,7 @@ function mapHomePageDoc(doc: HomePageDoc | null): HomePageData {
       ctaLabel: doc.galleryCtaLabel || staticHomePage.gallery.ctaLabel,
       ctaHref: doc.galleryCtaHref || staticHomePage.gallery.ctaHref,
     },
+    testimonials: mapTestimonials(doc, staticHomePage.testimonials),
     finalCta: {
       line1: doc.finalCtaLine1 || staticHomePage.finalCta.line1,
       line2: doc.finalCtaLine2 || staticHomePage.finalCta.line2,

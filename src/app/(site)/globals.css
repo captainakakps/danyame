@@ -101,6 +101,15 @@
   box-sizing: border-box;
 }
 
+html.experiences-scroll-snap {
+  scroll-snap-type: y proximity;
+}
+
+.experience-category-section {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
@@ -154,6 +163,14 @@ h1, h2, h3, h4, h5, h6 {
 @keyframes marquee {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
+}
+
+.animate-strip {
+  animation: marquee 20s linear infinite;
+}
+
+.strip-container:hover .animate-strip {
+  animation-play-state: paused;
 }
 
 /* ── Custom Scrollbar (mobile horizontal scroll) ─────────────── */

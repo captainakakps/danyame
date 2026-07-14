@@ -85,6 +85,17 @@ async function seedHomePage(
     })),
   );
 
+  const testimonialsItems = await Promise.all(
+    staticHomePage.testimonials.items.map(async (item) => ({
+      name: item.name,
+      role: item.role,
+      quote: item.quote,
+      imageAlt: item.imageAlt,
+      cardStyle: item.cardStyle,
+      image: await getOrCreateMedia(payload, item.image, item.imageAlt),
+    })),
+  );
+
   await payload.updateGlobal({
     slug: "home-page",
     overrideAccess: true,
@@ -130,6 +141,13 @@ async function seedHomePage(
       galleryImages,
       galleryCtaLabel: staticHomePage.gallery.ctaLabel,
       galleryCtaHref: staticHomePage.gallery.ctaHref,
+      testimonialsTitle: staticHomePage.testimonials.title,
+      testimonialsBackgroundImage: await getOrCreateMedia(
+        payload,
+        staticHomePage.testimonials.backgroundImage,
+        "Testimonials section background",
+      ),
+      testimonialsItems,
       finalCtaLine1: staticHomePage.finalCta.line1,
       finalCtaLine2: staticHomePage.finalCta.line2,
       finalCtaLine3: staticHomePage.finalCta.line3,
