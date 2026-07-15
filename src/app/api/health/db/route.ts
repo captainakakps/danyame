@@ -3,10 +3,6 @@ import { getPayloadClient } from "@/lib/payload";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  if (process.env.ENABLE_DB_HEALTHCHECK !== "true") {
-    return Response.json({ error: "Disabled" }, { status: 404 });
-  }
-
   try {
     const payload = await getPayloadClient();
 
