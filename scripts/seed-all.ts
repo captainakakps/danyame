@@ -17,10 +17,14 @@ const env = {
 
 const INITIAL_MIGRATION = "20260715_140605_initial";
 
-function requireEnv(name: string): void {
-  if (!process.env[name]?.trim()) {
-    throw new Error(`Missing required environment variable: ${name}`);
+function requireEnv(...names: string[]): void {
+  if (names.some((name) => process.env[name]?.trim())) {
+    return;
   }
+
+  throw new Error(
+    `Missing required environment variable. Set one of: ${names.join(", ")}`,
+  );
 }
 
 function getExecOutput(error: unknown): string {
@@ -115,7 +119,7 @@ async function ensureMigrations(payload: Payload): Promise<void> {
 }
 
 async function bootstrap(): Promise<void> {
-  requireEnv("DATABASE_URI");
+  requireEnv("DATABASE_URL", "POSTGRES_URL", "DATABASE_URI");
   requireEnv("PAYLOAD_SECRET");
 
   if (!process.env.BLOB_READ_WRITE_TOKEN?.trim()) {

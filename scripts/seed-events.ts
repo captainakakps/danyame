@@ -1,15 +1,10 @@
-import path from "path";
-
 import {
   events as seedEvents,
   featuredEventSlug,
 } from "@/lib/events";
 import type { Payload } from "payload";
 
-import {
-  getOrCreateMedia,
-  publicAssetToFilePath,
-} from "./lib/seed-helpers";
+import { getOrCreateMedia } from "./lib/seed-helpers";
 
 function parseEventDate(dateLabel: string): string {
   const parsed = new Date(dateLabel);
@@ -19,43 +14,6 @@ function parseEventDate(dateLabel: string): string {
   }
 
   return parsed.toISOString();
-}
-
-async function getOrCreateEventMedia(
-  payload: Payload,
-  publicPath: string,
-  alt: string,
-): Promise<number> {
-  const filePath = publicAssetToFilePath(publicPath);
-  const fileName = path.basename(filePath);
-
-  const existing = await payload.find({
-    collection: "media",
-    limit: 1,
-    overrideAccess: true,
-    where: {
-      filename: {
-        equals: fileName,
-      },
-    },
-  });
-
-  if (existing.docs[0]) {
-    console.log(`  ↳ reusing media: ${fileName}`);
-    return existing.docs[0].id;
-  }
-
-  const media = await payload.create({
-    collection: "media",
-    data: {
-      alt,
-    },
-    filePath,
-    overrideAccess: true,
-  });
-
-  console.log(`  ↳ created media: ${fileName}`);
-  return media.id;
 }
 
 export async function seedEventsData(payload: Payload): Promise<void> {
@@ -80,10 +38,11 @@ export async function seedEventsData(payload: Payload): Promise<void> {
 
     console.log(`• creating: ${event.title}`);
 
-    const posterImageId = await getOrCreateEventMedia(
+    const posterImageId = await getOrCreateMedia(
       payload,
       event.image,
       `${event.title} poster`,
+      { matchBy: "filename" },
     );
 
     await payload.create({
