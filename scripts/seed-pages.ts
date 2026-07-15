@@ -1,57 +1,14 @@
-import path from "path";
-import { fileURLToPath } from "url";
-
-import config from "@/payload.config";
 import { staticAboutPage } from "@/lib/pages/about";
 import { staticContactPageHero } from "@/lib/pages/contact-page";
 import { staticEventsHubPage } from "@/lib/pages/events-hub";
 import { staticExperiencesPage } from "@/lib/pages/experiences";
 import { staticGalleryPageHero } from "@/lib/pages/gallery-page";
 import { staticHostEventPage } from "@/lib/pages/host-event";
-import { getPayload } from "payload";
+import type { Payload } from "payload";
 
-const filename = fileURLToPath(import.meta.url);
-const dirname = path.dirname(filename);
-const projectRoot = path.resolve(dirname, "..");
+import { getOrCreateMedia } from "./lib/seed-helpers";
 
-function publicAssetToFilePath(publicPath: string): string {
-  const relativePath = publicPath.replace(/^\//, "");
-  return path.join(projectRoot, "public", relativePath);
-}
-
-async function getOrCreateMedia(
-  payload: Awaited<ReturnType<typeof getPayload>>,
-  publicPath: string,
-  alt: string,
-): Promise<number> {
-  const filePath = publicAssetToFilePath(publicPath);
-
-  const existing = await payload.find({
-    collection: "media",
-    limit: 1,
-    overrideAccess: true,
-    where: { caption: { equals: publicPath } },
-  });
-
-  if (existing.docs[0]) {
-    console.log(`  ↳ reusing media: ${publicPath}`);
-    return existing.docs[0].id;
-  }
-
-  const media = await payload.create({
-    collection: "media",
-    data: { alt, caption: publicPath },
-    filePath,
-    overrideAccess: true,
-  });
-
-  console.log(`  ↳ created media: ${publicPath}`);
-  return media.id;
-}
-
-async function seedExperiencesPage(
-  payload: Awaited<ReturnType<typeof getPayload>>,
-): Promise<void> {
+async function seedExperiencesPage(payload: Payload): Promise<void> {
   const categories = await Promise.all(
     staticExperiencesPage.categories.map(async (category) => ({
       slug: category.slug,
@@ -101,9 +58,7 @@ async function seedExperiencesPage(
   console.log("  ✓ experiences page updated");
 }
 
-async function seedAboutPage(
-  payload: Awaited<ReturnType<typeof getPayload>>,
-): Promise<void> {
+async function seedAboutPage(payload: Payload): Promise<void> {
   const stripImages = await Promise.all(
     staticAboutPage.stripImages.map(async (image) => ({
       alt: image.alt,
@@ -175,11 +130,6 @@ async function seedAboutPage(
       ),
       locationText: staticAboutPage.location.text,
       mapTitle: staticAboutPage.map.title,
-      mapImage: await getOrCreateMedia(
-        payload,
-        staticAboutPage.map.image,
-        "About map",
-      ),
       mapLink: staticAboutPage.map.link,
     },
   });
@@ -187,9 +137,7 @@ async function seedAboutPage(
   console.log("  ✓ about page updated");
 }
 
-async function seedGalleryPage(
-  payload: Awaited<ReturnType<typeof getPayload>>,
-): Promise<void> {
+async function seedGalleryPage(payload: Payload): Promise<void> {
   await payload.updateGlobal({
     slug: "gallery-page",
     overrideAccess: true,
@@ -202,9 +150,7 @@ async function seedGalleryPage(
   console.log("  ✓ gallery page updated");
 }
 
-async function seedEventsHubPage(
-  payload: Awaited<ReturnType<typeof getPayload>>,
-): Promise<void> {
+async function seedEventsHubPage(payload: Payload): Promise<void> {
   const hostImageId = await getOrCreateMedia(
     payload,
     staticEventsHubPage.hostCard.image,
@@ -256,9 +202,7 @@ async function seedEventsHubPage(
   console.log("  ✓ events hub page updated");
 }
 
-async function seedHostEventPage(
-  payload: Awaited<ReturnType<typeof getPayload>>,
-): Promise<void> {
+async function seedHostEventPage(payload: Payload): Promise<void> {
   await payload.updateGlobal({
     slug: "host-event-page",
     overrideAccess: true,
@@ -281,9 +225,7 @@ async function seedHostEventPage(
   console.log("  ✓ host event page updated");
 }
 
-async function seedContactPage(
-  payload: Awaited<ReturnType<typeof getPayload>>,
-): Promise<void> {
+async function seedContactPage(payload: Payload): Promise<void> {
   await payload.updateGlobal({
     slug: "contact-page",
     overrideAccess: true,
@@ -297,9 +239,7 @@ async function seedContactPage(
   console.log("  ✓ contact page updated");
 }
 
-async function seedPagesData(): Promise<void> {
-  const payload = await getPayload({ config });
-
+export async function seedPagesData(payload: Payload): Promise<void> {
   console.log("Seeding page globals...\n");
 
   await seedExperiencesPage(payload);
@@ -312,4 +252,18 @@ async function seedPagesData(): Promise<void> {
   console.log("\nPage globals seed complete.");
 }
 
-await seedPagesData();
+async function runStandalone(): Promise<void> {
+  const config = (await import("@/payload.config")).default;
+  const { getPayload } = await import("payload");
+  const payload = await getPayload({ config });
+  await seedPagesData(payload);
+}
+
+if (process.argv[1]?.includes("seed-pages.ts")) {
+  runStandalone()
+    .then(() => process.exit(0))
+    .catch((error) => {
+      console.error("Page seed failed:", error);
+      process.exit(1);
+    });
+}

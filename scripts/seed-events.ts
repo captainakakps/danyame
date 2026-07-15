@@ -1,16 +1,15 @@
 import path from "path";
-import { fileURLToPath } from "url";
 
-import config from "@/payload.config";
 import {
   events as seedEvents,
   featuredEventSlug,
 } from "@/lib/events";
-import { getPayload } from "payload";
+import type { Payload } from "payload";
 
-const filename = fileURLToPath(import.meta.url);
-const dirname = path.dirname(filename);
-const projectRoot = path.resolve(dirname, "..");
+import {
+  getOrCreateMedia,
+  publicAssetToFilePath,
+} from "./lib/seed-helpers";
 
 function parseEventDate(dateLabel: string): string {
   const parsed = new Date(dateLabel);
@@ -22,13 +21,8 @@ function parseEventDate(dateLabel: string): string {
   return parsed.toISOString();
 }
 
-function publicAssetToFilePath(publicPath: string): string {
-  const relativePath = publicPath.replace(/^\//, "");
-  return path.join(projectRoot, "public", relativePath);
-}
-
-async function getOrCreateMedia(
-  payload: Awaited<ReturnType<typeof getPayload>>,
+async function getOrCreateEventMedia(
+  payload: Payload,
   publicPath: string,
   alt: string,
 ): Promise<number> {
@@ -64,9 +58,7 @@ async function getOrCreateMedia(
   return media.id;
 }
 
-async function seedEventsData() {
-  const payload = await getPayload({ config });
-
+export async function seedEventsData(payload: Payload): Promise<void> {
   console.log(`Seeding ${seedEvents.length} events...\n`);
 
   for (const [index, event] of seedEvents.entries()) {
@@ -88,7 +80,7 @@ async function seedEventsData() {
 
     console.log(`• creating: ${event.title}`);
 
-    const posterImageId = await getOrCreateMedia(
+    const posterImageId = await getOrCreateEventMedia(
       payload,
       event.image,
       `${event.title} poster`,
@@ -121,10 +113,18 @@ async function seedEventsData() {
   console.log("\nEvent seed complete.");
 }
 
-try {
-  await seedEventsData();
-  process.exit(0);
-} catch (error) {
-  console.error("Event seed failed:", error);
-  process.exit(1);
+async function runStandalone(): Promise<void> {
+  const config = (await import("@/payload.config")).default;
+  const { getPayload } = await import("payload");
+  const payload = await getPayload({ config });
+  await seedEventsData(payload);
+}
+
+if (process.argv[1]?.includes("seed-events.ts")) {
+  runStandalone()
+    .then(() => process.exit(0))
+    .catch((error) => {
+      console.error("Event seed failed:", error);
+      process.exit(1);
+    });
 }

@@ -1,59 +1,9 @@
-import path from "path";
-import { fileURLToPath } from "url";
-
-import config from "@/payload.config";
 import { staticHomePage } from "@/lib/pages/home";
-import { getPayload } from "payload";
+import type { Payload } from "payload";
 
-const filename = fileURLToPath(import.meta.url);
-const dirname = path.dirname(filename);
-const projectRoot = path.resolve(dirname, "..");
+import { getOrCreateMedia } from "./lib/seed-helpers";
 
-function publicAssetToFilePath(publicPath: string): string {
-  const relativePath = publicPath.replace(/^\//, "");
-  return path.join(projectRoot, "public", relativePath);
-}
-
-async function getOrCreateMedia(
-  payload: Awaited<ReturnType<typeof getPayload>>,
-  publicPath: string,
-  alt: string,
-): Promise<number> {
-  const filePath = publicAssetToFilePath(publicPath);
-
-  const existing = await payload.find({
-    collection: "media",
-    limit: 1,
-    overrideAccess: true,
-    where: {
-      caption: {
-        equals: publicPath,
-      },
-    },
-  });
-
-  if (existing.docs[0]) {
-    console.log(`  ↳ reusing media: ${publicPath}`);
-    return existing.docs[0].id;
-  }
-
-  const media = await payload.create({
-    collection: "media",
-    data: {
-      alt,
-      caption: publicPath,
-    },
-    filePath,
-    overrideAccess: true,
-  });
-
-  console.log(`  ↳ created media: ${publicPath}`);
-  return media.id;
-}
-
-async function seedHomePage(
-  payload: Awaited<ReturnType<typeof getPayload>>,
-): Promise<void> {
+async function seedHomePage(payload: Payload): Promise<void> {
   const heroImageId = await getOrCreateMedia(
     payload,
     staticHomePage.hero.image,
@@ -163,12 +113,24 @@ async function seedHomePage(
   console.log("  ✓ home page global updated");
 }
 
-async function seedHomeData(): Promise<void> {
-  const payload = await getPayload({ config });
-
+export async function seedHomeData(payload: Payload): Promise<void> {
   console.log("Seeding home page global...\n");
   await seedHomePage(payload);
   console.log("\nHome page seed complete.");
 }
 
-await seedHomeData();
+async function runStandalone(): Promise<void> {
+  const config = (await import("@/payload.config")).default;
+  const { getPayload } = await import("payload");
+  const payload = await getPayload({ config });
+  await seedHomeData(payload);
+}
+
+if (process.argv[1]?.includes("seed-home.ts")) {
+  runStandalone()
+    .then(() => process.exit(0))
+    .catch((error) => {
+      console.error("Home seed failed:", error);
+      process.exit(1);
+    });
+}

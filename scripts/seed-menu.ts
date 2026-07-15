@@ -1,13 +1,17 @@
-import config from "@/payload.config";
 import {
   staticMenuCategories,
   type MenuCategory,
   type MenuItem,
 } from "@/lib/menu";
-import { getPayload } from "payload";
+import type { Payload } from "payload";
+
+import {
+  getOrCreateMedia,
+  normalizeMenuPrice,
+} from "./lib/seed-helpers";
 
 async function getOrCreateCategory(
-  payload: Awaited<ReturnType<typeof getPayload>>,
+  payload: Payload,
   category: MenuCategory,
 ): Promise<number> {
   const existing = await payload.find({
@@ -41,7 +45,7 @@ async function getOrCreateCategory(
 }
 
 async function seedMenuItem(
-  payload: Awaited<ReturnType<typeof getPayload>>,
+  payload: Payload,
   item: MenuItem,
   categoryId: number,
 ): Promise<void> {
@@ -59,6 +63,10 @@ async function seedMenuItem(
     return;
   }
 
+  const imageId = item.image
+    ? await getOrCreateMedia(payload, item.image, item.name)
+    : undefined;
+
   await payload.create({
     collection: "menu-items",
     overrideAccess: true,
@@ -67,7 +75,8 @@ async function seedMenuItem(
       slug: item.slug,
       category: categoryId,
       description: item.description,
-      price: item.price,
+      price: normalizeMenuPrice(item.price),
+      ...(imageId ? { image: imageId } : {}),
       isAvailable: item.isAvailable,
       isFeatured: item.isFeatured,
       tags: item.tags,
@@ -79,9 +88,7 @@ async function seedMenuItem(
   console.log(`  ✓ item: ${item.name}`);
 }
 
-async function seedMenuSettings(
-  payload: Awaited<ReturnType<typeof getPayload>>,
-): Promise<void> {
+async function seedMenuSettings(payload: Payload): Promise<void> {
   const siteUrl =
     process.env.NEXT_PUBLIC_SITE_URL ||
     process.env.NEXT_PUBLIC_SERVER_URL ||
@@ -102,9 +109,7 @@ async function seedMenuSettings(
   console.log("  ✓ menu settings updated");
 }
 
-async function seedMenuData(): Promise<void> {
-  const payload = await getPayload({ config });
-
+export async function seedMenuData(payload: Payload): Promise<void> {
   console.log(`Seeding ${staticMenuCategories.length} menu categories...\n`);
 
   for (const category of staticMenuCategories) {
@@ -120,10 +125,18 @@ async function seedMenuData(): Promise<void> {
   console.log("\nMenu seed complete.");
 }
 
-try {
-  await seedMenuData();
-  process.exit(0);
-} catch (error) {
-  console.error("Menu seed failed:", error);
-  process.exit(1);
+async function runStandalone(): Promise<void> {
+  const config = (await import("@/payload.config")).default;
+  const { getPayload } = await import("payload");
+  const payload = await getPayload({ config });
+  await seedMenuData(payload);
+}
+
+if (process.argv[1]?.includes("seed-menu.ts")) {
+  runStandalone()
+    .then(() => process.exit(0))
+    .catch((error) => {
+      console.error("Menu seed failed:", error);
+      process.exit(1);
+    });
 }
