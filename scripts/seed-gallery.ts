@@ -1,64 +1,13 @@
-import path from "path";
-import { fileURLToPath } from "url";
-
-import config from "@/payload.config";
 import {
   flattenGallerySet,
   staticGalleryCategories,
 } from "@/lib/gallery";
 import { site as staticSite } from "@/lib/site";
-import { getPayload } from "payload";
+import type { Payload } from "payload";
 
-const filename = fileURLToPath(import.meta.url);
-const dirname = path.dirname(filename);
-const projectRoot = path.resolve(dirname, "..");
+import { getOrCreateMedia } from "./lib/seed-helpers";
 
-function publicAssetToFilePath(publicPath: string): string {
-  const relativePath = publicPath.replace(/^\//, "");
-  return path.join(projectRoot, "public", relativePath);
-}
-
-async function getOrCreateMedia(
-  payload: Awaited<ReturnType<typeof getPayload>>,
-  publicPath: string,
-  alt: string,
-): Promise<number> {
-  const filePath = publicAssetToFilePath(publicPath);
-  const fileName = path.basename(filePath);
-
-  const existing = await payload.find({
-    collection: "media",
-    limit: 1,
-    overrideAccess: true,
-    where: {
-      caption: {
-        equals: publicPath,
-      },
-    },
-  });
-
-  if (existing.docs[0]) {
-    console.log(`  ↳ reusing media: ${publicPath}`);
-    return existing.docs[0].id;
-  }
-
-  const media = await payload.create({
-    collection: "media",
-    data: {
-      alt,
-      caption: publicPath,
-    },
-    filePath,
-    overrideAccess: true,
-  });
-
-  console.log(`  ↳ created media: ${publicPath}`);
-  return media.id;
-}
-
-async function resetGalleryImages(
-  payload: Awaited<ReturnType<typeof getPayload>>,
-): Promise<void> {
+async function resetGalleryImages(payload: Payload): Promise<void> {
   const existing = await payload.find({
     collection: "gallery-images",
     limit: 500,
@@ -75,7 +24,7 @@ async function resetGalleryImages(
 }
 
 async function getOrCreateCategory(
-  payload: Awaited<ReturnType<typeof getPayload>>,
+  payload: Payload,
   name: string,
   slug: string,
   sortOrder: number,
@@ -110,7 +59,7 @@ async function getOrCreateCategory(
 }
 
 async function seedGalleryImage(
-  payload: Awaited<ReturnType<typeof getPayload>>,
+  payload: Payload,
   categoryId: number,
   title: string,
   publicPath: string,
@@ -152,9 +101,7 @@ async function seedGalleryImage(
   console.log(`  ✓ image: ${title}`);
 }
 
-async function seedSiteSettings(
-  payload: Awaited<ReturnType<typeof getPayload>>,
-): Promise<void> {
+async function seedSiteSettings(payload: Payload): Promise<void> {
   await payload.updateGlobal({
     slug: "site-settings",
     overrideAccess: true,
@@ -188,9 +135,7 @@ async function seedSiteSettings(
   console.log("  ✓ site settings updated");
 }
 
-async function seedGalleryData(): Promise<void> {
-  const payload = await getPayload({ config });
-
+export async function seedGalleryData(payload: Payload): Promise<void> {
   await resetGalleryImages(payload);
 
   console.log(`Seeding ${staticGalleryCategories.length} gallery categories...\n`);
@@ -226,10 +171,18 @@ async function seedGalleryData(): Promise<void> {
   console.log("\nGallery seed complete.");
 }
 
-try {
-  await seedGalleryData();
-  process.exit(0);
-} catch (error) {
-  console.error("Gallery seed failed:", error);
-  process.exit(1);
+async function runStandalone(): Promise<void> {
+  const config = (await import("@/payload.config")).default;
+  const { getPayload } = await import("payload");
+  const payload = await getPayload({ config });
+  await seedGalleryData(payload);
+}
+
+if (process.argv[1]?.includes("seed-gallery.ts")) {
+  runStandalone()
+    .then(() => process.exit(0))
+    .catch((error) => {
+      console.error("Gallery seed failed:", error);
+      process.exit(1);
+    });
 }
