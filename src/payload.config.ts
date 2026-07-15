@@ -35,10 +35,11 @@ function getDatabasePoolConfig(): {
     rejectUnauthorized: boolean;
   };
 } {
+  // Prefer Vercel/Neon integration vars first — they include SSL params.
   const raw =
-    process.env.DATABASE_URI ||
     process.env.DATABASE_URL ||
     process.env.POSTGRES_URL ||
+    process.env.DATABASE_URI ||
     "";
 
   const connectionString = raw.trim().replace(/\.+$/, "");
@@ -50,11 +51,10 @@ function getDatabasePoolConfig(): {
     uri = `${uri}${separator}sslmode=require`;
   }
 
-  const needsSsl =
-    Boolean(uri) &&
-    (process.env.NODE_ENV === "production" ||
-      uri.includes("neon.tech") ||
-      uri.includes("supabase.co"));
+  const isLocalDatabase =
+    uri.includes("localhost") || uri.includes("127.0.0.1");
+
+  const needsSsl = Boolean(uri) && !isLocalDatabase;
 
   return {
     connectionString: uri,
