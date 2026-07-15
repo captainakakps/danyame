@@ -39,6 +39,10 @@ const eventsSectionPaths = [
 export function isNavItemActive(pathname: string, item: NavItem): boolean {
   if (pathname === item.href) return true;
 
+  if (item.href === pages.menu) {
+    return pathname.startsWith(`${pages.menu}/`);
+  }
+
   if (item.href === pages.events) {
     if (pathname.startsWith(`${pages.events}/`)) return true;
     return eventsSectionPaths.some(

@@ -177,6 +177,33 @@ export async function getMenuPageData(): Promise<MenuPageData> {
   };
 }
 
+export type MenuCategoryPageData = {
+  category: MenuCategory;
+  settings: MenuSettingsData;
+};
+
+export async function getMenuCategoryBySlug(
+  slug: string,
+): Promise<MenuCategoryPageData | null> {
+  const { settings, categories } = await getMenuPageData();
+  const category = categories.find((entry) => entry.slug === slug);
+
+  if (!category) {
+    return null;
+  }
+
+  const visibleCategory = applyMenuVisibility([category], settings.showUnavailableItems)[0];
+
+  if (!visibleCategory || visibleCategory.items.length === 0) {
+    return null;
+  }
+
+  return {
+    category: visibleCategory,
+    settings,
+  };
+}
+
 export async function getMenuSettings(): Promise<MenuSettingsData> {
   try {
     const payload = await getPayloadClient();
@@ -204,10 +231,4 @@ export function getMenuQrTargetUrl(settings: MenuSettingsData): string {
   return `${siteUrl.replace(/\/$/, "")}/menu`;
 }
 
-export function formatMenuPrice(price: number | string, currency: string): string {
-  if (typeof price === "string") {
-    return `${currency}${price}`;
-  }
-  const formatted = Number.isInteger(price) ? String(price) : price.toFixed(2);
-  return `${currency}${formatted}`;
-}
+export { formatMenuPrice } from "@/lib/menu";

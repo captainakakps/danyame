@@ -144,6 +144,7 @@ export const staticMenuCategories: MenuCategory[] = [
         name: "Cupcake",
         description: "Not decorated",
         price: "10.00, 20.00",
+        image: "/assets/menu/items/dessert-cupcake-plain.jpg",
         isAvailable: true,
         isFeatured: false,
         tags: [],
@@ -152,9 +153,10 @@ export const staticMenuCategories: MenuCategory[] = [
       },
       {
         slug: "cupcake-decorated",
-        name: "Cupcake (Decorated)",
+        name: "Cupcake",
         description: "Cake butter topped with buttercream and pringles",
         price: 150,
+        image: "/assets/menu/items/dessert-cupcake-decorated.jpg",
         isAvailable: true,
         isFeatured: false,
         tags: [],
@@ -166,6 +168,7 @@ export const staticMenuCategories: MenuCategory[] = [
         name: "DRV Cake",
         description: "Not decorated",
         price: "30.00, 50.00",
+        image: "/assets/menu/items/dessert-drv-cake.jpg",
         isAvailable: true,
         isFeatured: false,
         tags: [],
@@ -177,6 +180,7 @@ export const staticMenuCategories: MenuCategory[] = [
         name: "Birthday Cake",
         description: "Cake butter, decorated with butter cream and fondant with some touches",
         price: "150.00 - 1,200.00",
+        image: "/assets/menu/items/dessert-birthday-cake.jpg",
         isAvailable: true,
         isFeatured: false,
         tags: [],
@@ -188,6 +192,7 @@ export const staticMenuCategories: MenuCategory[] = [
         name: "Pan Cake",
         description: "With vanilla ice-cream",
         price: 50,
+        image: "/assets/menu/items/dessert-pancake.jpg",
         isAvailable: true,
         isFeatured: false,
         tags: [],
@@ -199,6 +204,7 @@ export const staticMenuCategories: MenuCategory[] = [
         name: "Chocolate Cake",
         description: "Sliced top with strawberry",
         price: 150,
+        image: "/assets/menu/items/dessert-chocolate-cake.jpg",
         isAvailable: true,
         isFeatured: false,
         tags: [],
@@ -210,6 +216,7 @@ export const staticMenuCategories: MenuCategory[] = [
         name: "Assorted Fruit",
         description: "Slices top with honey",
         price: 100,
+        image: "/assets/menu/items/dessert-assorted-fruit.jpg",
         isAvailable: true,
         isFeatured: false,
         tags: [],
@@ -1142,6 +1149,67 @@ export const staticMenuCategories: MenuCategory[] = [
       },
     ],
   },
+  {
+    slug: "drinks",
+    name: "Drinks",
+    sortOrder: 15,
+    items: [
+      {
+        slug: "fresh-coconut",
+        name: "Fresh Coconut",
+        description: "Chilled whole coconut, cracked to order.",
+        price: 20,
+        isAvailable: true,
+        isFeatured: false,
+        tags: ["non-alcoholic"],
+        sortOrder: 0,
+        categorySlug: "drinks",
+      },
+      {
+        slug: "bottled-water",
+        name: "Bottled Water",
+        price: 8,
+        isAvailable: true,
+        isFeatured: false,
+        tags: ["non-alcoholic"],
+        sortOrder: 1,
+        categorySlug: "drinks",
+      },
+      {
+        slug: "danyame-sunset",
+        name: "Danyame Sunset",
+        description: "Tequila, passion fruit, and citrus.",
+        price: 45,
+        isAvailable: true,
+        isFeatured: true,
+        tags: ["alcoholic"],
+        sortOrder: 2,
+        categorySlug: "drinks",
+      },
+      {
+        slug: "poolside-mojito",
+        name: "Poolside Mojito",
+        description: "Mint, lime, and white rum.",
+        price: 40,
+        isAvailable: true,
+        isFeatured: false,
+        tags: ["alcoholic"],
+        sortOrder: 3,
+        categorySlug: "drinks",
+      },
+      {
+        slug: "soft-drinks",
+        name: "Soft Drinks",
+        description: "Assorted chilled soft drinks.",
+        price: 15,
+        isAvailable: true,
+        isFeatured: false,
+        tags: ["non-alcoholic"],
+        sortOrder: 4,
+        categorySlug: "drinks",
+      },
+    ],
+  },
 ];
 
 export function getStaticFeaturedMenuItems(
@@ -1174,4 +1242,16 @@ export function applyMenuVisibility(
       items: filterMenuItems(category.items, showUnavailableItems),
     }))
     .filter((category) => category.items.length > 0);
+}
+
+export function formatMenuPrice(price: number | string, currency: string): string {
+  if (typeof price === "string") {
+    return `${currency}${price}`;
+  }
+  const formatted = Number.isInteger(price) ? String(price) : price.toFixed(2);
+  return `${currency}${formatted}`;
+}
+
+export function formatMenuDisplayPrice(price: number | string, currency: string): string {
+  return formatMenuPrice(price, currency).replace(/^GH₵/, "GHS ");
 }

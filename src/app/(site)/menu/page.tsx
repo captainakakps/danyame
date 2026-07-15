@@ -1,31 +1,20 @@
 import type { Metadata, Viewport } from "next";
 
-import MenuPageClient from "./MenuPageClient";
+import MenuLandingPage from "./MenuLandingPage";
 import { getMenuPageData } from "@/lib/cms/menu";
-import { getSiteSettings } from "@/lib/cms/site-settings";
 
 export const metadata: Metadata = {
   title: "Menu",
   description:
-    "Browse food and drinks at Danyame Recreational Village — local dishes, grills, cocktails, and more.",
+    "Discover food and drinks at Danyame Recreational Village — local dishes, pizza, desserts, grills, and more.",
 };
 
 export const viewport: Viewport = {
-  themeColor: "#125E65",
+  themeColor: "#e87d26",
 };
 
 export default async function MenuPage() {
-  const [{ settings, categories, featuredItems }, site] = await Promise.all([
-    getMenuPageData(),
-    getSiteSettings(),
-  ]);
+  const { categories } = await getMenuPageData();
 
-  return (
-    <MenuPageClient
-      settings={settings}
-      categories={categories}
-      featuredItems={featuredItems}
-      site={site}
-    />
-  );
+  return <MenuLandingPage categories={categories} />;
 }
