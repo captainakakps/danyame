@@ -29,15 +29,43 @@ import { SiteSettings } from "./globals/SiteSettings";
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
-function getDatabaseUri(): string {
-  const uri = process.env.DATABASE_URI || "";
+function getDatabasePoolConfig(): {
+  connectionString: string;
+  ssl?: {
+    rejectUnauthorized: boolean;
+  };
+} {
+  const raw =
+    process.env.DATABASE_URI ||
+    process.env.DATABASE_URL ||
+    process.env.POSTGRES_URL ||
+    "";
 
-  if (!uri || uri.includes("sslmode=")) {
-    return uri;
+  const connectionString = raw.trim().replace(/\.+$/, "");
+
+  let uri = connectionString;
+
+  if (uri && !uri.includes("sslmode=")) {
+    const separator = uri.includes("?") ? "&" : "?";
+    uri = `${uri}${separator}sslmode=require`;
   }
 
-  const separator = uri.includes("?") ? "&" : "?";
-  return `${uri}${separator}sslmode=require`;
+  const needsSsl =
+    Boolean(uri) &&
+    (process.env.NODE_ENV === "production" ||
+      uri.includes("neon.tech") ||
+      uri.includes("supabase.co"));
+
+  return {
+    connectionString: uri,
+    ...(needsSsl
+      ? {
+          ssl: {
+            rejectUnauthorized: false,
+          },
+        }
+      : {}),
+  };
 }
 
 export default buildConfig({
@@ -88,9 +116,7 @@ export default buildConfig({
     outputFile: path.resolve(dirname, "payload-types.ts"),
   },
   db: postgresAdapter({
-    pool: {
-      connectionString: getDatabaseUri(),
-    },
+    pool: getDatabasePoolConfig(),
     // Avoid interactive Drizzle "create vs rename" prompts that hang `next dev`.
     push: false,
   }),
