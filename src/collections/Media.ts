@@ -5,7 +5,6 @@ import { isAdmin } from "@/access/isAdmin";
 export const Media: CollectionConfig = {
   slug: "media",
   upload: {
-    staticDir: "public/media",
     mimeTypes: ["image/*"],
   },
   admin: {
