@@ -1,7 +1,7 @@
 import { execSync } from "node:child_process";
 
 import config from "@/payload.config";
-import { getPayload } from "payload";
+import { getPayload, type Payload } from "payload";
 
 import { projectRoot } from "./lib/seed-helpers";
 import { seedEventsData } from "./seed-events";
@@ -43,13 +43,20 @@ function migrationsAreApplied(statusOutput: string): boolean {
   );
 }
 
-function schemaAlreadyExists(output: string): boolean {
-  return /already exists/i.test(output);
+async function databaseSchemaExists(payload: Payload): Promise<boolean> {
+  try {
+    await payload.find({
+      collection: "users",
+      limit: 1,
+      overrideAccess: true,
+    });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
-async function markInitialMigrationComplete(): Promise<void> {
-  const payload = await getPayload({ config });
-
+async function markInitialMigrationComplete(payload: Payload): Promise<void> {
   await payload.db.drizzle.execute(`
     INSERT INTO "payload_migrations" ("name", "batch", "updated_at", "created_at")
     SELECT '${INITIAL_MIGRATION}', 1, NOW(), NOW()
@@ -61,7 +68,21 @@ async function markInitialMigrationComplete(): Promise<void> {
   console.log("Marked initial migration as complete.\n");
 }
 
-function runMigrate(): void {
+async function prepareLegacySchema(payload: Payload): Promise<void> {
+  const fixes = [
+    `ALTER TABLE "about_page" ALTER COLUMN "quote_text" DROP NOT NULL`,
+  ];
+
+  for (const sql of fixes) {
+    try {
+      await payload.db.drizzle.execute(sql);
+    } catch {
+      // Ignore if the legacy column is already gone or nullable.
+    }
+  }
+}
+
+async function ensureMigrations(payload: Payload): Promise<void> {
   console.log("\n==> Checking database migrations...\n");
 
   const status = execSync("npx payload migrate:status", {
@@ -75,46 +96,22 @@ function runMigrate(): void {
     return;
   }
 
-  try {
-    execSync("npx payload migrate", {
-      cwd: projectRoot,
-      stdio: "pipe",
-      env,
-      encoding: "utf8",
-    });
-    console.log("Migrations applied.\n");
-  } catch (error) {
-    const output = getExecOutput(error);
-
-    if (schemaAlreadyExists(output)) {
-      console.warn(
-        "Database schema already exists (from a previous deploy or dev sync). Skipping migration SQL and continuing to seed.\n",
-      );
-      return;
-    }
-
-    try {
-      execSync('printf "y\\n" | npx payload migrate', {
-        cwd: projectRoot,
-        stdio: "pipe",
-        env,
-        shell: "/bin/bash",
-        encoding: "utf8",
-      });
-      console.log("Migrations applied.\n");
-    } catch (confirmError) {
-      const confirmOutput = getExecOutput(confirmError);
-
-      if (schemaAlreadyExists(confirmOutput)) {
-        console.warn(
-          "Database schema already exists (from a previous deploy or dev sync). Skipping migration SQL and continuing to seed.\n",
-        );
-        return;
-      }
-
-      throw confirmError;
-    }
+  if (await databaseSchemaExists(payload)) {
+    console.warn(
+      "Database schema already exists. Skipping migration SQL and continuing to seed.\n",
+    );
+    await markInitialMigrationComplete(payload);
+    return;
   }
+
+  execSync('printf "y\\n" | npx payload migrate', {
+    cwd: projectRoot,
+    stdio: "inherit",
+    env,
+    shell: "/bin/bash",
+  });
+
+  console.log("Migrations applied.\n");
 }
 
 async function bootstrap(): Promise<void> {
@@ -127,9 +124,9 @@ async function bootstrap(): Promise<void> {
     );
   }
 
-  runMigrate();
-
   const payload = await getPayload({ config });
+  await ensureMigrations(payload);
+  await prepareLegacySchema(payload);
 
   console.log("\n==> Seeding page globals...\n");
   await seedPagesData(payload);
@@ -153,7 +150,7 @@ async function bootstrap(): Promise<void> {
   });
 
   if (!migrationsAreApplied(status)) {
-    await markInitialMigrationComplete();
+    await markInitialMigrationComplete(payload);
   }
 
   console.log("\nBootstrap complete.");
