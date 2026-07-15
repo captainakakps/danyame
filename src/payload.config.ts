@@ -29,7 +29,19 @@ import { SiteSettings } from "./globals/SiteSettings";
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 
+function getDatabaseUri(): string {
+  const uri = process.env.DATABASE_URI || "";
+
+  if (!uri || uri.includes("sslmode=")) {
+    return uri;
+  }
+
+  const separator = uri.includes("?") ? "&" : "?";
+  return `${uri}${separator}sslmode=require`;
+}
+
 export default buildConfig({
+  serverURL: process.env.NEXT_PUBLIC_SERVER_URL,
   admin: {
     user: Users.slug,
     theme: "light",
@@ -77,7 +89,7 @@ export default buildConfig({
   },
   db: postgresAdapter({
     pool: {
-      connectionString: process.env.DATABASE_URI || "",
+      connectionString: getDatabaseUri(),
     },
     // Avoid interactive Drizzle "create vs rename" prompts that hang `next dev`.
     push: false,
