@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev --no-server-fast-refresh",
     "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
-    "vercel-build": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_MIGRATING=true payload migrate || true && next build",
+    "vercel-build": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_MIGRATING=true payload migrate && next build",
+    "db:migrate": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_MIGRATING=true payload migrate",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
     "lint": "eslint",
     "generate:favicons": "node scripts/generate-favicons.mjs",
