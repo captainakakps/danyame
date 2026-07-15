@@ -258,7 +258,7 @@ function mapAboutPage(doc: AboutPageDoc | null): AboutPageData {
     },
     map: {
       title: doc.mapTitle || staticAboutPage.map.title,
-      image: getMediaUrl(doc.mapImage) ?? staticAboutPage.map.image,
+      embedUrl: staticAboutPage.map.embedUrl,
       link: doc.mapLink || staticAboutPage.map.link,
     },
   };
