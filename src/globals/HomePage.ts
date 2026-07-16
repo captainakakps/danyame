@@ -312,7 +312,7 @@ export const HomePage: GlobalConfig = {
             {
               name: "galleryUseCmsGallery",
               type: "checkbox",
-              defaultValue: true,
+              defaultValue: false,
               admin: {
                 description:
                   "When enabled, the first 7 published gallery images are used instead of the manual picks below.",

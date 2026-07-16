@@ -170,7 +170,7 @@ export const staticHomePage: HomePageData = {
   gallery: {
     title: "Moments at Danyame",
     intro: "A glimpse into the experience, energy, and memories created here",
-    useCmsGallery: true,
+    useCmsGallery: false,
     images: [
       { src: "/assets/home/gallery-1.jpg", alt: "Gallery image 1" },
       { src: "/assets/home/gallery-2.jpg", alt: "Gallery image 2" },
