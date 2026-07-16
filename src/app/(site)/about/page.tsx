@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import AboutPageView from "@/components/about/AboutPageView";
-import { staticAboutPage } from "@/lib/pages/about";
+import { getAboutPage } from "@/lib/cms/pages";
 
 export const metadata: Metadata = {
   title: "About Us",
@@ -8,6 +8,8 @@ export const metadata: Metadata = {
     "Danyame Recreational Village — elevating lives and creating memories in Boadua-Topremang, Eastern Region.",
 };
 
-export default function AboutPage() {
-  return <AboutPageView page={staticAboutPage} />;
+export default async function AboutPage() {
+  const page = await getAboutPage();
+
+  return <AboutPageView page={page} />;
 }

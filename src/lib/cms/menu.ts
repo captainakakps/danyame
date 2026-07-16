@@ -8,9 +8,9 @@ import {
   type MenuSettingsData,
   type MenuTag,
 } from "@/lib/menu";
+import { getMediaUrl } from "@/lib/cms/media";
 import { getPayloadClient } from "@/lib/payload";
 import type {
-  Media,
   MenuCategory as PayloadMenuCategory,
   MenuItem as PayloadMenuItem,
   MenuSetting,
@@ -23,14 +23,6 @@ export type MenuPageData = {
   categories: MenuCategory[];
   featuredItems: MenuItem[];
 };
-
-function getMediaUrl(image: number | Media | null | undefined): string | undefined {
-  if (!image || typeof image === "number") {
-    return undefined;
-  }
-
-  return image.url || undefined;
-}
 
 function getCategorySlug(
   category: number | PayloadMenuCategory | null | undefined,

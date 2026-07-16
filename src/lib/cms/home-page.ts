@@ -1,3 +1,4 @@
+import { getMediaUrl } from "@/lib/cms/media";
 import { getPayloadClient } from "@/lib/payload";
 import {
   computeCountdown,
@@ -6,7 +7,7 @@ import {
   type HomeGalleryImage,
   type HomePageData,
 } from "@/lib/pages/home";
-import type { HomePage as HomePageDoc, Media } from "@/payload-types";
+import type { HomePage as HomePageDoc } from "@/payload-types";
 
 export type { EventCountdown, HomePageData };
 
@@ -14,14 +15,6 @@ export type HomePageContent = {
   page: HomePageData;
   countdown: EventCountdown;
 };
-
-function getMediaUrl(media: number | Media | null | undefined): string | undefined {
-  if (!media || typeof media === "number") {
-    return undefined;
-  }
-
-  return media.url || undefined;
-}
 
 async function getCmsGalleryImages(): Promise<HomeGalleryImage[] | null> {
   try {

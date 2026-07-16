@@ -1,3 +1,4 @@
+import { getMediaUrl } from "@/lib/cms/media";
 import {
   buildGallerySet,
   staticGalleryCategories,
@@ -8,19 +9,11 @@ import { getPayloadClient } from "@/lib/payload";
 import type {
   GalleryCategory as PayloadGalleryCategory,
   GalleryImage as PayloadGalleryImage,
-  Media,
 } from "@/payload-types";
 
 export type { GalleryCategoryData, GalleryImage } from "@/lib/gallery";
 export type { GallerySet } from "@/lib/gallery";
 
-function getMediaUrl(image: number | Media | null | undefined): string {
-  if (!image || typeof image === "number") {
-    return "";
-  }
-
-  return image.url || "";
-}
 
 function getCategorySlug(
   category: number | PayloadGalleryCategory | null | undefined,

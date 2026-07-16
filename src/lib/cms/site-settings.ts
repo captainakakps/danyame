@@ -1,16 +1,9 @@
+import { getMediaUrl } from "@/lib/cms/media";
 import { site as staticSite, type SiteConfig } from "@/lib/site";
 import { getPayloadClient } from "@/lib/payload";
-import type { Media, SiteSetting } from "@/payload-types";
+import type { SiteSetting } from "@/payload-types";
 
 export type { SiteConfig };
-
-function getMediaUrl(media: number | Media | null | undefined): string | undefined {
-  if (!media || typeof media === "number") {
-    return undefined;
-  }
-
-  return media.url || undefined;
-}
 
 function getStaticSiteConfig(): SiteConfig {
   return {

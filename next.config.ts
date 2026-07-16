@@ -24,6 +24,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "*.public.blob.vercel-storage.com",
       },
+      {
+        protocol: "https",
+        hostname: "danyame.vercel.app",
+        pathname: "/api/media/file/**",
+      },
     ],
   },
   webpack: (webpackConfig) => {

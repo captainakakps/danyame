@@ -7,19 +7,13 @@ import {
   type Event,
   type FeaturedEvent,
 } from "@/lib/events";
+import { getMediaUrl } from "@/lib/cms/media";
 import { getPayloadClient } from "@/lib/payload";
-import type { Event as PayloadEvent, Media } from "@/payload-types";
+import type { Event as PayloadEvent } from "@/payload-types";
 
 export { getEventPath };
 export type { Event, FeaturedEvent };
 
-function getMediaUrl(posterImage: number | Media | null | undefined): string {
-  if (!posterImage || typeof posterImage === "number") {
-    return "";
-  }
-
-  return posterImage.url || "";
-}
 
 function formatMonthLabel(date: Date): string {
   const month = new Intl.DateTimeFormat("en-GB", { month: "long" }).format(date);
@@ -57,7 +51,7 @@ function mapPayloadEventToEvent(doc: PayloadEvent): Event {
     location: doc.location,
     shortSummary: doc.shortSummary,
     description: doc.description,
-    image: getMediaUrl(doc.posterImage),
+    image: getMediaUrl(doc.posterImage) ?? "",
     hasTickets: Boolean(doc.hasTickets),
     ticketLabel: doc.ticketLabel || undefined,
     ticketUrl: doc.ticketUrl || undefined,
@@ -72,7 +66,7 @@ function mapPayloadEventToFeaturedEvent(doc: PayloadEvent): FeaturedEvent {
   return {
     title: doc.title,
     slug: doc.slug,
-    image: getMediaUrl(doc.posterImage),
+    image: getMediaUrl(doc.posterImage) ?? "",
     location: doc.location,
     description: doc.description,
     dateCard: {

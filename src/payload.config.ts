@@ -25,9 +25,53 @@ import { HomePage } from "./globals/HomePage";
 import { HostEventPage } from "./globals/HostEventPage";
 import { MenuSettings } from "./globals/MenuSettings";
 import { SiteSettings } from "./globals/SiteSettings";
+import {
+  revalidateSiteAfterChange,
+  revalidateSiteGlobalAfterChange,
+} from "./hooks/revalidateSite";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
+
+const contentCollections = [
+  Media,
+  Events,
+  MenuCategories,
+  MenuItems,
+  MenuQr,
+  GalleryCategories,
+  GalleryImages,
+].map((collection) => ({
+  ...collection,
+  hooks: {
+    ...collection.hooks,
+    afterChange: [
+      ...(collection.hooks?.afterChange ?? []),
+      revalidateSiteAfterChange,
+    ],
+  },
+}));
+
+const contentGlobals = [
+  HomePage,
+  ExperiencesPage,
+  AboutPage,
+  GalleryPage,
+  EventsHubPage,
+  HostEventPage,
+  ContactPage,
+  MenuSettings,
+  SiteSettings,
+].map((global) => ({
+  ...global,
+  hooks: {
+    ...global.hooks,
+    afterChange: [
+      ...(global.hooks?.afterChange ?? []),
+      revalidateSiteGlobalAfterChange,
+    ],
+  },
+}));
 
 function getDatabasePoolConfig(): {
   connectionString: string;
@@ -87,29 +131,8 @@ export default buildConfig({
       },
     },
   },
-  collections: [
-    Users,
-    Media,
-    Events,
-    MenuCategories,
-    MenuItems,
-    MenuQr,
-    GalleryCategories,
-    GalleryImages,
-    ContactInquiries,
-    NewsletterSubscribers,
-  ],
-  globals: [
-    HomePage,
-    ExperiencesPage,
-    AboutPage,
-    GalleryPage,
-    EventsHubPage,
-    HostEventPage,
-    ContactPage,
-    MenuSettings,
-    SiteSettings,
-  ],
+  collections: [Users, ...contentCollections, ContactInquiries, NewsletterSubscribers],
+  globals: contentGlobals,
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || "",
   typescript: {

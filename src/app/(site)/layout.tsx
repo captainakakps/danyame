@@ -27,6 +27,10 @@ export const viewport: Viewport = {
   themeColor: "#125E65",
 };
 
+// Revalidate CMS-backed pages on a short interval as a fallback when
+// on-demand revalidation from Payload hooks is unavailable.
+export const revalidate = 60;
+
 export default function RootLayout({
   children,
 }: Readonly<{
