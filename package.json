@@ -20,6 +20,7 @@
     "seed:home": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed-home.ts",
     "set:home-gallery-manual": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/set-home-gallery-manual.ts",
     "seed:pages": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed-pages.ts",
+    "sync:explore-more-modal": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/sync-explore-more-modal-to-cms.ts",
     "bootstrap": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed-all.ts"
   },
   "dependencies": {

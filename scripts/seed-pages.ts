@@ -266,11 +266,10 @@ async function runStandalone(): Promise<void> {
   await seedPagesData(payload);
 }
 
-if (process.argv[1]?.includes("seed-pages.ts")) {
-  runStandalone()
-    .then(() => process.exit(0))
-    .catch((error) => {
-      console.error("Page seed failed:", error);
-      process.exit(1);
-    });
+try {
+  await runStandalone();
+  process.exit(0);
+} catch (error) {
+  console.error("Page seed failed:", error);
+  process.exit(1);
 }
