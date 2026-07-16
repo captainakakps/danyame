@@ -136,7 +136,29 @@ async function seedSiteSettings(payload: Payload): Promise<void> {
 }
 
 export async function seedGalleryData(payload: Payload): Promise<void> {
+  const galleryImages = await payload.find({
+    collection: "gallery-images",
+    depth: 0,
+    limit: 500,
+    overrideAccess: true,
+  });
+
+  const mediaIds = new Set<number>();
+  for (const doc of galleryImages.docs) {
+    if (typeof doc.image === "number") {
+      mediaIds.add(doc.image);
+    }
+  }
+
   await resetGalleryImages(payload);
+
+  for (const mediaId of mediaIds) {
+    await payload.delete({
+      collection: "media",
+      id: mediaId,
+      overrideAccess: true,
+    });
+  }
 
   console.log(`Seeding ${staticGalleryCategories.length} gallery categories...\n`);
 

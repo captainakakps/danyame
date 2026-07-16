@@ -1,4 +1,5 @@
 import fs from "fs/promises";
+import os from "os";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -114,6 +115,22 @@ export function publicAssetToFilePath(publicPath: string): string {
   return path.join(projectRoot, "public", relativePath);
 }
 
+export function publicPathToStorageFilename(publicPath: string): string {
+  const parts = publicPath.replace(/^\//, "").split("/");
+
+  if (parts[0] === "assets") {
+    parts.shift();
+  }
+
+  return parts.join("-");
+}
+
+async function copyToTempUpload(filePath: string, storageFileName: string): Promise<string> {
+  const tempPath = path.join(os.tmpdir(), storageFileName);
+  await fs.copyFile(filePath, tempPath);
+  return tempPath;
+}
+
 export async function getOrCreateMedia(
   payload: Payload,
   publicPath: string,
@@ -121,7 +138,7 @@ export async function getOrCreateMedia(
   options?: { matchBy?: "caption" | "filename" },
 ): Promise<number> {
   const filePath = publicAssetToFilePath(publicPath);
-  const fileName = path.basename(filePath);
+  const storageFileName = publicPathToStorageFilename(publicPath);
   const matchBy = options?.matchBy ?? "caption";
   const token = process.env.BLOB_READ_WRITE_TOKEN?.trim();
 
@@ -131,25 +148,33 @@ export async function getOrCreateMedia(
     overrideAccess: true,
     where:
       matchBy === "filename"
-        ? { filename: { equals: fileName } }
+        ? { filename: { equals: storageFileName } }
         : {
             or: [
               { caption: { equals: publicPath } },
-              { filename: { equals: fileName } },
+              { filename: { equals: storageFileName } },
             ],
           },
   });
 
   if (existing.docs[0]) {
-    console.log(`  ↳ reusing media: ${publicPath}`);
-    return existing.docs[0].id;
+    if (existing.docs[0].filename === storageFileName) {
+      console.log(`  ↳ reusing media: ${publicPath}`);
+      return existing.docs[0].id;
+    }
+
+    await payload.delete({
+      collection: "media",
+      id: existing.docs[0].id,
+      overrideAccess: true,
+    });
   }
 
   if (token) {
     try {
       return await createMediaFromExistingBlob(payload, {
         alt,
-        fileName,
+        fileName: storageFileName,
         filePath,
         publicPath,
         token,
@@ -161,6 +186,8 @@ export async function getOrCreateMedia(
     }
   }
 
+  const uploadPath = await copyToTempUpload(filePath, storageFileName);
+
   try {
     const media = await payload.create({
       collection: "media",
@@ -168,7 +195,7 @@ export async function getOrCreateMedia(
         alt,
         caption: publicPath,
       },
-      filePath,
+      filePath: uploadPath,
       overrideAccess: true,
     });
 
@@ -178,7 +205,7 @@ export async function getOrCreateMedia(
     if (token && isBlobExistsError(error)) {
       return createMediaFromExistingBlob(payload, {
         alt,
-        fileName,
+        fileName: storageFileName,
         filePath,
         publicPath,
         token,
@@ -186,6 +213,8 @@ export async function getOrCreateMedia(
     }
 
     throw error;
+  } finally {
+    await fs.unlink(uploadPath).catch(() => undefined);
   }
 }
 

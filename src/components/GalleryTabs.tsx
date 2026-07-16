@@ -128,7 +128,7 @@ export default function GalleryTabs({ categories }: GalleryTabsProps) {
 
       <section className="bg-white px-4 pt-6 pb-16 md:px-10 md:pt-8 md:pb-32 lg:px-14">
         {set ? (
-          <GalleryGrid set={set} />
+          <GalleryGrid key={activeCategory?.slug ?? activeTab} set={set} />
         ) : (
           <div className="flex flex-col gap-3 md:gap-4">
             {[1, 2, 3].map((row) => (
