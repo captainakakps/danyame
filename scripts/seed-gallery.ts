@@ -200,11 +200,10 @@ async function runStandalone(): Promise<void> {
   await seedGalleryData(payload);
 }
 
-if (process.argv[1]?.includes("seed-gallery.ts")) {
-  runStandalone()
-    .then(() => process.exit(0))
-    .catch((error) => {
-      console.error("Gallery seed failed:", error);
-      process.exit(1);
-    });
+try {
+  await runStandalone();
+  process.exit(0);
+} catch (error) {
+  console.error("Gallery seed failed:", error);
+  process.exit(1);
 }

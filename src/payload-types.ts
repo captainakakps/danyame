@@ -843,6 +843,30 @@ export interface ExperiencesPage {
         image?: (number | null) | Media;
         imageAlt?: string | null;
         href?: string | null;
+        /**
+         * Main paragraph in the popup.
+         */
+        description?: string | null;
+        /**
+         * e.g. Access, Starting From, Capacity.
+         */
+        detailRows?:
+          | {
+              label: string;
+              value: string;
+              id?: string | null;
+            }[]
+          | null;
+        includes?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        primaryCtaLabel?: string | null;
+        primaryCtaHref?: string | null;
+        secondaryCtaLabel?: string | null;
+        secondaryCtaHref?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -1183,6 +1207,24 @@ export interface ExperiencesPageSelect<T extends boolean = true> {
         image?: T;
         imageAlt?: T;
         href?: T;
+        description?: T;
+        detailRows?:
+          | T
+          | {
+              label?: T;
+              value?: T;
+              id?: T;
+            };
+        includes?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        primaryCtaLabel?: T;
+        primaryCtaHref?: T;
+        secondaryCtaLabel?: T;
+        secondaryCtaHref?: T;
         id?: T;
       };
   finalCtaLine1?: T;

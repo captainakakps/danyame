@@ -16,7 +16,11 @@ import {
   staticExperiencesPage,
   type ExperiencesPageData,
 } from "@/lib/pages/experiences";
-import { withExploreMoreModalContent } from "@/lib/pages/explore-more-modal-content";
+import {
+  exploreMoreModalContentByName,
+  type ExploreMoreModalContent,
+} from "@/lib/pages/explore-more-modal-content";
+import { pages } from "@/lib/tokens";
 import {
   staticGalleryPageHero,
   type GalleryPageHeroData,
@@ -90,6 +94,42 @@ function mapExperienceCard(
   };
 }
 
+function mapExploreMoreModalContent(
+  item: NonNullable<ExperiencesPageDoc["exploreMoreItems"]>[number],
+): ExploreMoreModalContent {
+  const fallback = exploreMoreModalContentByName[item.name];
+
+  const detailRows =
+    item.detailRows?.length
+      ? item.detailRows
+          .filter((row) => row.label && row.value)
+          .map((row) => ({
+            label: row.label!,
+            value: row.value!,
+          }))
+      : (fallback?.detailRows ?? []);
+
+  const includes =
+    item.includes?.length
+      ? item.includes
+          .map((entry) => entry.text)
+          .filter((text): text is string => Boolean(text))
+      : (fallback?.includes ?? []);
+
+  return {
+    description: item.description?.trim() || fallback?.description || "",
+    detailRows,
+    includes,
+    primaryCtaLabel:
+      item.primaryCtaLabel || fallback?.primaryCtaLabel || "Contact Us",
+    primaryCtaHref: item.primaryCtaHref || fallback?.primaryCtaHref || pages.contact,
+    secondaryCtaLabel:
+      item.secondaryCtaLabel || fallback?.secondaryCtaLabel || "Contact Us",
+    secondaryCtaHref:
+      item.secondaryCtaHref || fallback?.secondaryCtaHref || pages.contact,
+  };
+}
+
 function mapExperiencesPage(doc: ExperiencesPageDoc | null): ExperiencesPageData {
   if (!doc) {
     return staticExperiencesPage;
@@ -131,7 +171,7 @@ function mapExperiencesPage(doc: ExperiencesPageDoc | null): ExperiencesPageData
           );
 
           return [
-            withExploreMoreModalContent({
+            {
               name: item.name,
               tagline: item.tagline,
               href: item.href || undefined,
@@ -142,7 +182,8 @@ function mapExperiencesPage(doc: ExperiencesPageDoc | null): ExperiencesPageData
                 staticExperiencesPage.exploreMore.items[0].image,
               imageAlt:
                 item.imageAlt || staticItem?.imageAlt || item.name,
-            }),
+              ...mapExploreMoreModalContent(item),
+            },
           ];
         })
       : [];

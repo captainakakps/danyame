@@ -98,6 +98,54 @@ export const ExperiencesPage: GlobalConfig = {
                 },
                 { name: "imageAlt", type: "text" },
                 { name: "href", type: "text" },
+                {
+                  type: "collapsible",
+                  label: "Modal details",
+                  admin: {
+                    description:
+                      "Shown when a visitor taps the facility. Fill these in for new items.",
+                    initCollapsed: false,
+                  },
+                  fields: [
+                    {
+                      name: "description",
+                      type: "textarea",
+                      admin: {
+                        description: "Main paragraph in the popup.",
+                      },
+                    },
+                    {
+                      name: "detailRows",
+                      type: "array",
+                      label: "Details",
+                      admin: {
+                        description: "e.g. Access, Starting From, Capacity.",
+                      },
+                      fields: [
+                        { name: "label", type: "text", required: true },
+                        { name: "value", type: "text", required: true },
+                      ],
+                    },
+                    {
+                      name: "includes",
+                      type: "array",
+                      label: "Includes",
+                      fields: [{ name: "text", type: "text", required: true }],
+                    },
+                    {
+                      name: "primaryCtaLabel",
+                      type: "text",
+                      defaultValue: "Contact Us",
+                    },
+                    { name: "primaryCtaHref", type: "text", defaultValue: "/contact" },
+                    {
+                      name: "secondaryCtaLabel",
+                      type: "text",
+                      defaultValue: "Contact Us",
+                    },
+                    { name: "secondaryCtaHref", type: "text", defaultValue: "/contact" },
+                  ],
+                },
               ],
             },
           ],
