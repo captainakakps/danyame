@@ -18,6 +18,7 @@
     "seed:menu": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed-menu.ts",
     "seed:gallery": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed-gallery.ts",
     "seed:home": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed-home.ts",
+    "set:home-gallery-manual": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/set-home-gallery-manual.ts",
     "seed:pages": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed-pages.ts",
     "bootstrap": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed-all.ts"
   },

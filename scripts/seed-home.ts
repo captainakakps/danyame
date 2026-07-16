@@ -87,7 +87,7 @@ async function seedHomePage(payload: Payload): Promise<void> {
       planningEventCtaHref: staticHomePage.planningEvent.ctaHref,
       galleryTitle: staticHomePage.gallery.title,
       galleryIntro: staticHomePage.gallery.intro,
-      galleryUseCmsGallery: staticHomePage.gallery.useCmsGallery,
+      galleryUseCmsGallery: false,
       galleryImages,
       galleryCtaLabel: staticHomePage.gallery.ctaLabel,
       galleryCtaHref: staticHomePage.gallery.ctaHref,
