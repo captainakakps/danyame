@@ -16,7 +16,7 @@ export const navItems: NavItem[] = [
   { label: "Home", href: pages.home },
   { label: "Experiences", href: pages.experiences },
   { label: "Gallery", href: pages.gallery },
-  { label: "Menu", href: pages.menu },
+  { label: "Food Menu", href: pages.menu },
   { label: "About Us", href: pages.about },
   {
     label: "Events",
