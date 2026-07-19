@@ -5,7 +5,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import { MenuCircularImage } from "@/components/menu/MenuCircularImage";
 import { formatMenuDisplayPrice, type MenuCategory, type MenuItem, type MenuSettingsData } from "@/lib/menu";
-import { getLandingCardImage, getLandingDisplayName } from "@/lib/menu-landing";
+import { getCategoryCardImage, getLandingDisplayName } from "@/lib/menu-landing";
 import type { SiteConfig } from "@/lib/site";
 import { pages } from "@/lib/tokens";
 
@@ -174,7 +174,7 @@ export default function MenuCategoryPageClient({
 }: MenuCategoryPageClientProps) {
   const openingHours = site.openingHours ?? [];
   const displayName = getLandingDisplayName(category.slug, category.name);
-  const fallbackImage = getLandingCardImage(category.slug);
+  const fallbackImage = getCategoryCardImage(category);
   const visibleItems = category.items.filter(
     (item) => item.isAvailable || settings.showUnavailableItems,
   );

@@ -262,6 +262,10 @@ export interface MenuCategory {
   slug: string;
   description?: string | null;
   /**
+   * Category image shown on the menu landing page and as a fallback for items without their own photo.
+   */
+  image?: (number | null) | Media;
+  /**
    * Lower numbers appear first on the menu.
    */
   sortOrder?: number | null;
@@ -585,6 +589,7 @@ export interface MenuCategoriesSelect<T extends boolean = true> {
   generateSlug?: T;
   slug?: T;
   description?: T;
+  image?: T;
   sortOrder?: T;
   isActive?: T;
   updatedAt?: T;

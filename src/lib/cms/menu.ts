@@ -57,6 +57,7 @@ function mapPayloadMenuCategory(
     slug: doc.slug,
     name: doc.name,
     description: doc.description || undefined,
+    image: getMediaUrl(doc.image),
     sortOrder: doc.sortOrder ?? 0,
     items: items
       .filter((item) => item.categorySlug === doc.slug)
@@ -89,7 +90,7 @@ async function getPayloadMenuData(): Promise<MenuPageData | null> {
       }),
       payload.find({
         collection: "menu-categories",
-        depth: 0,
+        depth: 1,
         limit: 100,
         sort: "sortOrder",
         where: {

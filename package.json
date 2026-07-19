@@ -16,6 +16,7 @@
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "seed:events": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed-events.ts",
     "seed:menu": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed-menu.ts",
+    "backfill:menu-images": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/backfill-menu-images.ts",
     "seed:gallery": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed-gallery.ts",
     "seed:home": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/seed-home.ts",
     "set:home-gallery-manual": "cross-env NODE_OPTIONS=--no-deprecation payload run scripts/set-home-gallery-manual.ts",

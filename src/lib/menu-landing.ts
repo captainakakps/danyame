@@ -162,10 +162,33 @@ export function getLandingCardImage(slug: string): string | undefined {
   return landingBySlug.get(slug)?.cardImage;
 }
 
+export function getCategoryCardImage(
+  category: Pick<MenuCategory, "slug" | "image">,
+): string | undefined {
+  return category.image ?? getLandingCardImage(category.slug);
+}
+
 export function buildLandingCategories(
   categories: MenuCategory[],
 ): MenuLandingCategory[] {
-  const categorySlugs = new Set(categories.map((category) => category.slug));
+  const categoryBySlug = new Map(
+    categories.map((category) => [category.slug, category]),
+  );
 
-  return menuLandingCategories.filter((landing) => categorySlugs.has(landing.slug));
+  return menuLandingCategories
+    .filter((landing) => categoryBySlug.has(landing.slug))
+    .map((landing) => {
+      const cmsCategory = categoryBySlug.get(landing.slug)!;
+
+      return {
+        ...landing,
+        name: getLandingDisplayName(landing.slug, cmsCategory.name),
+        cardDescription:
+          cmsCategory.description?.trim() || landing.cardDescription,
+        cardImage: getCategoryCardImage(cmsCategory),
+      };
+    })
+    .filter((category): category is MenuLandingCategory =>
+      Boolean(category.cardImage),
+    );
 }

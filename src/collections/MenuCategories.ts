@@ -29,6 +29,14 @@ export const MenuCategories: CollectionConfig = {
       type: "textarea",
     },
     {
+      name: "image",
+      type: "upload",
+      relationTo: "media",
+      admin: {
+        description: "Category image shown on the menu landing page and as a fallback for items without their own photo.",
+      },
+    },
+    {
       name: "sortOrder",
       type: "number",
       defaultValue: 0,

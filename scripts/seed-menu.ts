@@ -5,6 +5,7 @@ import {
 } from "@/lib/menu";
 import type { Payload } from "payload";
 
+import { syncMenuImages } from "./lib/menu-image-sync";
 import {
   getOrCreateMedia,
   normalizeMenuPrice,
@@ -122,6 +123,7 @@ export async function seedMenuData(payload: Payload): Promise<void> {
 
   console.log("");
   await seedMenuSettings(payload);
+  await syncMenuImages(payload);
   console.log("\nMenu seed complete.");
 }
 

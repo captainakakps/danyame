@@ -23,6 +23,7 @@ export type MenuCategory = {
   slug: string;
   name: string;
   description?: string;
+  image?: string;
   sortOrder: number;
   items: MenuItem[];
 };
