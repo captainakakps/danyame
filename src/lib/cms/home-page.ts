@@ -1,4 +1,5 @@
 import { getMediaUrl } from "@/lib/cms/media";
+import { getFeaturedEvent } from "@/lib/cms/events";
 import { getPayloadClient } from "@/lib/payload";
 import {
   computeCountdown,
@@ -7,6 +8,7 @@ import {
   type HomeGalleryImage,
   type HomePageData,
 } from "@/lib/pages/home";
+import type { FeaturedEvent } from "@/lib/events";
 import type { HomePage as HomePageDoc } from "@/payload-types";
 
 export type { EventCountdown, HomePageData };
@@ -14,6 +16,7 @@ export type { EventCountdown, HomePageData };
 export type HomePageContent = {
   page: HomePageData;
   countdown: EventCountdown;
+  featuredEvent: FeaturedEvent | null;
 };
 
 async function getCmsGalleryImages(): Promise<HomeGalleryImage[] | null> {
@@ -322,15 +325,23 @@ export async function getHomePageContent(): Promise<HomePageContent> {
 
     let page = mapHomePageDoc(doc);
     page = await resolveGalleryImages(page);
-    const countdown = await resolveCountdown(page);
+    const [countdown, featuredEvent] = await Promise.all([
+      resolveCountdown(page),
+      getFeaturedEvent().catch(() => null),
+    ]);
 
-    return { page, countdown };
+    return {
+      page,
+      countdown,
+      featuredEvent: featuredEvent?.image ? featuredEvent : null,
+    };
   } catch {
     return {
       page: staticHomePage,
       countdown: computeCountdown(
         new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       ),
+      featuredEvent: null,
     };
   }
 }

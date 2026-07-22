@@ -2,7 +2,13 @@ import { getHomePageContent } from "@/lib/cms/home-page";
 import HomePageView from "@/components/home/HomePageView";
 
 export default async function HomePage() {
-  const { page, countdown } = await getHomePageContent();
+  const { page, countdown, featuredEvent } = await getHomePageContent();
 
-  return <HomePageView page={page} countdown={countdown} />;
+  return (
+    <HomePageView
+      page={page}
+      countdown={countdown}
+      featuredEvent={featuredEvent}
+    />
+  );
 }

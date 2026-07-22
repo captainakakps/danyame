@@ -23,88 +23,49 @@ export default async function AttendEventPage() {
   ]);
 
   const ticketHref = featuredEvent.ticketUrl || pages.contact;
+  const lineupEvents = [
+    ...events.filter((event) => event.slug === featuredEventSlug),
+    ...events.filter((event) => event.slug !== featuredEventSlug),
+  ];
 
   return (
     <div className="bg-white overflow-x-hidden">
-      {/* ── Hero Section 1 - Experience Danyame Live ── */}
-      <section className="relative min-h-[500px] w-full text-white sm:min-h-[600px] md:min-h-[700px] lg:h-[900px]">
-        {/* Background image */}
-        <Image
-          src="/assets/attend-event/hero.jpg"
-          alt="Concert crowd at Danyame"
-          fill
-          className="object-cover"
-          priority
-          sizes="100vw"
-        />
-        {/* Dark overlay */}
-        <div className="absolute inset-0 bg-black/30" />
-
-        {/* Navbar */}
-        <div className="relative z-10">
-          <Navbar />
-        </div>
-
-        {/* Hero content - centered title */}
-        <div className="relative flex h-full min-h-[300px] flex-col items-center justify-center px-6 sm:min-h-[400px] md:px-14">
-          <h1
-            className="text-center text-[40px] font-semibold uppercase leading-[1] sm:text-[60px] md:text-[100px] lg:text-[150px]"
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
-            Experience
-            <br />
-            Danyame Live
-          </h1>
-
-          {/* Scroll indicator */}
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 lg:bottom-16">
-            <svg
-              className="h-6 w-6 animate-bounce"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            >
-              <path d="M12 5v14M5 12l7 7 7-7" />
-            </svg>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Featured Event Section ── */}
-      <section className="relative min-h-[500px] w-full text-white sm:min-h-[600px] md:min-h-[700px] lg:h-[900px]">
-        {/* Background image */}
+      {/* ── Hero — Featured Event ── */}
+      <section className="relative flex h-svh min-h-[560px] w-full flex-col overflow-hidden bg-ink text-white">
+        {/* Full poster visible (no crop); letterboxes on dark bg on wide screens */}
         <Image
           src={featuredEvent.image}
           alt={featuredEvent.title}
           fill
-          className="object-cover"
+          className="object-contain object-center"
+          priority
           sizes="100vw"
         />
-        {/* Dark overlay */}
-        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 bg-linear-to-b from-black/55 via-black/10 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-[55%] bg-linear-to-t from-black/90 via-black/45 to-transparent" />
 
-        {/* Content */}
-        <div className="relative flex h-full flex-col px-6 py-12 sm:px-10 md:px-14 lg:py-20">
-          {/* Featured event label */}
+        <div className="relative z-10 shrink-0">
+          <Navbar />
+        </div>
+
+        <div className="relative z-10 flex min-h-0 flex-1 flex-col px-6 pb-10 pt-4 sm:px-10 sm:pb-12 md:px-14 lg:pb-14">
           <p
-            className="text-[28px] uppercase sm:text-[36px] md:text-[48px]"
+            className="text-[16px] uppercase tracking-[0.25em] text-white/80 sm:text-[18px] md:text-[20px]"
             style={{ fontFamily: "var(--font-heading)" }}
           >
             Featured Event
           </p>
 
-          {/* Date card - positioned top right on desktop */}
-          <div className="mt-6 flex w-fit flex-col items-center gap-4 rounded-[20px] border border-white/30 px-6 py-6 sm:gap-6 sm:px-8 sm:py-8 lg:absolute lg:right-14 lg:top-20 lg:mt-0">
-            <div className="flex flex-col items-center gap-2 text-center sm:gap-4">
+          <div className="mt-5 flex w-fit flex-col items-center gap-3 rounded-[20px] border border-white/25 bg-white/10 px-6 py-5 backdrop-blur-md sm:gap-4 sm:px-8 sm:py-6 lg:absolute lg:right-14 lg:top-4 lg:mt-0">
+            <div className="flex flex-col items-center gap-1 text-center sm:gap-2">
               <span
-                className="text-[20px] sm:text-[24px] md:text-[32px]"
+                className="text-[16px] uppercase tracking-[0.15em] text-white/80 sm:text-[18px] md:text-[20px]"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 {featuredEvent.dateCard.month}
               </span>
               <span
-                className="text-[24px] font-bold sm:text-[28px] md:text-[32px]"
+                className="text-[32px] font-bold leading-none sm:text-[36px] md:text-[44px]"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 {featuredEvent.dateCard.day}
@@ -112,33 +73,32 @@ export default async function AttendEventPage() {
             </div>
             <div className="h-px w-full bg-white/30" />
             <span
-              className="text-[24px] font-bold sm:text-[28px] md:text-[32px]"
+              className="text-[18px] font-bold sm:text-[20px] md:text-[24px]"
               style={{ fontFamily: "var(--font-body)" }}
             >
               {featuredEvent.dateCard.time}
             </span>
           </div>
 
-          {/* Event title and buttons - positioned at bottom */}
-          <div className="mt-auto flex flex-col gap-6 sm:gap-8 lg:gap-10">
-            <h2
-              className="text-[40px] font-semibold uppercase leading-[1] sm:text-[60px] md:text-[80px] lg:text-[100px]"
+          <div className="mt-auto flex flex-col gap-5 sm:gap-6 lg:gap-8">
+            <h1
+              className="max-w-[16ch] text-[40px] font-semibold uppercase leading-[0.95] drop-shadow-[0_4px_20px_rgba(0,0,0,0.6)] sm:text-[56px] md:text-[72px] lg:text-[88px]"
               style={{ fontFamily: "var(--font-heading)" }}
             >
               {featuredEvent.title}
-            </h2>
+            </h1>
 
             <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
               <Link
                 href={ticketHref}
-                className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-rust text-base font-medium uppercase text-white transition-colors duration-150 hover:bg-rust/90 sm:w-[182px]"
+                className="flex h-[54px] w-full items-center justify-center rounded-[100px] bg-rust text-base font-medium uppercase text-white shadow-[0_8px_24px_rgba(0,0,0,0.35)] transition-all duration-150 hover:-translate-y-0.5 hover:bg-rust/90 sm:w-[182px]"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 Buy Ticket
               </Link>
               <Link
                 href={featuredEvent.slug ? getEventPath(featuredEvent.slug) : pages.contact}
-                className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-white text-base font-medium text-ink transition-colors duration-150 hover:bg-white/90 sm:w-[182px]"
+                className="flex h-[54px] w-full items-center justify-center rounded-[100px] border border-white/40 bg-white/10 text-base font-medium text-white backdrop-blur-md transition-all duration-150 hover:-translate-y-0.5 hover:bg-white hover:text-ink sm:w-[182px]"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 Learn More
@@ -174,9 +134,7 @@ export default async function AttendEventPage() {
 
           {/* Event grid */}
           <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-            {events
-              .filter((event) => event.slug !== featuredEventSlug)
-              .map((event) => (
+            {lineupEvents.map((event) => (
               <Link
                 key={event.slug}
                 href={getEventPath(event.slug)}

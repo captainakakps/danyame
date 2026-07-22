@@ -6,10 +6,14 @@ import Footer from "@/components/Footer";
 import CategoryGrid from "@/components/CategoryGrid";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
 import type { EventCountdown, HomePageData } from "@/lib/pages/home";
+import type { FeaturedEvent } from "@/lib/events";
+import { getEventPath } from "@/lib/events";
+import { pages } from "@/lib/tokens";
 
 type HomePageViewProps = {
   page: HomePageData;
   countdown: EventCountdown;
+  featuredEvent?: FeaturedEvent | null;
 };
 
 function MultilineHeading({
@@ -35,8 +39,15 @@ function MultilineHeading({
   );
 }
 
-export default function HomePageView({ page, countdown }: HomePageViewProps) {
+export default function HomePageView({
+  page,
+  countdown,
+  featuredEvent = null,
+}: HomePageViewProps) {
   const galleryImages = page.gallery.images;
+  const featuredHref = featuredEvent?.slug
+    ? getEventPath(featuredEvent.slug)
+    : pages.attendEvent;
   return (
     // <>
     <div className="bg-white overflow-x-hidden">
@@ -343,6 +354,44 @@ export default function HomePageView({ page, countdown }: HomePageViewProps) {
             </Link>
           </div>
 
+          {/* Featured Event */}
+          {featuredEvent?.image ? (
+            <Link
+              href={featuredHref}
+              className="group relative block h-[420px] w-full overflow-hidden rounded-[20px] bg-ink sm:h-[520px]"
+            >
+              <Image
+                src={featuredEvent.image}
+                alt={featuredEvent.title}
+                fill
+                className="object-cover transition-transform duration-300 group-hover:scale-105"
+                sizes="100vw"
+              />
+              <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/85 via-black/40 to-transparent px-6 pb-6 pt-16">
+                <p
+                  className="text-[12px] uppercase tracking-[0.2em] text-white/75"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
+                  Featured Event
+                </p>
+                <h3
+                  className="mt-2 text-[28px] font-semibold uppercase leading-none text-white sm:text-[32px]"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
+                  {featuredEvent.title}
+                </h3>
+                <p
+                  className="mt-2 text-[14px] text-white/80"
+                  style={{ fontFamily: "var(--font-body)" }}
+                >
+                  {featuredEvent.dateCard.month} {featuredEvent.dateCard.day}
+                  {" · "}
+                  {featuredEvent.dateCard.time}
+                </p>
+              </div>
+            </Link>
+          ) : null}
+
           {/* Countdown Card */}
           <aside className="flex w-full flex-col items-center gap-8 rounded-[20px] bg-crimson px-8 py-8 text-white">
             <p
@@ -513,68 +562,107 @@ export default function HomePageView({ page, countdown }: HomePageViewProps) {
             </Link>
           </div>
 
-          {/* Right Countdown Card */}
-          <aside className="absolute right-[56px] top-[355px] flex h-[760px] w-[263px] flex-col items-center justify-between rounded-[20px] bg-crimson px-[53px] py-8 text-white">
-            <p
-              className="text-[20px] font-medium"
-              style={{ fontFamily: "var(--font-body)" }}
-            >
-              {page.events.countdownLabel}
-            </p>
-            <div className="flex flex-col items-center gap-10 text-center">
-              <div>
-                <p
-                  className="text-[90px] font-medium leading-none"
-                  style={{ fontFamily: "var(--font-body)" }}
-                >
-                  {countdown.days}
-                </p>
-                <p
-                  className="text-[16px]"
-                  style={{ fontFamily: "var(--font-body)" }}
-                >
-                  DAYS
-                </p>
+          {/* Featured Event + Countdown — featured sits immediately left of countdown */}
+          <div className="absolute right-[56px] top-[355px] flex items-center gap-6">
+            {featuredEvent?.image ? (
+              <Link
+                href={featuredHref}
+                className="group relative block h-[560px] w-[370px] overflow-hidden rounded-[20px] bg-ink shadow-[0_20px_50px_rgba(0,0,0,0.18)] transition-transform duration-300 hover:-translate-y-1"
+              >
+                <Image
+                  src={featuredEvent.image}
+                  alt={featuredEvent.title}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  sizes="370px"
+                />
+                <div className="absolute inset-x-0 bottom-0 flex flex-col items-center bg-linear-to-t from-black/85 via-black/45 to-transparent px-5 pb-6 pt-16 text-center">
+                  <p
+                    className="text-[11px] uppercase tracking-[0.25em] text-white/75"
+                    style={{ fontFamily: "var(--font-heading)" }}
+                  >
+                    Featured Event
+                  </p>
+                  <h3
+                    className="mt-2 text-[24px] font-semibold uppercase leading-none text-white"
+                    style={{ fontFamily: "var(--font-heading)" }}
+                  >
+                    {featuredEvent.title}
+                  </h3>
+                  <p
+                    className="mt-2 text-[14px] text-white/80"
+                    style={{ fontFamily: "var(--font-body)" }}
+                  >
+                    {featuredEvent.dateCard.month} {featuredEvent.dateCard.day}
+                    {" · "}
+                    {featuredEvent.dateCard.time}
+                  </p>
+                </div>
+              </Link>
+            ) : null}
+
+            <aside className="flex h-[760px] w-[220px] shrink-0 flex-col items-center justify-between rounded-[20px] bg-crimson px-8 py-8 text-white">
+              <p
+                className="text-[20px] font-medium"
+                style={{ fontFamily: "var(--font-body)" }}
+              >
+                {page.events.countdownLabel}
+              </p>
+              <div className="flex flex-col items-center gap-10 text-center">
+                <div>
+                  <p
+                    className="text-[90px] font-medium leading-none"
+                    style={{ fontFamily: "var(--font-body)" }}
+                  >
+                    {countdown.days}
+                  </p>
+                  <p
+                    className="text-[16px]"
+                    style={{ fontFamily: "var(--font-body)" }}
+                  >
+                    DAYS
+                  </p>
+                </div>
+                <div className="h-px w-[126px] bg-white/40" />
+                <div>
+                  <p
+                    className="text-[90px] font-medium leading-none"
+                    style={{ fontFamily: "var(--font-body)" }}
+                  >
+                    {countdown.hours}
+                  </p>
+                  <p
+                    className="text-[16px]"
+                    style={{ fontFamily: "var(--font-body)" }}
+                  >
+                    HOURS
+                  </p>
+                </div>
+                <div className="h-px w-[126px] bg-white/40" />
+                <div>
+                  <p
+                    className="text-[90px] font-medium leading-none"
+                    style={{ fontFamily: "var(--font-body)" }}
+                  >
+                    {countdown.minutes}
+                  </p>
+                  <p
+                    className="text-[16px]"
+                    style={{ fontFamily: "var(--font-body)" }}
+                  >
+                    MINUTES
+                  </p>
+                </div>
               </div>
-              <div className="h-px w-[126px] bg-white/40" />
-              <div>
-                <p
-                  className="text-[90px] font-medium leading-none"
-                  style={{ fontFamily: "var(--font-body)" }}
-                >
-                  {countdown.hours}
-                </p>
-                <p
-                  className="text-[16px]"
-                  style={{ fontFamily: "var(--font-body)" }}
-                >
-                  HOURS
-                </p>
-              </div>
-              <div className="h-px w-[126px] bg-white/40" />
-              <div>
-                <p
-                  className="text-[90px] font-medium leading-none"
-                  style={{ fontFamily: "var(--font-body)" }}
-                >
-                  {countdown.minutes}
-                </p>
-                <p
-                  className="text-[16px]"
-                  style={{ fontFamily: "var(--font-body)" }}
-                >
-                  MINUTES
-                </p>
-              </div>
-            </div>
-            <Link
-              href={page.events.viewAllHref}
-              className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-white text-[16px] font-medium text-subtext"
-              style={{ fontFamily: "var(--font-body)" }}
-            >
-              {page.events.viewAllLabel}
-            </Link>
-          </aside>
+              <Link
+                href={page.events.viewAllHref}
+                className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-white text-[16px] font-medium text-subtext"
+                style={{ fontFamily: "var(--font-body)" }}
+              >
+                {page.events.viewAllLabel}
+              </Link>
+            </aside>
+          </div>
 
           {/* Planning an Event CTA Card */}
           <div className="absolute left-[56px] top-[977px] flex items-center gap-4 overflow-hidden rounded-[20px] bg-crimson pr-6 text-white">

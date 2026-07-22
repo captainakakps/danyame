@@ -1,4 +1,5 @@
 import { getMediaUrl } from "@/lib/cms/media";
+import { getFeaturedEvent } from "@/lib/cms/events";
 import { getPayloadClient } from "@/lib/payload";
 import {
   staticAboutPage,
@@ -405,13 +406,34 @@ export async function getGalleryPageHero(): Promise<GalleryPageHeroData> {
 }
 
 export async function getEventsHubPage(): Promise<EventsHubPageData> {
+  let page: EventsHubPageData = staticEventsHubPage;
+
   try {
     const payload = await getPayloadClient();
     const doc = await payload.findGlobal({ slug: "events-hub-page", depth: 2 });
-    return mapEventsHubPage(doc);
+    page = mapEventsHubPage(doc);
   } catch {
-    return staticEventsHubPage;
+    page = staticEventsHubPage;
   }
+
+  // Attend card always shows the current featured event poster
+  try {
+    const featured = await getFeaturedEvent();
+    if (featured.image) {
+      page = {
+        ...page,
+        attendCard: {
+          ...page.attendCard,
+          image: featured.image,
+          imageAlt: featured.title,
+        },
+      };
+    }
+  } catch {
+    // Keep CMS/static attend card image
+  }
+
+  return page;
 }
 
 export async function getHostEventPage(): Promise<HostEventPageData> {
