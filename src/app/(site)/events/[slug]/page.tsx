@@ -88,7 +88,7 @@ export default async function EventSinglePage({ params }: EventPageProps) {
                 />
 
                 <p
-                  className="text-[14px] leading-[1.5] text-white sm:text-[16px]"
+                  className="whitespace-pre-wrap text-[14px] leading-[1.5] text-white sm:text-[16px]"
                   style={{ fontFamily: "var(--font-body)" }}
                 >
                   {event.description}
