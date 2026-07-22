@@ -4,6 +4,7 @@ import {
   eventOgImageSize,
 } from "@/lib/cms/event-og-image";
 
+export const runtime = "edge";
 export const alt = "Event at Danyame Recreational Village";
 export const size = eventOgImageSize;
 export const contentType = eventOgImageContentType;
