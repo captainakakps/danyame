@@ -4,11 +4,21 @@ import Footer from "@/components/Footer";
 import Button from "@/components/ui/Button";
 import Image from "next/image";
 import { getHostEventPage } from "@/lib/cms/pages";
+import { buildSocialMetadata } from "@/lib/seo";
+
+const hostDescription =
+  "Book your wedding, birthday, corporate gathering, or private celebration at Danyame Recreational Village.";
 
 export const metadata: Metadata = {
   title: "Host an Event",
-  description:
-    "Book your wedding, birthday, corporate gathering, or private celebration at Danyame Recreational Village.",
+  description: hostDescription,
+  ...buildSocialMetadata({
+    title: "Host an Event | Danyame Recreational Village",
+    description: hostDescription,
+    image: "/assets/events/host-event.jpg",
+    imageAlt: "Host an event at Danyame",
+    path: "/host-event",
+  }),
 };
 
 export default async function HostEventPage() {

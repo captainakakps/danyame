@@ -3,9 +3,13 @@ import { notFound } from "next/navigation";
 
 import MenuCategoryPageClient from "./MenuCategoryPageClient";
 import { getMenuCategoryBySlug } from "@/lib/cms/menu";
-import { getLandingDisplayName } from "@/lib/menu-landing";
+import {
+  getLandingCardImage,
+  getLandingDisplayName,
+} from "@/lib/menu-landing";
 import { staticMenuCategories } from "@/lib/menu";
 import { getSiteSettings } from "@/lib/cms/site-settings";
+import { buildSocialMetadata } from "@/lib/seo";
 
 type MenuCategoryPageProps = {
   params: Promise<{ slug: string }>;
@@ -33,10 +37,25 @@ export async function generateMetadata({
     categoryData.category.slug,
     categoryData.category.name,
   );
+  const description = `Browse ${name.toLowerCase()} at Danyame Recreational Village.`;
+
+  // Prefer public static card assets for share previews — more reliable for
+  // WhatsApp/Facebook crawlers than Payload /api/media/file URLs.
+  const image =
+    getLandingCardImage(categoryData.category.slug) ??
+    categoryData.category.image ??
+    categoryData.category.items.find((item) => item.image)?.image;
 
   return {
     title: name,
-    description: `Browse ${name.toLowerCase()} at Danyame Recreational Village.`,
+    description,
+    ...buildSocialMetadata({
+      title: `${name} | Danyame Recreational Village`,
+      description,
+      image,
+      imageAlt: name,
+      path: `/menu/${categoryData.category.slug}`,
+    }),
   };
 }
 

@@ -1,13 +1,21 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
+import {
+  buildSocialMetadata,
+  DEFAULT_OG_IMAGE,
+  getMetadataBase,
+} from "@/lib/seo";
+
+const siteDescription =
+  "A vibrant leisure and entertainment destination in Akwatia, Eastern Region. Events, poolside sessions, food, nightlife, and more.";
 
 export const metadata: Metadata = {
+  metadataBase: getMetadataBase(),
   title: {
     default: "Danyame Recreational Village",
     template: "%s | Danyame Recreational Village",
   },
-  description:
-    "A vibrant leisure and entertainment destination in Akwatia, Eastern Region. Events, poolside sessions, food, nightlife, and more.",
+  description: siteDescription,
   keywords: [
     "Danyame",
     "recreational village",
@@ -16,11 +24,13 @@ export const metadata: Metadata = {
     "entertainment",
     "Ghana",
   ],
-  openGraph: {
-    type: "website",
-    locale: "en_GH",
-    siteName: "Danyame Recreational Village",
-  },
+  ...buildSocialMetadata({
+    title: "Danyame Recreational Village",
+    description: siteDescription,
+    image: DEFAULT_OG_IMAGE,
+    imageAlt: "Danyame Recreational Village",
+    path: "/",
+  }),
 };
 
 export const viewport: Viewport = {

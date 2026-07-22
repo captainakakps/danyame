@@ -4,12 +4,26 @@ import Footer from "@/components/Footer";
 import Link from "next/link";
 import Image from "next/image";
 import { getEventsHubPage } from "@/lib/cms/pages";
+import { buildSocialMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Events",
-  description:
-    "Upcoming events at Danyame Recreational Village — Akwatia, Eastern Region.",
-};
+const eventsDescription =
+  "Upcoming events at Danyame Recreational Village — Akwatia, Eastern Region.";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const page = await getEventsHubPage();
+
+  return {
+    title: "Events",
+    description: eventsDescription,
+    ...buildSocialMetadata({
+      title: "Events | Danyame Recreational Village",
+      description: eventsDescription,
+      image: page.attendCard.image || page.hero.image,
+      imageAlt: page.attendCard.imageAlt || page.hero.imageAlt,
+      path: "/events",
+    }),
+  };
+}
 
 export default async function EventsPage() {
   const page = await getEventsHubPage();

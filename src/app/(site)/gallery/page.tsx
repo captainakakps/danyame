@@ -4,11 +4,21 @@ import GalleryTabs from "@/components/GalleryTabs";
 import Footer from "@/components/Footer";
 import { getGalleryCategories } from "@/lib/cms/gallery";
 import { getGalleryPageHero } from "@/lib/cms/pages";
+import { buildSocialMetadata } from "@/lib/seo";
+
+const galleryDescription =
+  "Real people, real moments, real energy — explore the experiences, atmosphere, and memories created at Danyame Recreational Village.";
 
 export const metadata: Metadata = {
   title: "Gallery",
-  description:
-    "Real people, real moments, real energy — explore the experiences, atmosphere, and memories created at Danyame Recreational Village.",
+  description: galleryDescription,
+  ...buildSocialMetadata({
+    title: "Gallery | Danyame Recreational Village",
+    description: galleryDescription,
+    image: "/assets/home/gallery-2.jpg",
+    imageAlt: "Moments at Danyame",
+    path: "/gallery",
+  }),
 };
 
 const starDecoration = "/assets/gallery/star-decoration.svg";

@@ -8,13 +8,29 @@ import {
   getLineupEvents,
   getEventPath,
 } from "@/lib/cms/events";
+import { buildSocialMetadata } from "@/lib/seo";
 import { pages } from "@/lib/tokens";
 
-export const metadata: Metadata = {
-  title: "Attend an Event",
-  description:
-    "Experience Danyame live — discover upcoming concerts, parties, and exclusive events.",
-};
+const attendDescription =
+  "Experience Danyame live — discover upcoming concerts, parties, and exclusive events.";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const featuredEvent = await getFeaturedEvent();
+
+  return {
+    title: "Attend an Event",
+    description: attendDescription,
+    ...buildSocialMetadata({
+      title: featuredEvent.title
+        ? `${featuredEvent.title} | Attend an Event`
+        : "Attend an Event | Danyame Recreational Village",
+      description: attendDescription,
+      image: featuredEvent.image || "/assets/attend-event/hero.jpg",
+      imageAlt: featuredEvent.title || "Attend an Event at Danyame",
+      path: pages.attendEvent,
+    }),
+  };
+}
 
 export default async function AttendEventPage() {
   const [featuredEvent, { events, featuredEventSlug }] = await Promise.all([

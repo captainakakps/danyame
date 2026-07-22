@@ -10,6 +10,7 @@ import {
   getEventBySlug,
   getPublishedEvents,
 } from "@/lib/cms/events";
+import { buildSocialMetadata } from "@/lib/seo";
 import { pages } from "@/lib/tokens";
 
 interface EventPageProps {
@@ -32,6 +33,14 @@ export async function generateMetadata({ params }: EventPageProps): Promise<Meta
   return {
     title: event.title,
     description: event.shortSummary,
+    ...buildSocialMetadata({
+      title: event.title,
+      description: event.shortSummary,
+      image: event.image,
+      imageAlt: event.title,
+      path: `/events/${event.slug}`,
+      type: "article",
+    }),
   };
 }
 

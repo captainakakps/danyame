@@ -4,11 +4,21 @@ import Footer from "@/components/Footer";
 import ContactForm from "@/components/ContactForm";
 import { getContactPageHero } from "@/lib/cms/pages";
 import { getSiteSettings } from "@/lib/cms/site-settings";
+import { buildSocialMetadata } from "@/lib/seo";
+
+const contactDescription =
+  "Get in touch with Danyame Recreational Village — booking, inquiries, or planning a visit.";
 
 export const metadata: Metadata = {
   title: "Contact Us",
-  description:
-    "Get in touch with Danyame Recreational Village — booking, inquiries, or planning a visit.",
+  description: contactDescription,
+  ...buildSocialMetadata({
+    title: "Contact Us | Danyame Recreational Village",
+    description: contactDescription,
+    image: "/assets/home/hero-bg.jpg",
+    imageAlt: "Contact Danyame Recreational Village",
+    path: "/contact",
+  }),
 };
 
 export default async function ContactPage() {
