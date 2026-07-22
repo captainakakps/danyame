@@ -8,6 +8,7 @@ import {
   getLineupEvents,
   getEventPath,
 } from "@/lib/cms/events";
+import { getEventOgImagePath } from "@/lib/cms/event-og";
 import { buildSocialMetadata } from "@/lib/seo";
 import { pages } from "@/lib/tokens";
 
@@ -25,8 +26,12 @@ export async function generateMetadata(): Promise<Metadata> {
         ? `${featuredEvent.title} | Attend an Event`
         : "Attend an Event | Danyame Recreational Village",
       description: attendDescription,
-      image: featuredEvent.image || "/assets/attend-event/hero.jpg",
+      image: featuredEvent.slug
+        ? getEventOgImagePath(featuredEvent.slug)
+        : "/assets/events/attend-event.jpg",
       imageAlt: featuredEvent.title || "Attend an Event at Danyame",
+      imageWidth: 1200,
+      imageHeight: 630,
       path: pages.attendEvent,
     }),
   };

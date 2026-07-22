@@ -76,18 +76,24 @@ async function buildSocialJpeg(slug: string): Promise<Buffer> {
     .toBuffer();
 }
 
-const cacheHeaders = {
-  "Content-Type": "image/jpeg",
-  "Cache-Control":
-    "public, max-age=60, s-maxage=3600, stale-while-revalidate=86400",
-};
+function imageHeaders(byteLength: number): HeadersInit {
+  return {
+    "Content-Type": "image/jpeg",
+    "Content-Length": String(byteLength),
+    "Content-Disposition": 'inline; filename="event-og.jpg"',
+    "Cache-Control":
+      "public, max-age=60, s-maxage=3600, stale-while-revalidate=86400",
+  };
+}
 
 export async function GET(_request: Request, context: RouteContext) {
   const { slug } = await context.params;
 
   try {
     const jpeg = await buildSocialJpeg(slug);
-    return new Response(new Uint8Array(jpeg), { headers: cacheHeaders });
+    return new Response(new Uint8Array(jpeg), {
+      headers: imageHeaders(jpeg.byteLength),
+    });
   } catch {
     return new Response("Event preview image unavailable", { status: 404 });
   }
@@ -95,5 +101,13 @@ export async function GET(_request: Request, context: RouteContext) {
 
 /** WhatsApp probes with HEAD first; Payload media HEAD returns 404. */
 export async function HEAD() {
-  return new Response(null, { status: 200, headers: cacheHeaders });
+  return new Response(null, {
+    status: 200,
+    headers: {
+      "Content-Type": "image/jpeg",
+      "Content-Disposition": 'inline; filename="event-og.jpg"',
+      "Cache-Control":
+        "public, max-age=60, s-maxage=3600, stale-while-revalidate=86400",
+    },
+  });
 }

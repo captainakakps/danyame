@@ -10,6 +10,7 @@ import {
   getEventBySlug,
   getPublishedEvents,
 } from "@/lib/cms/events";
+import { getEventOgImagePath } from "@/lib/cms/event-og";
 import { buildSocialMetadata } from "@/lib/seo";
 import { pages } from "@/lib/tokens";
 
@@ -36,9 +37,8 @@ export async function generateMetadata({ params }: EventPageProps): Promise<Meta
     ...buildSocialMetadata({
       title: event.title,
       description: event.shortSummary,
-      // Small JPEG via /api/event-og — WhatsApp rejects large/slow OG routes
-      // and Payload /api/media/file HEAD returns 404.
-      image: `/api/event-og/${event.slug}`,
+      // Static /assets file — same WhatsApp-friendly pattern as menu cards.
+      image: getEventOgImagePath(event.slug),
       imageAlt: event.title,
       imageWidth: 1200,
       imageHeight: 630,
