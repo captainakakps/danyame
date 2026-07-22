@@ -36,7 +36,9 @@ export async function generateMetadata({ params }: EventPageProps): Promise<Meta
     ...buildSocialMetadata({
       title: event.title,
       description: event.shortSummary,
-      image: event.image,
+      // Poster comes from opengraph-image.tsx so crawlers always get
+      // the current CMS image (and a HEAD-friendly response).
+      image: false,
       imageAlt: event.title,
       path: `/events/${event.slug}`,
       type: "article",

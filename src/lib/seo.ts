@@ -33,7 +33,8 @@ export function toAbsoluteUrl(pathOrUrl: string | null | undefined): string | un
 type SocialMetadataInput = {
   title: string;
   description: string;
-  image?: string | null;
+  /** Pass `false` when a route file (`opengraph-image`) supplies the preview. */
+  image?: string | null | false;
   imageAlt?: string;
   path?: string;
   type?: "website" | "article";
@@ -48,9 +49,12 @@ export function buildSocialMetadata({
   path,
   type = "website",
 }: SocialMetadataInput): Pick<Metadata, "openGraph" | "twitter"> {
-  const imageUrl = toAbsoluteUrl(image) ?? toAbsoluteUrl(DEFAULT_OG_IMAGE)!;
   const alt = imageAlt || title;
   const url = path ? toAbsoluteUrl(path) : undefined;
+  const imageUrl =
+    image === false
+      ? undefined
+      : (toAbsoluteUrl(image) ?? toAbsoluteUrl(DEFAULT_OG_IMAGE)!);
 
   return {
     openGraph: {
@@ -60,18 +64,22 @@ export function buildSocialMetadata({
       siteName: "Danyame Recreational Village",
       locale: "en_GH",
       ...(url ? { url } : {}),
-      images: [
-        {
-          url: imageUrl,
-          alt,
-        },
-      ],
+      ...(imageUrl
+        ? {
+            images: [
+              {
+                url: imageUrl,
+                alt,
+              },
+            ],
+          }
+        : {}),
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [imageUrl],
+      ...(imageUrl ? { images: [imageUrl] } : {}),
     },
   };
 }
