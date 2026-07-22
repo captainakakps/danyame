@@ -7,6 +7,8 @@ const __filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(__filename);
 
 const nextConfig: NextConfig = {
+  // Keep sharp out of the serverless trace for image routes (native binary).
+  serverExternalPackages: ["sharp"],
   images: {
     formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],

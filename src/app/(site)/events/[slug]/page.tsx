@@ -36,10 +36,12 @@ export async function generateMetadata({ params }: EventPageProps): Promise<Meta
     ...buildSocialMetadata({
       title: event.title,
       description: event.shortSummary,
-      // Poster comes from opengraph-image.tsx so crawlers always get
-      // the current CMS image (and a HEAD-friendly response).
-      image: false,
+      // Small JPEG via /api/event-og — WhatsApp rejects large/slow OG routes
+      // and Payload /api/media/file HEAD returns 404.
+      image: `/api/event-og/${event.slug}`,
       imageAlt: event.title,
+      imageWidth: 1200,
+      imageHeight: 630,
       path: `/events/${event.slug}`,
       type: "article",
     }),

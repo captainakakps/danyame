@@ -33,9 +33,11 @@ export function toAbsoluteUrl(pathOrUrl: string | null | undefined): string | un
 type SocialMetadataInput = {
   title: string;
   description: string;
-  /** Pass `false` when a route file (`opengraph-image`) supplies the preview. */
+  /** Pass `false` to omit images (rare; prefer an absolute crawlable URL). */
   image?: string | null | false;
   imageAlt?: string;
+  imageWidth?: number;
+  imageHeight?: number;
   path?: string;
   type?: "website" | "article";
 };
@@ -46,6 +48,8 @@ export function buildSocialMetadata({
   description,
   image,
   imageAlt,
+  imageWidth,
+  imageHeight,
   path,
   type = "website",
 }: SocialMetadataInput): Pick<Metadata, "openGraph" | "twitter"> {
@@ -70,6 +74,8 @@ export function buildSocialMetadata({
               {
                 url: imageUrl,
                 alt,
+                ...(imageWidth ? { width: imageWidth } : {}),
+                ...(imageHeight ? { height: imageHeight } : {}),
               },
             ],
           }
