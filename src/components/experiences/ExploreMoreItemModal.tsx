@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { ExploreMoreItem } from "@/lib/pages/experiences";
 import { pages } from "@/lib/tokens";
@@ -11,6 +11,8 @@ type ExploreMoreItemModalProps = {
   item: ExploreMoreItem;
   onClose: () => void;
 };
+
+const CLOSE_ANIMATION_MS = 220;
 
 function CheckIcon() {
   return (
@@ -66,47 +68,81 @@ export default function ExploreMoreItemModal({
   item,
   onClose,
 }: ExploreMoreItemModalProps) {
+  const closeTimeoutRef = useRef<number | null>(null);
+  const isClosingRef = useRef(false);
+  const [isVisible, setIsVisible] = useState(false);
+
+  const requestClose = useCallback(() => {
+    if (isClosingRef.current) {
+      return;
+    }
+
+    isClosingRef.current = true;
+    setIsVisible(false);
+
+    closeTimeoutRef.current = window.setTimeout(() => {
+      onClose();
+    }, CLOSE_ANIMATION_MS);
+  }, [onClose]);
+
   useEffect(() => {
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    const frame = window.requestAnimationFrame(() => {
+      setIsVisible(true);
+    });
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        onClose();
+        requestClose();
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
+      window.cancelAnimationFrame(frame);
+      if (closeTimeoutRef.current !== null) {
+        window.clearTimeout(closeTimeoutRef.current);
+      }
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [onClose]);
+  }, [requestClose]);
 
   const secondaryHref = item.secondaryCtaHref ?? pages.contact;
   const primaryHref = item.primaryCtaHref ?? pages.contact;
 
   return (
-    <div className="fixed inset-0 z-[10000] flex items-end justify-center p-4 sm:items-center sm:p-6">
+    <div
+      className={`fixed inset-0 z-[10000] flex items-end justify-center p-4 sm:items-center sm:p-6 ${
+        isVisible ? "" : "pointer-events-none"
+      }`}
+    >
       <button
         type="button"
-        className="absolute inset-0 bg-black/50"
+        className={`absolute inset-0 bg-black/50 transition-opacity duration-200 ease-out motion-reduce:transition-none ${
+          isVisible ? "opacity-100" : "opacity-0"
+        }`}
         aria-label="Close dialog"
-        onClick={onClose}
+        onClick={requestClose}
       />
 
       <div
         role="dialog"
         aria-modal="true"
         aria-labelledby="explore-more-modal-title"
-        className="relative z-[10001] flex max-h-[min(92vh,1214px)] w-full max-w-[996px] flex-col overflow-hidden rounded-[24px] bg-white sm:rounded-[32px]"
+        className={`relative z-[10001] flex max-h-[min(92vh,1214px)] w-full max-w-[996px] flex-col overflow-hidden rounded-[24px] bg-white transition-all duration-200 ease-out motion-reduce:transition-none sm:rounded-[32px] ${
+          isVisible
+            ? "translate-y-0 opacity-100 sm:scale-100"
+            : "translate-y-6 opacity-0 sm:translate-y-3 sm:scale-[0.98]"
+        }`}
         onClick={(event) => event.stopPropagation()}
       >
         <div className="flex shrink-0 justify-end px-6 pb-8 pt-6 sm:px-10 sm:pb-8 sm:pt-10">
           <button
             type="button"
-            onClick={onClose}
+            onClick={requestClose}
             className="flex h-10 w-10 items-center justify-center rounded-[6px] bg-[#e6e6e6] transition-colors hover:bg-[#dcdcdc]"
             aria-label="Close"
           >
@@ -131,7 +167,9 @@ export default function ExploreMoreItemModal({
                     src={item.image}
                     alt={item.imageAlt}
                     fill
-                    className="object-cover"
+                    className={`object-cover transition-transform duration-300 ease-out motion-reduce:transition-none ${
+                      isVisible ? "scale-100" : "scale-[1.03]"
+                    }`}
                     sizes="(max-width: 996px) 100vw, 996px"
                     priority
                   />
@@ -196,7 +234,7 @@ export default function ExploreMoreItemModal({
                   href={secondaryHref}
                   className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-[rgba(208,63,80,0.1)] text-base font-medium text-ink sm:w-[182px]"
                   style={{ fontFamily: "var(--font-body)" }}
-                  onClick={onClose}
+                  onClick={requestClose}
                 >
                   {item.secondaryCtaLabel ?? "Contact Us"}
                 </Link>
@@ -204,7 +242,7 @@ export default function ExploreMoreItemModal({
                   href={primaryHref}
                   className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-rust text-base font-medium text-white sm:w-[182px]"
                   style={{ fontFamily: "var(--font-body)" }}
-                  onClick={onClose}
+                  onClick={requestClose}
                 >
                   {item.primaryCtaLabel}
                 </Link>

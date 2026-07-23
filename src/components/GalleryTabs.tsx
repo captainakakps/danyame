@@ -3,92 +3,111 @@
 import { useState } from "react";
 import Image from "next/image";
 
+import ParallaxImages from "@/components/ParallaxImages";
 import type { GalleryCategoryData, GallerySet } from "@/lib/gallery";
+
+function GalleryTile({
+  src,
+  alt,
+  sizes,
+  className,
+  revealIndex,
+}: {
+  src: string;
+  alt: string;
+  sizes: string;
+  className: string;
+  revealIndex: number;
+}) {
+  return (
+    <div
+      className={`group relative overflow-hidden ${className}`}
+      style={{ animationDelay: `${revealIndex * 70}ms` }}
+      data-gallery-tile
+    >
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+        sizes={sizes}
+        data-gallery-media
+      />
+      <div className="absolute inset-0 bg-black/15 transition-colors duration-500 group-hover:bg-black/30" />
+    </div>
+  );
+}
 
 function GalleryGrid({ set }: { set: GallerySet }) {
   const [row1, row2, row3] = set.rows;
+  const [a, b] = row1;
+  const [c, d, e] = row2;
+  const [f, g] = row3;
 
   return (
-    <div className="flex flex-col gap-3 md:gap-4">
+    <ParallaxImages
+      selector="[data-gallery-media]"
+      range={6}
+      className="gallery-grid-enter flex flex-col gap-3 md:gap-4"
+    >
       <div className="flex flex-col gap-3 md:flex-row md:gap-4">
-        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[12px] md:aspect-[870/500] md:w-[65.5%] md:rounded-[20px]">
-          <Image
-            src={row1[0].src}
-            alt={row1[0].alt}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, 65vw"
-          />
-          <div className="absolute inset-0 bg-black/15" />
-        </div>
-        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[12px] md:aspect-[442/500] md:flex-1 md:rounded-[20px]">
-          <Image
-            src={row1[1].src}
-            alt={row1[1].alt}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, 33vw"
-          />
-          <div className="absolute inset-0 bg-black/15" />
-        </div>
+        <GalleryTile
+          src={a.src}
+          alt={a.alt}
+          sizes="(max-width: 768px) 100vw, 65vw"
+          className="aspect-[4/3] w-full rounded-[12px] md:aspect-[870/500] md:w-[65.5%] md:rounded-[20px]"
+          revealIndex={0}
+        />
+        <GalleryTile
+          src={b.src}
+          alt={b.alt}
+          sizes="(max-width: 768px) 100vw, 33vw"
+          className="aspect-[4/3] w-full rounded-[12px] md:aspect-[442/500] md:flex-1 md:rounded-[20px]"
+          revealIndex={1}
+        />
       </div>
 
       <div className="flex flex-col gap-3 md:flex-row md:gap-4">
-        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[12px] md:aspect-[442/500] md:w-[33.3%] md:rounded-[20px]">
-          <Image
-            src={row2[0].src}
-            alt={row2[0].alt}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, 33vw"
-          />
-          <div className="absolute inset-0 bg-black/15" />
-        </div>
-        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[12px] md:aspect-[412/500] md:w-[31%] md:rounded-[20px]">
-          <Image
-            src={row2[1].src}
-            alt={row2[1].alt}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, 31vw"
-          />
-          <div className="absolute inset-0 bg-black/15" />
-        </div>
-        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[12px] md:aspect-[442/500] md:flex-1 md:rounded-[20px]">
-          <Image
-            src={row2[2].src}
-            alt={row2[2].alt}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, 33vw"
-          />
-          <div className="absolute inset-0 bg-black/15" />
-        </div>
+        <GalleryTile
+          src={c.src}
+          alt={c.alt}
+          sizes="(max-width: 768px) 100vw, 33vw"
+          className="aspect-[4/3] w-full rounded-[12px] md:aspect-[442/500] md:w-[33.3%] md:rounded-[20px]"
+          revealIndex={2}
+        />
+        <GalleryTile
+          src={d.src}
+          alt={d.alt}
+          sizes="(max-width: 768px) 100vw, 31vw"
+          className="aspect-[4/3] w-full rounded-[12px] md:aspect-[412/500] md:w-[31%] md:rounded-[20px]"
+          revealIndex={3}
+        />
+        <GalleryTile
+          src={e.src}
+          alt={e.alt}
+          sizes="(max-width: 768px) 100vw, 33vw"
+          className="aspect-[4/3] w-full rounded-[12px] md:aspect-[442/500] md:flex-1 md:rounded-[20px]"
+          revealIndex={4}
+        />
       </div>
 
       <div className="flex flex-col gap-3 md:flex-row md:gap-4">
-        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[12px] md:aspect-[442/500] md:w-[33.3%] md:rounded-[20px]">
-          <Image
-            src={row3[0].src}
-            alt={row3[0].alt}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, 33vw"
-          />
-          <div className="absolute inset-0 bg-black/15" />
-        </div>
-        <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[12px] md:aspect-[870/500] md:flex-1 md:rounded-[20px]">
-          <Image
-            src={row3[1].src}
-            alt={row3[1].alt}
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, 65vw"
-          />
-          <div className="absolute inset-0 bg-black/15" />
-        </div>
+        <GalleryTile
+          src={f.src}
+          alt={f.alt}
+          sizes="(max-width: 768px) 100vw, 33vw"
+          className="aspect-[4/3] w-full rounded-[12px] md:aspect-[442/500] md:w-[33.3%] md:rounded-[20px]"
+          revealIndex={5}
+        />
+        <GalleryTile
+          src={g.src}
+          alt={g.alt}
+          sizes="(max-width: 768px) 100vw, 65vw"
+          className="aspect-[4/3] w-full rounded-[12px] md:aspect-[870/500] md:flex-1 md:rounded-[20px]"
+          revealIndex={6}
+        />
       </div>
-    </div>
+    </ParallaxImages>
   );
 }
 

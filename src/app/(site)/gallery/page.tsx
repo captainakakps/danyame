@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import GalleryTabs from "@/components/GalleryTabs";
 import Footer from "@/components/Footer";
+import DriftDecor from "@/components/DriftDecor";
 import { getGalleryCategories } from "@/lib/cms/gallery";
 import { getGalleryPageHero } from "@/lib/cms/pages";
 import { buildSocialMetadata } from "@/lib/seo";
@@ -50,14 +51,14 @@ export default async function GalleryPage() {
             </p>
           </div>
 
-          <div className="h-[150px] w-[150px] shrink-0 sm:h-[180px] sm:w-[180px] md:h-[220px] md:w-[220px] lg:h-[268px] lg:w-[268px]">
+          <DriftDecor className="h-[150px] w-[150px] shrink-0 sm:h-[180px] sm:w-[180px] md:h-[220px] md:w-[220px] lg:h-[268px] lg:w-[268px]" aria-hidden>
             <img
               src={starDecoration}
               alt=""
-              aria-hidden
+              data-decor
               className="h-full w-full object-contain"
             />
-          </div>
+          </DriftDecor>
         </div>
       </section>
 

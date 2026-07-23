@@ -34,7 +34,7 @@ interface ButtonAsButton extends ButtonBaseProps {
 type ButtonProps = ButtonAsLink | ButtonAsButton;
 
 const baseClasses =
-  "inline-flex h-[50px] items-center justify-center rounded-[100px] px-4 text-base font-medium transition-colors duration-150";
+  "inline-flex h-[50px] items-center justify-center rounded-[100px] px-4 text-base font-medium transition-all duration-200 hover:-translate-y-0.5 active:translate-y-0";
 
 export default function Button({
   variant = "primary",

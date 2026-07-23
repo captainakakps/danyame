@@ -16,6 +16,8 @@ export type { EventCountdown, HomePageData };
 export type HomePageContent = {
   page: HomePageData;
   countdown: EventCountdown;
+  /** ISO date the countdown targets — lets the client tick it live. */
+  countdownTarget: string | null;
   featuredEvent: FeaturedEvent | null;
 };
 
@@ -258,10 +260,18 @@ async function resolveGalleryImages(page: HomePageData): Promise<HomePageData> {
   };
 }
 
-async function resolveCountdown(page: HomePageData): Promise<EventCountdown> {
-  const fallback = computeCountdown(
-    new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-  );
+type ResolvedCountdown = {
+  countdown: EventCountdown;
+  targetISO: string | null;
+};
+
+async function resolveCountdown(page: HomePageData): Promise<ResolvedCountdown> {
+  const fallback: ResolvedCountdown = {
+    countdown: computeCountdown(
+      new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    ),
+    targetISO: null,
+  };
 
   if (!page.events.useCmsCountdown) {
     return fallback;
@@ -306,7 +316,10 @@ async function resolveCountdown(page: HomePageData): Promise<EventCountdown> {
     }
 
     if (targetDate && !Number.isNaN(targetDate.getTime())) {
-      return computeCountdown(targetDate);
+      return {
+        countdown: computeCountdown(targetDate),
+        targetISO: targetDate.toISOString(),
+      };
     }
   } catch {
     return fallback;
@@ -325,14 +338,15 @@ export async function getHomePageContent(): Promise<HomePageContent> {
 
     let page = mapHomePageDoc(doc);
     page = await resolveGalleryImages(page);
-    const [countdown, featuredEvent] = await Promise.all([
+    const [resolved, featuredEvent] = await Promise.all([
       resolveCountdown(page),
       getFeaturedEvent().catch(() => null),
     ]);
 
     return {
       page,
-      countdown,
+      countdown: resolved.countdown,
+      countdownTarget: resolved.targetISO,
       featuredEvent: featuredEvent?.image ? featuredEvent : null,
     };
   } catch {
@@ -341,6 +355,7 @@ export async function getHomePageContent(): Promise<HomePageContent> {
       countdown: computeCountdown(
         new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       ),
+      countdownTarget: null,
       featuredEvent: null,
     };
   }

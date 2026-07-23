@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useCallback, useRef, useState } from "react";
 
 import ExploreMoreItemModal from "@/components/experiences/ExploreMoreItemModal";
+import FadeUp from "@/components/FadeUp";
 import type { ExperiencesPageData } from "@/lib/pages/experiences";
 
 const PREVIEW_WIDTH = 356;
@@ -78,7 +79,7 @@ export default function ExploreMoreSection({
         }
       >
         <div className="w-full px-6 md:px-10 lg:px-[72px]">
-          <div className="pb-8 md:pb-10">
+          <FadeUp className="pb-8 md:pb-10">
             <h2
               className="text-[32px] font-medium leading-none text-ink sm:text-[40px] md:text-[48px] lg:text-[56px]"
               style={{ fontFamily: "var(--font-heading)" }}
@@ -91,7 +92,7 @@ export default function ExploreMoreSection({
             >
               {exploreMore.intro}
             </p>
-          </div>
+          </FadeUp>
 
           <div
             ref={listRef}
@@ -100,13 +101,16 @@ export default function ExploreMoreSection({
           >
             {activeItem?.image ? (
               <div
-                key={activeItem.image}
-                className="pointer-events-none absolute left-1/2 z-50 hidden -translate-x-1/2 overflow-hidden rounded-[20px] bg-[#e2e5e6] shadow-[0_24px_48px_rgba(0,0,0,0.18)] transition-opacity duration-300 lg:block"
+                className="pointer-events-none absolute left-1/2 z-50 hidden overflow-hidden rounded-[20px] bg-[#e2e5e6] shadow-[0_24px_48px_rgba(0,0,0,0.18)] transition-[top,opacity,transform] duration-300 ease-out lg:block"
                 style={{
                   top: previewTop,
                   width: PREVIEW_WIDTH,
                   height: PREVIEW_HEIGHT,
                   opacity: activeIndex !== null ? 1 : 0,
+                  transform:
+                    activeIndex !== null
+                      ? "translateX(-50%) scale(1)"
+                      : "translateX(-50%) scale(0.96)",
                 }}
                 aria-hidden
               >
@@ -121,65 +125,69 @@ export default function ExploreMoreSection({
               </div>
             ) : null}
 
-            {exploreMore.items.map((item, index) => {
-              const isLast = index === exploreMore.items.length - 1;
-              const isActive = activeIndex === index;
+            <FadeUp selector="[data-explore-row]" y={24} stagger={0.06}>
+              {exploreMore.items.map((item, index) => {
+                const isLast = index === exploreMore.items.length - 1;
+                const isActive = activeIndex === index;
 
-              return (
-                <div
-                  key={`${item.name}-${index}`}
-                  ref={(element) => {
-                    rowRefs.current[index] = element;
-                  }}
-                  className={`relative border-[#e2e5e6] ${
-                    isLast ? "border-b border-t" : "border-t"
-                  }`}
-                  onMouseEnter={() => handleActivate(index)}
-                >
+                return (
                   <div
-                    className={`pointer-events-none absolute inset-0 z-10 transition-colors ${
-                      isActive ? "bg-rust" : "bg-transparent"
-                    }`}
-                    aria-hidden
-                  />
-
-                  <button
-                    type="button"
-                    className={`group relative flex w-full cursor-pointer flex-col gap-2 px-4 py-6 text-left transition-colors sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-6 sm:py-8 md:py-10 lg:px-8 ${
-                      isActive ? "z-40" : "z-30"
-                    }`}
-                    onClick={() => handleOpenModal(index)}
-                    onFocus={() => handleActivate(index)}
-                    onBlur={(event) => {
-                      if (!event.currentTarget.contains(event.relatedTarget)) {
-                        handleDeactivate();
-                      }
+                    key={`${item.name}-${index}`}
+                    ref={(element) => {
+                      rowRefs.current[index] = element;
                     }}
+                    data-explore-row
+                    className={`relative border-[#e2e5e6] ${
+                      isLast ? "border-b border-t" : "border-t"
+                    }`}
+                    onMouseEnter={() => handleActivate(index)}
                   >
-                    <span
-                      className={`text-[20px] font-medium tracking-[0.02em] transition-colors sm:text-[22px] lg:text-[24px] lg:tracking-[0.72px] ${
-                        isActive
-                          ? "text-white"
-                          : "text-ink group-hover:text-white"
+                    <div
+                      className="pointer-events-none absolute inset-0 z-10 origin-left bg-rust transition-transform duration-300 ease-out"
+                      style={{ transform: isActive ? "scaleX(1)" : "scaleX(0)" }}
+                      aria-hidden
+                    />
+
+                    <button
+                      type="button"
+                      className={`group relative flex w-full cursor-pointer flex-col gap-2 px-4 py-6 text-left transition-colors sm:flex-row sm:items-center sm:justify-between sm:gap-6 sm:px-6 sm:py-8 md:py-10 lg:px-8 ${
+                        isActive ? "z-40" : "z-30"
                       }`}
-                      style={{ fontFamily: "var(--font-heading)" }}
+                      onClick={() => handleOpenModal(index)}
+                      onFocus={() => handleActivate(index)}
+                      onBlur={(event) => {
+                        if (
+                          !event.currentTarget.contains(event.relatedTarget)
+                        ) {
+                          handleDeactivate();
+                        }
+                      }}
                     >
-                      {item.name}
-                    </span>
-                    <span
-                      className={`text-sm tracking-[0.03em] transition-colors sm:text-base sm:tracking-[0.48px] ${
-                        isActive
-                          ? "text-white"
-                          : "text-subtext group-hover:text-white"
-                      }`}
-                      style={{ fontFamily: "var(--font-body)" }}
-                    >
-                      {item.tagline}
-                    </span>
-                  </button>
-                </div>
-              );
-            })}
+                      <span
+                        className={`text-[20px] font-medium tracking-[0.02em] transition-colors sm:text-[22px] lg:text-[24px] lg:tracking-[0.72px] ${
+                          isActive
+                            ? "text-white"
+                            : "text-ink group-hover:text-white"
+                        }`}
+                        style={{ fontFamily: "var(--font-heading)" }}
+                      >
+                        {item.name}
+                      </span>
+                      <span
+                        className={`text-sm tracking-[0.03em] transition-colors sm:text-base sm:tracking-[0.48px] ${
+                          isActive
+                            ? "text-white"
+                            : "text-subtext group-hover:text-white"
+                        }`}
+                        style={{ fontFamily: "var(--font-body)" }}
+                      >
+                        {item.tagline}
+                      </span>
+                    </button>
+                  </div>
+                );
+              })}
+            </FadeUp>
           </div>
         </div>
       </section>

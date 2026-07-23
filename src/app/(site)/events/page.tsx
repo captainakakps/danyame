@@ -3,6 +3,8 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import Image from "next/image";
+import EventsHeroAnimation from "@/components/events/EventsHeroAnimation";
+import FadeUp from "@/components/FadeUp";
 import { getEventsHubPage } from "@/lib/cms/pages";
 import { buildSocialMetadata } from "@/lib/seo";
 
@@ -30,6 +32,7 @@ export default async function EventsPage() {
 
   return (
     <div className="bg-white overflow-x-hidden">
+      <EventsHeroAnimation>
       <section className="relative min-h-[600px] w-full text-white md:min-h-[700px] lg:h-[1014px]">
         <Image
           src={page.hero.image}
@@ -38,6 +41,7 @@ export default async function EventsPage() {
           className="object-cover"
           priority
           sizes="100vw"
+          data-events-hero-img
         />
         <div className="absolute inset-0 bg-black/30" />
 
@@ -50,11 +54,12 @@ export default async function EventsPage() {
             <h1
               className="text-[36px] font-semibold uppercase leading-[1] sm:text-[48px] md:text-[60px] lg:text-[80px]"
               style={{ fontFamily: "var(--font-heading)" }}
+              data-events-hero-title
             >
               {page.hero.title}
             </h1>
 
-            <div className="flex flex-col gap-6 lg:gap-6">
+            <div className="flex flex-col gap-6 lg:gap-6" data-events-hero-copy>
               <p
                 className="max-w-[600px] text-sm leading-[1.7] sm:text-base md:max-w-[800px]"
                 style={{ fontFamily: "var(--font-body)" }}
@@ -65,14 +70,14 @@ export default async function EventsPage() {
               <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
                 <Link
                   href={page.hero.hostCtaHref}
-                  className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-rust text-base font-medium text-white transition-colors duration-150 hover:bg-rust/90 sm:w-[182px]"
+                  className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-rust text-base font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-rust/90 active:translate-y-0 sm:w-[182px]"
                   style={{ fontFamily: "var(--font-body)" }}
                 >
                   {page.hero.hostCtaLabel}
                 </Link>
                 <Link
                   href={page.hero.attendCtaHref}
-                  className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-white text-base font-medium text-ink transition-colors duration-150 hover:bg-white/90 sm:w-[182px]"
+                  className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-white text-base font-medium text-ink transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/90 active:translate-y-0 sm:w-[182px]"
                   style={{ fontFamily: "var(--font-body)" }}
                 >
                   {page.hero.attendCtaLabel}
@@ -82,10 +87,14 @@ export default async function EventsPage() {
           </div>
         </div>
       </section>
+      </EventsHeroAnimation>
 
       <section className="bg-white px-6 py-16 sm:px-10 sm:py-20 md:px-14 lg:px-14 lg:py-[130px]">
-        <div className="mx-auto max-w-[1328px]">
-          <div className="mb-10 flex flex-col gap-4 lg:mb-14">
+        <FadeUp
+          selector="[data-events-reveal]"
+          className="mx-auto max-w-[1328px]"
+        >
+          <div className="mb-10 flex flex-col gap-4 lg:mb-14" data-events-reveal>
             <h2
               className="text-[32px] font-medium leading-none text-ink sm:text-[40px] md:text-[48px] lg:text-[56px]"
               style={{ fontFamily: "var(--font-heading)" }}
@@ -100,17 +109,21 @@ export default async function EventsPage() {
             </p>
           </div>
 
-          <div className="flex flex-col gap-10 md:flex-row md:justify-between md:gap-6 lg:gap-8">
+          <div
+            className="flex flex-col gap-10 md:flex-row md:justify-between md:gap-6 lg:gap-8"
+            data-events-reveal
+          >
             <div className="flex flex-1 flex-col gap-6 md:max-w-[600px] lg:gap-8">
               <div className="flex flex-col gap-5 lg:gap-6">
-                <div className="relative h-[200px] w-full overflow-hidden rounded-[20px] sm:h-[250px] md:h-[300px]">
+                <div className="group relative h-[200px] w-full overflow-hidden rounded-[20px] sm:h-[250px] md:h-[300px]">
                   <Image
                     src={page.hostCard.image}
                     alt={page.hostCard.imageAlt}
                     fill
-                    className="object-cover"
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                     sizes="(max-width: 768px) 100vw, 50vw"
                   />
+                  <div className="absolute inset-0 bg-black/10 transition-colors duration-500 group-hover:bg-black/20" />
                 </div>
                 <div className="flex flex-col gap-3 lg:gap-4">
                   <h3
@@ -129,7 +142,7 @@ export default async function EventsPage() {
               </div>
               <Link
                 href={page.hostCard.ctaHref}
-                className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-rust text-base font-medium text-white transition-colors duration-150 hover:bg-rust/90 sm:w-[182px]"
+                className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-rust text-base font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-rust/90 active:translate-y-0 sm:w-[182px]"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 {page.hostCard.ctaLabel}
@@ -141,14 +154,15 @@ export default async function EventsPage() {
               className="flex flex-1 flex-col gap-6 md:max-w-[600px] lg:gap-8"
             >
               <div className="flex flex-col gap-5 lg:gap-6">
-                <div className="relative h-[200px] w-full overflow-hidden rounded-[20px] sm:h-[250px] md:h-[300px]">
+                <div className="group relative h-[200px] w-full overflow-hidden rounded-[20px] sm:h-[250px] md:h-[300px]">
                   <Image
                     src={page.attendCard.image}
                     alt={page.attendCard.imageAlt}
                     fill
-                    className="object-cover"
+                    className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                     sizes="(max-width: 768px) 100vw, 50vw"
                   />
+                  <div className="absolute inset-0 bg-black/10 transition-colors duration-500 group-hover:bg-black/20" />
                 </div>
                 <div className="flex flex-col gap-3 lg:gap-4">
                   <h3
@@ -167,14 +181,14 @@ export default async function EventsPage() {
               </div>
               <Link
                 href={page.attendCard.ctaHref}
-                className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-rust text-base font-medium text-white transition-colors duration-150 hover:bg-rust/90 sm:w-[182px]"
+                className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-rust text-base font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-rust/90 active:translate-y-0 sm:w-[182px]"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 {page.attendCard.ctaLabel}
               </Link>
             </div>
           </div>
-        </div>
+        </FadeUp>
       </section>
 
       <Footer />

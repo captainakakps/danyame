@@ -4,6 +4,10 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CategoryGrid from "@/components/CategoryGrid";
+import CountdownTicker from "@/components/home/CountdownTicker";
+import FadeUp from "@/components/FadeUp";
+import HeroAnimation from "@/components/home/HeroAnimation";
+import ParallaxImages from "@/components/ParallaxImages";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
 import type { EventCountdown, HomePageData } from "@/lib/pages/home";
 import type { FeaturedEvent } from "@/lib/events";
@@ -13,6 +17,7 @@ import { pages } from "@/lib/tokens";
 type HomePageViewProps = {
   page: HomePageData;
   countdown: EventCountdown;
+  countdownTarget?: string | null;
   featuredEvent?: FeaturedEvent | null;
 };
 
@@ -42,6 +47,7 @@ function MultilineHeading({
 export default function HomePageView({
   page,
   countdown,
+  countdownTarget = null,
   featuredEvent = null,
 }: HomePageViewProps) {
   const galleryImages = page.gallery.images;
@@ -52,7 +58,8 @@ export default function HomePageView({
     // <>
     <div className="bg-white overflow-x-hidden">
       {/* ── Hero ── */}
-      <section className="relative min-h-[600px] w-full text-white lg:h-[1014px]">
+      <HeroAnimation>
+      <section className="relative min-h-[600px] w-full overflow-hidden text-white lg:h-[1014px]">
         <Image
           src={page.hero.image}
           alt=""
@@ -60,6 +67,7 @@ export default function HomePageView({
           priority
           sizes="100vw"
           className="object-cover"
+          data-hero-img
         />
         <div className="absolute inset-0 bg-black/45" />
 
@@ -74,7 +82,10 @@ export default function HomePageView({
               aria-hidden
             >
               {/* Crimson starburst with chair icon */}
-              <div className="absolute left-[931px] top-[105px] h-[230px] w-[230px]">
+              <div
+                className="absolute left-[931px] top-[105px] h-[230px] w-[230px]"
+                data-hero-decor
+              >
                 <svg
                   className="absolute left-[47px] top-[47px] h-[136px] w-[136px]"
                   viewBox="0 0 122 135"
@@ -101,7 +112,10 @@ export default function HomePageView({
               </div>
 
               {/* Orange ellipse with music icons */}
-              <div className="absolute left-[411px] top-[312px] h-[114px] w-[114px]">
+              <div
+                className="absolute left-[411px] top-[312px] h-[114px] w-[114px]"
+                data-hero-decor
+              >
                 <svg
                   className="absolute inset-0 h-full w-full"
                   viewBox="0 0 114 114"
@@ -129,7 +143,10 @@ export default function HomePageView({
               </div>
 
               {/* Teal triangle with smiley centered inside */}
-              <div className="absolute left-[988px] top-[398px] flex h-[260px] w-[260px] origin-center rotate-[9.1deg] items-center justify-center">
+              <div
+                className="absolute left-[988px] top-[398px] flex h-[260px] w-[260px] origin-center rotate-[9.1deg] items-center justify-center"
+                data-hero-decor
+              >
                 <svg
                   className="absolute h-[150px] w-[167px]"
                   viewBox="0 0 167 150"
@@ -155,7 +172,10 @@ export default function HomePageView({
             </div>
 
             {/* ── Headlines (exact Figma positions on lg) ── */}
-            <div className="absolute inset-x-0 top-[80px] flex flex-col items-center px-6 lg:inset-x-auto lg:left-[480px] lg:top-[154px] lg:items-start lg:px-0">
+            <div
+              className="absolute inset-x-0 top-[80px] flex flex-col items-center px-6 lg:inset-x-auto lg:left-[480px] lg:top-[154px] lg:items-start lg:px-0"
+              data-hero-line
+            >
               <p
                 className="text-center text-[clamp(2.5rem,6vw,5rem)] font-semibold uppercase leading-none lg:text-left lg:text-[80px]"
                 style={{ fontFamily: "var(--font-heading)" }}
@@ -164,7 +184,10 @@ export default function HomePageView({
               </p>
             </div>
 
-            <div className="absolute inset-x-0 top-[150px] flex items-center justify-center px-6 lg:inset-x-auto lg:left-[449.97px] lg:top-[240.97px] lg:h-[108.807px] lg:w-[632.011px] lg:justify-start lg:px-0">
+            <div
+              className="absolute inset-x-0 top-[150px] flex items-center justify-center px-6 lg:inset-x-auto lg:left-[449.97px] lg:top-[240.97px] lg:h-[108.807px] lg:w-[632.011px] lg:justify-start lg:px-0"
+              data-hero-line
+            >
               <p
                 className="rotate-[2.63deg] text-center text-[clamp(2.5rem,6vw,5rem)] font-semibold uppercase leading-none lg:text-left lg:text-[80px]"
                 style={{ fontFamily: "var(--font-heading)" }}
@@ -173,7 +196,10 @@ export default function HomePageView({
               </p>
             </div>
 
-            <div className="absolute inset-x-0 top-[230px] flex items-center justify-center px-6 lg:inset-x-auto lg:left-[430px] lg:top-[369px] lg:h-[216.5px] lg:w-[679.326px] lg:justify-start lg:px-0">
+            <div
+              className="absolute inset-x-0 top-[230px] flex items-center justify-center px-6 lg:inset-x-auto lg:left-[430px] lg:top-[369px] lg:h-[216.5px] lg:w-[679.326px] lg:justify-start lg:px-0"
+              data-hero-line
+            >
               <p
                 className="-rotate-[4.9deg] max-w-[668px] text-center text-[clamp(2.5rem,6vw,5rem)] font-semibold uppercase leading-none lg:text-left lg:text-[80px]"
                 style={{ fontFamily: "var(--font-heading)" }}
@@ -183,7 +209,10 @@ export default function HomePageView({
             </div>
 
             {/* ── Subtext (exact Figma position on lg) ── */}
-            <div className="absolute inset-x-0 bottom-8 flex flex-col items-center gap-4 px-6 text-center lg:inset-x-auto lg:bottom-auto lg:left-[445px] lg:top-[712px] lg:w-[551px] lg:px-0">
+            <div
+              className="absolute inset-x-0 bottom-8 flex flex-col items-center gap-4 px-6 text-center lg:inset-x-auto lg:bottom-auto lg:left-[445px] lg:top-[712px] lg:w-[551px] lg:px-0"
+              data-hero-sub
+            >
               <p
                 className="text-lg font-normal leading-[1.2] lg:text-[24px]"
                 style={{ fontFamily: "var(--font-heading)" }}
@@ -200,17 +229,22 @@ export default function HomePageView({
           </div>
         </div>
       </section>
+      </HeroAnimation>
 
       {/* ── Everything You Need Section ── */}
       <section className="bg-white px-6 py-16 md:px-10 lg:px-[56px] lg:pb-[72px] lg:pt-[130px]">
-        <div className="mx-auto flex max-w-[1328px] flex-col gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-0">
+        <FadeUp
+          selector="[data-fade]"
+          className="mx-auto flex max-w-[1328px] flex-col gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-0"
+        >
           <h2
             className="text-lg font-medium leading-[1.1] text-ink md:text-4xl lg:w-[440px] lg:text-[50px]"
             style={{ fontFamily: "var(--font-heading)" }}
+            data-fade
           >
             {page.everythingYouNeed.title}
           </h2>
-          <div className="flex flex-col gap-6 lg:w-[566px]">
+          <div className="flex flex-col gap-6 lg:w-[566px]" data-fade>
             <p
               className="text-[14px] leading-[1.5] text-subtext md:text-[16px]"
               style={{ fontFamily: "var(--font-body)" }}
@@ -219,22 +253,49 @@ export default function HomePageView({
             </p>
             <Link
               href={page.everythingYouNeed.ctaHref}
-              className="flex h-[50px] w-[182px] items-center justify-center rounded-[100px] bg-rust text-[16px] font-medium text-white"
+              className="flex h-[50px] w-[182px] items-center justify-center rounded-[100px] bg-rust text-[16px] font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-rust/90 active:translate-y-0"
               style={{ fontFamily: "var(--font-body)" }}
             >
               {page.everythingYouNeed.ctaLabel}
             </Link>
           </div>
-        </div>
+        </FadeUp>
       </section>
 
       {/* ── Category Grid Section ── */}
       <CategoryGrid categories={page.categories} />
 
+      {/* ── Marquee strip ── */}
+      <section className="strip-container overflow-hidden bg-ink py-5" aria-hidden>
+        <div
+          className="animate-strip flex w-max items-center"
+          style={{ animationDuration: "45s" }}
+        >
+          {[
+            ...page.categories,
+            ...page.categories,
+            ...page.categories,
+            ...page.categories,
+          ].map((category, index) => (
+            <span
+              key={`${category.title}-${index}`}
+              className="flex items-center whitespace-nowrap text-[18px] font-medium uppercase tracking-[0.25em] text-white/90 md:text-[22px]"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
+              <span className="px-8">{category.title}</span>
+              <span className="h-2 w-2 shrink-0 rounded-full bg-amber" />
+            </span>
+          ))}
+        </div>
+      </section>
+
       {/* ── A Place Built for People Section ── */}
       <section className="bg-white px-6 py-16 md:px-10 lg:px-[56px] lg:pb-[80px] lg:pt-[130px]">
-        <div className="mx-auto flex max-w-[1328px] flex-col gap-10 lg:flex-row lg:items-end lg:justify-between lg:gap-0">
-          <div className="flex flex-col gap-10 lg:w-[587px] lg:gap-[104px]">
+        <FadeUp
+          selector="[data-fade]"
+          className="mx-auto flex max-w-[1328px] flex-col gap-10 lg:flex-row lg:items-end lg:justify-between lg:gap-0"
+        >
+          <div className="flex flex-col gap-10 lg:w-[587px] lg:gap-[104px]" data-fade>
             <div className="flex flex-col gap-8 lg:gap-12">
               <h2
                 className="text-lg font-medium leading-[1.1] text-ink md:text-4xl lg:text-[50px]"
@@ -251,7 +312,7 @@ export default function HomePageView({
             </div>
             <Link
               href={page.aboutTeaser.ctaHref}
-              className="flex h-[50px] w-fit items-center justify-center rounded-[100px] bg-rust px-[24px] text-[16px] font-medium text-white"
+              className="flex h-[50px] w-fit items-center justify-center rounded-[100px] bg-rust px-[24px] text-[16px] font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-rust/90 active:translate-y-0"
               style={{ fontFamily: "var(--font-body)" }}
             >
               {page.aboutTeaser.ctaLabel}
@@ -263,31 +324,37 @@ export default function HomePageView({
             width={497}
             height={438}
             className="h-auto w-full shrink-0 object-contain object-bottom opacity-80 lg:h-[438px] lg:w-[497px]"
+            data-fade
           />
-        </div>
+        </FadeUp>
       </section>
 
       {/* ── Upcoming Events Section ── */}
       <section className="relative bg-white px-6 py-16 md:px-10 lg:h-[1245px] lg:px-[56px] lg:py-0">
         {/* Section Header */}
         <div className="flex flex-col items-center gap-6 lg:absolute lg:left-1/2 lg:top-[130px] lg:-translate-x-1/2">
-          <h2
-            className="text-center text-[28px] font-medium uppercase leading-[1.1] text-ink md:text-[32px] lg:text-[40px]"
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
-            {page.events.sectionTitle}
-          </h2>
-          <div className="flex items-center gap-2">
-            <span className="h-[9px] w-14 rounded-full bg-amber/30" />
-            <span className="h-[9px] w-[135px] rounded-full bg-amber" />
-            <span className="h-[9px] w-14 rounded-full bg-amber/30" />
-          </div>
+          <FadeUp className="flex flex-col items-center gap-6">
+            <h2
+              className="text-center text-[28px] font-medium uppercase leading-[1.1] text-ink md:text-[32px] lg:text-[40px]"
+              style={{ fontFamily: "var(--font-heading)" }}
+            >
+              {page.events.sectionTitle}
+            </h2>
+            <div className="flex items-center gap-2">
+              <span className="h-[9px] w-14 rounded-full bg-amber/30" />
+              <span className="h-[9px] w-[135px] rounded-full bg-amber" />
+              <span className="h-[9px] w-14 rounded-full bg-amber/30" />
+            </div>
+          </FadeUp>
         </div>
 
         {/* Mobile/Tablet Layout */}
-        <div className="mt-12 flex flex-col gap-10 lg:hidden">
+        <FadeUp
+          selector="[data-fade-m]"
+          className="mt-12 flex flex-col gap-10 lg:hidden"
+        >
           {/* Left Content */}
-          <div className="flex flex-col gap-8">
+          <div className="flex flex-col gap-8" data-fade-m>
             <MultilineHeading
               heading={page.events.heading}
               className="text-lg font-medium leading-[1.2] text-ink md:text-4xl"
@@ -347,7 +414,7 @@ export default function HomePageView({
             </div>
             <Link
               href={page.events.registerHref}
-              className="flex h-[50px] w-[171px] items-center justify-center rounded-[100px] bg-rust text-[16px] font-medium text-white"
+              className="flex h-[50px] w-[171px] items-center justify-center rounded-[100px] bg-rust text-[16px] font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-rust/90 active:translate-y-0"
               style={{ fontFamily: "var(--font-body)" }}
             >
               {page.events.registerLabel}
@@ -359,6 +426,7 @@ export default function HomePageView({
             <Link
               href={featuredHref}
               className="group relative block h-[420px] w-full overflow-hidden rounded-[20px] bg-ink sm:h-[520px]"
+              data-fade-m
             >
               <Image
                 src={featuredEvent.image}
@@ -393,60 +461,24 @@ export default function HomePageView({
           ) : null}
 
           {/* Countdown Card */}
-          <aside className="flex w-full flex-col items-center gap-8 rounded-[20px] bg-crimson px-8 py-8 text-white">
+          <aside
+            className="flex w-full flex-col items-center gap-8 rounded-[20px] bg-crimson px-8 py-8 text-white"
+            data-fade-m
+          >
             <p
               className="text-[18px] font-medium"
               style={{ fontFamily: "var(--font-body)" }}
             >
               {page.events.countdownLabel}
             </p>
-            <div className="flex flex-row items-center gap-6 text-center">
-              <div>
-                <p
-                  className="text-[48px] font-medium leading-none"
-                  style={{ fontFamily: "var(--font-body)" }}
-                >
-                  {countdown.days}
-                </p>
-                <p
-                  className="text-[14px]"
-                  style={{ fontFamily: "var(--font-body)" }}
-                >
-                  DAYS
-                </p>
-              </div>
-              <div>
-                <p
-                  className="text-[48px] font-medium leading-none"
-                  style={{ fontFamily: "var(--font-body)" }}
-                >
-                  {countdown.hours}
-                </p>
-                <p
-                  className="text-[14px]"
-                  style={{ fontFamily: "var(--font-body)" }}
-                >
-                  HOURS
-                </p>
-              </div>
-              <div>
-                <p
-                  className="text-[48px] font-medium leading-none"
-                  style={{ fontFamily: "var(--font-body)" }}
-                >
-                  {countdown.minutes}
-                </p>
-                <p
-                  className="text-[14px]"
-                  style={{ fontFamily: "var(--font-body)" }}
-                >
-                  MINUTES
-                </p>
-              </div>
-            </div>
+            <CountdownTicker
+              initial={countdown}
+              targetISO={countdownTarget}
+              layout="row"
+            />
             <Link
               href={page.events.viewAllHref}
-              className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-white text-[16px] font-medium text-subtext"
+              className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-white text-[16px] font-medium text-subtext transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/90 active:translate-y-0"
               style={{ fontFamily: "var(--font-body)" }}
             >
               {page.events.viewAllLabel}
@@ -454,7 +486,10 @@ export default function HomePageView({
           </aside>
 
           {/* Planning an Event CTA Card */}
-          <div className="flex flex-col items-center gap-4 overflow-hidden rounded-[20px] bg-crimson text-white sm:flex-row sm:items-stretch sm:gap-0">
+          <div
+            className="flex flex-col items-center gap-4 overflow-hidden rounded-[20px] bg-crimson text-white sm:flex-row sm:items-stretch sm:gap-0"
+            data-fade-m
+          >
             <Image
               src={page.planningEvent.image}
               alt={page.planningEvent.imageAlt}
@@ -479,19 +514,19 @@ export default function HomePageView({
               </div>
               <Link
                 href={page.planningEvent.ctaHref}
-                className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-white px-6 text-[16px] font-medium text-subtext sm:w-auto"
+                className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-white px-6 text-[16px] font-medium text-subtext transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/90 active:translate-y-0 sm:w-auto"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 {page.planningEvent.ctaLabel}
               </Link>
             </div>
           </div>
-        </div>
+        </FadeUp>
 
         {/* Desktop Layout — absolute positioning like Figma */}
         <div className="hidden lg:block">
           {/* Left Content */}
-          <div className="absolute left-[56px] top-[355px]">
+          <FadeUp className="absolute left-[56px] top-[355px]">
             <div className="flex flex-col gap-16">
               <div className="flex flex-col gap-8">
                 <MultilineHeading
@@ -555,19 +590,23 @@ export default function HomePageView({
             </div>
             <Link
               href={page.events.registerHref}
-              className="mt-16 flex h-[50px] w-[171px] items-center justify-center rounded-[100px] bg-rust text-[16px] font-medium text-white"
+              className="mt-16 flex h-[50px] w-[171px] items-center justify-center rounded-[100px] bg-rust text-[16px] font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-rust/90 active:translate-y-0"
               style={{ fontFamily: "var(--font-body)" }}
             >
               {page.events.registerLabel}
             </Link>
-          </div>
+          </FadeUp>
 
           {/* Featured Event + Countdown — featured sits immediately left of countdown */}
-          <div className="absolute right-[56px] top-[355px] flex items-center gap-6">
+          <FadeUp
+            selector="[data-fade]"
+            className="absolute right-[56px] top-[355px] flex items-center gap-6"
+          >
             {featuredEvent?.image ? (
               <Link
                 href={featuredHref}
                 className="group relative block h-[560px] w-[370px] overflow-hidden rounded-[20px] bg-ink shadow-[0_20px_50px_rgba(0,0,0,0.18)] transition-transform duration-300 hover:-translate-y-1"
+                data-fade
               >
                 <Image
                   src={featuredEvent.image}
@@ -601,71 +640,33 @@ export default function HomePageView({
               </Link>
             ) : null}
 
-            <aside className="flex h-[760px] w-[220px] shrink-0 flex-col items-center justify-between rounded-[20px] bg-crimson px-8 py-8 text-white">
+            <aside
+              className="flex h-[760px] w-[220px] shrink-0 flex-col items-center justify-between rounded-[20px] bg-crimson px-8 py-8 text-white"
+              data-fade
+            >
               <p
                 className="text-[20px] font-medium"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 {page.events.countdownLabel}
               </p>
-              <div className="flex flex-col items-center gap-10 text-center">
-                <div>
-                  <p
-                    className="text-[90px] font-medium leading-none"
-                    style={{ fontFamily: "var(--font-body)" }}
-                  >
-                    {countdown.days}
-                  </p>
-                  <p
-                    className="text-[16px]"
-                    style={{ fontFamily: "var(--font-body)" }}
-                  >
-                    DAYS
-                  </p>
-                </div>
-                <div className="h-px w-[126px] bg-white/40" />
-                <div>
-                  <p
-                    className="text-[90px] font-medium leading-none"
-                    style={{ fontFamily: "var(--font-body)" }}
-                  >
-                    {countdown.hours}
-                  </p>
-                  <p
-                    className="text-[16px]"
-                    style={{ fontFamily: "var(--font-body)" }}
-                  >
-                    HOURS
-                  </p>
-                </div>
-                <div className="h-px w-[126px] bg-white/40" />
-                <div>
-                  <p
-                    className="text-[90px] font-medium leading-none"
-                    style={{ fontFamily: "var(--font-body)" }}
-                  >
-                    {countdown.minutes}
-                  </p>
-                  <p
-                    className="text-[16px]"
-                    style={{ fontFamily: "var(--font-body)" }}
-                  >
-                    MINUTES
-                  </p>
-                </div>
-              </div>
+              <CountdownTicker
+                initial={countdown}
+                targetISO={countdownTarget}
+                layout="column"
+              />
               <Link
                 href={page.events.viewAllHref}
-                className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-white text-[16px] font-medium text-subtext"
+                className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-white text-[16px] font-medium text-subtext transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/90 active:translate-y-0"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 {page.events.viewAllLabel}
               </Link>
             </aside>
-          </div>
+          </FadeUp>
 
           {/* Planning an Event CTA Card */}
-          <div className="absolute left-[56px] top-[977px] flex items-center gap-4 overflow-hidden rounded-[20px] bg-crimson pr-6 text-white">
+          <FadeUp className="absolute left-[56px] top-[977px] flex items-center gap-4 overflow-hidden rounded-[20px] bg-crimson pr-6 text-white">
             <Image
               src={page.planningEvent.image}
               alt={page.planningEvent.imageAlt}
@@ -690,20 +691,20 @@ export default function HomePageView({
               </div>
               <Link
                 href={page.planningEvent.ctaHref}
-                className="flex h-[50px] items-center justify-center rounded-[100px] bg-white px-6 text-[16px] font-medium text-subtext"
+                className="flex h-[50px] items-center justify-center rounded-[100px] bg-white px-6 text-[16px] font-medium text-subtext transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/90 active:translate-y-0"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 {page.planningEvent.ctaLabel}
               </Link>
             </div>
-          </div>
+          </FadeUp>
         </div>
       </section>
 
       {/* ── Moments at Danyame Section ── */}
       <section className="bg-teal px-6 py-16 md:px-10 lg:px-[56px] lg:py-[130px]">
         {/* Header */}
-        <div className="text-white">
+        <FadeUp className="text-white">
           <h2
             className="text-[32px] font-medium leading-[1.1] md:text-[40px] lg:whitespace-nowrap lg:text-[56px]"
             style={{ fontFamily: "var(--font-heading)" }}
@@ -716,11 +717,18 @@ export default function HomePageView({
           >
             {page.gallery.intro}
           </p>
-        </div>
+        </FadeUp>
 
         {/* Mobile/Tablet Gallery Grid */}
-        <div className="mt-10 grid grid-cols-2 gap-4 md:gap-6 lg:hidden">
-          <div className="col-span-2 aspect-[4/3] overflow-hidden rounded-[20px]">
+        <FadeUp
+          selector="[data-gallery-item]"
+          stagger={0.08}
+          className="mt-10 grid grid-cols-2 gap-4 md:gap-6 lg:hidden"
+        >
+          <div
+            className="col-span-2 aspect-[4/3] overflow-hidden rounded-[20px]"
+            data-gallery-item
+          >
             <Image
               src={galleryImages[0]?.src ?? ""}
               alt={galleryImages[0]?.alt ?? "Gallery image 1"}
@@ -730,7 +738,10 @@ export default function HomePageView({
               sizes="(max-width: 1024px) 100vw, 37vw"
             />
           </div>
-          <div className="aspect-[1/1.3] overflow-hidden rounded-[20px]">
+          <div
+            className="aspect-[1/1.3] overflow-hidden rounded-[20px]"
+            data-gallery-item
+          >
             <Image
               src={galleryImages[1]?.src ?? ""}
               alt={galleryImages[1]?.alt ?? "Gallery image 2"}
@@ -739,7 +750,10 @@ export default function HomePageView({
               className="h-full w-full object-cover"
             />
           </div>
-          <div className="aspect-[1/1.3] overflow-hidden rounded-[20px]">
+          <div
+            className="aspect-[1/1.3] overflow-hidden rounded-[20px]"
+            data-gallery-item
+          >
             <Image
               src={galleryImages[2]?.src ?? ""}
               alt={galleryImages[2]?.alt ?? "Gallery image 3"}
@@ -748,7 +762,10 @@ export default function HomePageView({
               className="h-full w-full object-cover"
             />
           </div>
-          <div className="aspect-[1/1.3] overflow-hidden rounded-[20px]">
+          <div
+            className="aspect-[1/1.3] overflow-hidden rounded-[20px]"
+            data-gallery-item
+          >
             <Image
               src={galleryImages[3]?.src ?? ""}
               alt={galleryImages[3]?.alt ?? "Gallery image 4"}
@@ -757,7 +774,10 @@ export default function HomePageView({
               className="h-full w-full object-cover"
             />
           </div>
-          <div className="aspect-[1/1.3] overflow-hidden rounded-[20px]">
+          <div
+            className="aspect-[1/1.3] overflow-hidden rounded-[20px]"
+            data-gallery-item
+          >
             <Image
               src={galleryImages[4]?.src ?? ""}
               alt={galleryImages[4]?.alt ?? "Gallery image 5"}
@@ -766,7 +786,10 @@ export default function HomePageView({
               className="h-full w-full object-cover"
             />
           </div>
-          <div className="aspect-[1/1.3] overflow-hidden rounded-[20px]">
+          <div
+            className="aspect-[1/1.3] overflow-hidden rounded-[20px]"
+            data-gallery-item
+          >
             <Image
               src={galleryImages[5]?.src ?? ""}
               alt={galleryImages[5]?.alt ?? "Gallery image 6"}
@@ -775,7 +798,10 @@ export default function HomePageView({
               className="h-full w-full object-cover"
             />
           </div>
-          <div className="aspect-[1/1.3] overflow-hidden rounded-[20px]">
+          <div
+            className="aspect-[1/1.3] overflow-hidden rounded-[20px]"
+            data-gallery-item
+          >
             <Image
               src={galleryImages[6]?.src ?? ""}
               alt={galleryImages[6]?.alt ?? "Gallery image 7"}
@@ -784,15 +810,24 @@ export default function HomePageView({
               className="h-full w-full object-cover"
             />
           </div>
-        </div>
+        </FadeUp>
 
         {/* Desktop Gallery — flex layout that fills width */}
-        <div className="mt-10 hidden flex-col gap-[100px] lg:flex">
+        <ParallaxImages
+          selector="[data-gallery-item] img"
+          range={10}
+          className="mt-10 hidden flex-col gap-[100px] lg:flex"
+        >
           {/* Row 1: small left (36.6%), large right (46%), gap between */}
-          <div className="flex items-start justify-between">
+          <FadeUp
+            selector="[data-gallery-item]"
+            stagger={0.1}
+            className="flex items-start justify-between"
+          >
             <div
               className="relative overflow-hidden rounded-[20px]"
               style={{ width: "36.6%", aspectRatio: "486/362" }}
+              data-gallery-item
             >
               <Image
                 src={galleryImages[0]?.src ?? ""}
@@ -805,6 +840,7 @@ export default function HomePageView({
             <div
               className="relative overflow-hidden rounded-[20px]"
               style={{ width: "46%", aspectRatio: "611/565" }}
+              data-gallery-item
             >
               <Image
                 src={galleryImages[1]?.src ?? ""}
@@ -814,15 +850,22 @@ export default function HomePageView({
                 sizes="(max-width: 1024px) 100vw, 46vw"
               />
             </div>
-          </div>
+          </FadeUp>
 
           {/* Row 2: two left (54%), one right (26%), gap between */}
-          <div className="flex items-start justify-between">
+          <FadeUp
+            selector="[data-gallery-item]"
+            stagger={0.1}
+            className="flex items-start justify-between"
+          >
             <div
               className="flex gap-6"
               style={{ width: "54%", aspectRatio: "717/453" }}
             >
-              <div className="relative h-full flex-1 overflow-hidden rounded-[20px]">
+              <div
+                className="relative h-full flex-1 overflow-hidden rounded-[20px]"
+                data-gallery-item
+              >
                 <Image
                   src={galleryImages[2]?.src ?? ""}
                   alt={galleryImages[2]?.alt ?? "Gallery image 3"}
@@ -831,7 +874,10 @@ export default function HomePageView({
                   sizes="(max-width: 1024px) 50vw, 23vw"
                 />
               </div>
-              <div className="relative h-full flex-1 overflow-hidden rounded-[20px]">
+              <div
+                className="relative h-full flex-1 overflow-hidden rounded-[20px]"
+                data-gallery-item
+              >
                 <Image
                   src={galleryImages[3]?.src ?? ""}
                   alt={galleryImages[3]?.alt ?? "Gallery image 4"}
@@ -844,6 +890,7 @@ export default function HomePageView({
             <div
               className="relative overflow-hidden rounded-[20px]"
               style={{ width: "26%", aspectRatio: "347/453" }}
+              data-gallery-item
             >
               <Image
                 src={galleryImages[4]?.src ?? ""}
@@ -853,15 +900,22 @@ export default function HomePageView({
                 sizes="(max-width: 1024px) 100vw, 33vw"
               />
             </div>
-          </div>
+          </FadeUp>
 
           {/* Row 3: two images on right side (54% of width) */}
-          <div className="flex justify-end">
+          <FadeUp
+            selector="[data-gallery-item]"
+            stagger={0.1}
+            className="flex justify-end"
+          >
             <div
               className="flex gap-6"
               style={{ width: "54%", aspectRatio: "717/453" }}
             >
-              <div className="relative h-full flex-1 overflow-hidden rounded-[20px]">
+              <div
+                className="relative h-full flex-1 overflow-hidden rounded-[20px]"
+                data-gallery-item
+              >
                 <Image
                   src={galleryImages[5]?.src ?? ""}
                   alt={galleryImages[5]?.alt ?? "Gallery image 6"}
@@ -870,7 +924,10 @@ export default function HomePageView({
                   sizes="(max-width: 1024px) 50vw, 23vw"
                 />
               </div>
-              <div className="relative h-full flex-1 overflow-hidden rounded-[20px]">
+              <div
+                className="relative h-full flex-1 overflow-hidden rounded-[20px]"
+                data-gallery-item
+              >
                 <Image
                   src={galleryImages[6]?.src ?? ""}
                   alt={galleryImages[6]?.alt ?? "Gallery image 7"}
@@ -880,17 +937,19 @@ export default function HomePageView({
                 />
               </div>
             </div>
-          </div>
-        </div>
+          </FadeUp>
+        </ParallaxImages>
 
         {/* View Full Gallery Button */}
-        <Link
-          href={page.gallery.ctaHref}
-          className="mt-10 flex h-[50px] w-[171px] items-center justify-center rounded-[100px] bg-white text-[16px] font-medium text-ink lg:mt-16"
-          style={{ fontFamily: "var(--font-body)" }}
-        >
-          {page.gallery.ctaLabel}
-        </Link>
+        <FadeUp className="mt-10 lg:mt-16">
+          <Link
+            href={page.gallery.ctaHref}
+            className="flex h-[50px] w-[171px] items-center justify-center rounded-[100px] bg-white text-[16px] font-medium text-ink transition-transform duration-300 hover:-translate-y-0.5"
+            style={{ fontFamily: "var(--font-body)" }}
+          >
+            {page.gallery.ctaLabel}
+          </Link>
+        </FadeUp>
       </section>
 
       <TestimonialsSection
@@ -902,7 +961,7 @@ export default function HomePageView({
       {/* ── Ready For Your Next Experience Section ── */}
       <section className="relative bg-white px-6 py-16 md:px-10 lg:h-[796px] lg:px-14 lg:py-0 lg:pt-[130px]">
         {/* Heading with decorations */}
-        <div className="relative">
+        <FadeUp className="relative">
           <h2
             className="text-[48px] font-semibold uppercase leading-[1.1] text-ink md:text-[72px] lg:text-[122px]"
             style={{ fontFamily: "var(--font-heading)" }}
@@ -955,10 +1014,13 @@ export default function HomePageView({
               </svg>
             </div>
           </div>
-        </div>
+        </FadeUp>
 
         {/* Right content — CTA */}
-        <div className="mt-10 lg:absolute lg:right-14 lg:top-[463px] lg:mt-0 lg:w-[460px] lg:text-right">
+        <FadeUp
+          delay={0.15}
+          className="mt-10 lg:absolute lg:right-14 lg:top-[463px] lg:mt-0 lg:w-[460px] lg:text-right"
+        >
           <p
             className="text-[18px] leading-[1.5] text-subtext md:text-[20px] lg:text-[24px]"
             style={{ fontFamily: "var(--font-body)" }}
@@ -968,20 +1030,20 @@ export default function HomePageView({
           <div className="mt-6 flex flex-col gap-4 sm:flex-row lg:justify-end">
             <Link
               href={page.finalCta.secondaryHref}
-              className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-[rgba(208,63,80,0.1)] text-[16px] font-medium text-ink sm:w-[182px]"
+              className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-[rgba(208,63,80,0.1)] text-[16px] font-medium text-ink transition-all duration-200 hover:-translate-y-0.5 hover:bg-[rgba(208,63,80,0.18)] active:translate-y-0 sm:w-[182px]"
               style={{ fontFamily: "var(--font-body)" }}
             >
               {page.finalCta.secondaryLabel}
             </Link>
             <Link
               href={page.finalCta.primaryHref}
-              className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-rust text-[16px] font-medium text-white sm:w-[182px]"
+              className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-rust text-[16px] font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-rust/90 active:translate-y-0 sm:w-[182px]"
               style={{ fontFamily: "var(--font-body)" }}
             >
               {page.finalCta.primaryLabel}
             </Link>
           </div>
-        </div>
+        </FadeUp>
       </section>
 
       <Footer />

@@ -1,89 +1,24 @@
-import Image from "next/image";
 import Link from "next/link";
 
-import CategoryPills from "@/components/experiences/CategoryPills";
+import CategorySection from "@/components/experiences/CategorySection";
+import ExperiencesHero from "@/components/experiences/ExperiencesHero";
 import ExperiencesScrollSetup from "@/components/experiences/ExperiencesScrollSetup";
-import Footer from "@/components/Footer";
 import ExperiencesTagline from "@/components/experiences/ExperiencesTagline";
 import ExploreMoreSection from "@/components/experiences/ExploreMoreSection";
-import Navbar from "@/components/Navbar";
-import type {
-  ExperienceCategory,
-  ExperiencesPageData,
-} from "@/lib/pages/experiences";
+import DecorDrift from "@/components/DecorDrift";
+import FadeUp from "@/components/FadeUp";
+import Footer from "@/components/Footer";
+import type { ExperiencesPageData } from "@/lib/pages/experiences";
 
 type ExperiencesPageViewProps = {
   page: ExperiencesPageData;
 };
 
-function CategorySection({
-  category,
-  categories,
-  index,
-}: {
-  category: ExperienceCategory;
-  categories: ExperienceCategory[];
-  index: number;
-}) {
-  return (
-    <section
-      id={category.slug}
-      className="experience-category-section relative h-dvh min-h-[520px] w-full overflow-hidden text-white sm:min-h-[640px]"
-    >
-      <Image
-        src={category.image}
-        alt=""
-        fill
-        className="object-cover"
-        sizes="100vw"
-      />
-      <div className="absolute inset-0 bg-black/30" />
-
-      <div className="relative z-10 flex h-full min-h-0 flex-col px-6 pb-10 pt-6 sm:px-10 sm:pb-12 sm:pt-10 lg:px-14 lg:pb-[max(7rem,12vh)] lg:pt-[64px]">
-        <CategoryPills categories={categories} activeIndex={index} />
-
-        <h2
-          className="mt-[clamp(2.5rem,28vh,22rem)] text-[28px] font-medium leading-[1.1] sm:text-[32px] lg:text-[40px] lg:whitespace-nowrap"
-          style={{ fontFamily: "var(--font-heading)" }}
-        >
-          {category.title}
-        </h2>
-
-        <p
-          className="mt-auto max-w-[587px] text-sm leading-[1.5] sm:text-base"
-          style={{ fontFamily: "var(--font-body)" }}
-        >
-          {category.description}
-        </p>
-      </div>
-    </section>
-  );
-}
-
 export default function ExperiencesPageView({ page }: ExperiencesPageViewProps) {
   return (
     <div className="overflow-x-hidden bg-white">
       <ExperiencesScrollSetup />
-      <section className="relative flex h-dvh min-h-[520px] w-full flex-col overflow-hidden text-white sm:min-h-[640px]">
-        <Image
-          src={page.hero.image}
-          alt=""
-          fill
-          priority
-          className="object-cover"
-          sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-black/30" />
-        <Navbar />
-        <div className="relative z-10 flex flex-1 flex-col justify-end px-6 pb-12 sm:px-10 sm:pb-16 lg:px-14 lg:pb-[max(10rem,15vh)]">
-          <h1
-            className="max-w-[917px] text-[32px] font-semibold uppercase leading-[1.1] sm:text-[48px] md:text-[56px] lg:text-[80px] lg:leading-none"
-            style={{ fontFamily: "var(--font-heading)" }}
-          >
-            {page.hero.title}
-          </h1>
-        </div>
-      </section>
+      <ExperiencesHero image={page.hero.image} title={page.hero.title} />
 
       <section className="flex items-center justify-center bg-white px-6 py-20 sm:px-10 sm:py-28 md:py-40 lg:px-[295px] lg:py-[410px]">
         <ExperiencesTagline
@@ -104,7 +39,7 @@ export default function ExperiencesPageView({ page }: ExperiencesPageViewProps) 
       <ExploreMoreSection exploreMore={page.exploreMore} />
 
       <section className="relative bg-white px-6 py-16 md:px-10 md:py-24 lg:h-[796px] lg:px-14 lg:py-0 lg:pt-[130px]">
-        <div className="relative">
+        <FadeUp className="relative">
           <h2
             className="text-[40px] font-semibold uppercase leading-[1.1] text-ink sm:text-[56px] md:text-[80px] lg:text-[122px]"
             style={{ fontFamily: "var(--font-heading)" }}
@@ -118,8 +53,14 @@ export default function ExperiencesPageView({ page }: ExperiencesPageViewProps) 
             {page.finalCta.line4}
           </h2>
 
-          <div className="pointer-events-none absolute inset-0 hidden lg:block" aria-hidden>
-            <div className="absolute left-[389px] top-[-36px] h-[230px] w-[230px]">
+          <DecorDrift
+            className="pointer-events-none absolute inset-0 hidden lg:block"
+            aria-hidden
+          >
+            <div
+              className="absolute left-[389px] top-[-36px] h-[230px] w-[230px]"
+              data-cta-decor
+            >
               <svg
                 className="absolute left-[47px] top-[47px] h-[136px] w-[136px]"
                 viewBox="0 0 122 135"
@@ -143,17 +84,34 @@ export default function ExperiencesPageView({ page }: ExperiencesPageViewProps) 
                   d="M53.333 26.667h10a3.333 3.333 0 013.334 3.333v33.333a3.333 3.333 0 01-3.334 3.334h-10V26.667z"
                   fill="white"
                 />
-                <rect x="26.667" y="16.667" width="26.667" height="50" rx="3.333" fill="white" />
+                <rect
+                  x="26.667"
+                  y="16.667"
+                  width="26.667"
+                  height="50"
+                  rx="3.333"
+                  fill="white"
+                />
                 <path
                   d="M33.333 16.667v-3.334a6.667 6.667 0 0113.334 0v3.334"
                   stroke="white"
                   strokeWidth="2"
                 />
-                <rect x="33.333" y="30" width="13.333" height="20" rx="1.667" fill="#D03F50" />
+                <rect
+                  x="33.333"
+                  y="30"
+                  width="13.333"
+                  height="20"
+                  rx="1.667"
+                  fill="#D03F50"
+                />
               </svg>
             </div>
 
-            <div className="absolute left-[502px] top-[245px] h-[215px] w-[215px]">
+            <div
+              className="absolute left-[502px] top-[245px] h-[215px] w-[215px]"
+              data-cta-decor
+            >
               <svg
                 className="absolute left-[26px] top-[16px] h-[145px] w-[162px]"
                 viewBox="0 0 162 145"
@@ -186,10 +144,13 @@ export default function ExperiencesPageView({ page }: ExperiencesPageViewProps) 
                 <path d="M75 20v75" stroke="white" strokeWidth="4" />
               </svg>
             </div>
-          </div>
-        </div>
+          </DecorDrift>
+        </FadeUp>
 
-        <div className="mt-10 text-left md:mt-16 lg:absolute lg:right-14 lg:top-[463px] lg:mt-0 lg:w-[460px] lg:text-right">
+        <FadeUp
+          delay={0.15}
+          className="mt-10 text-left md:mt-16 lg:absolute lg:right-14 lg:top-[463px] lg:mt-0 lg:w-[460px] lg:text-right"
+        >
           <p
             className="text-base leading-[1.5] text-subtext sm:text-lg md:text-xl lg:text-2xl"
             style={{ fontFamily: "var(--font-body)" }}
@@ -199,20 +160,20 @@ export default function ExperiencesPageView({ page }: ExperiencesPageViewProps) 
           <div className="mt-6 flex flex-col gap-4 sm:flex-row lg:justify-end">
             <Link
               href={page.finalCta.secondaryHref}
-              className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-[rgba(208,63,80,0.1)] text-base font-medium text-ink sm:w-[182px]"
+              className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-[rgba(208,63,80,0.1)] text-base font-medium text-ink transition-all duration-200 hover:-translate-y-0.5 hover:bg-[rgba(208,63,80,0.18)] active:translate-y-0 sm:w-[182px]"
               style={{ fontFamily: "var(--font-body)" }}
             >
               {page.finalCta.secondaryLabel}
             </Link>
             <Link
               href={page.finalCta.primaryHref}
-              className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-rust text-base font-medium text-white sm:w-[182px]"
+              className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-rust text-base font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-rust/90 active:translate-y-0 sm:w-[182px]"
               style={{ fontFamily: "var(--font-body)" }}
             >
               {page.finalCta.primaryLabel}
             </Link>
           </div>
-        </div>
+        </FadeUp>
       </section>
 
       <Footer />
