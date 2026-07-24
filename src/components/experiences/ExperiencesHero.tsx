@@ -5,6 +5,7 @@ import { gsap } from "gsap";
 import { useEffect, useRef } from "react";
 
 import Navbar from "@/components/Navbar";
+import ScrollCue from "@/components/ScrollCue";
 
 type ExperiencesHeroProps = {
   image: string;
@@ -81,6 +82,8 @@ export default function ExperiencesHero({ image, title }: ExperiencesHeroProps) 
           {title}
         </h1>
       </div>
+
+      <ScrollCue />
     </section>
   );
 }

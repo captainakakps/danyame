@@ -11,6 +11,7 @@ export interface FeaturedEvent {
   };
   hasTickets: boolean;
   ticketUrl?: string;
+  eventDateISO?: string;
 }
 
 export interface Event {
@@ -48,6 +49,7 @@ export const events: Event[] = [
     image: "/assets/attend-event/featured.jpg",
     hasTickets: true,
     ticketLabel: "TICKETS & INFO",
+    eventDateISO: "2026-07-26T14:00:00.000Z",
   },
   {
     slug: "afro-vibes-live",
@@ -63,6 +65,7 @@ export const events: Event[] = [
     image: "/assets/attend-event/event-1.jpg",
     hasTickets: true,
     ticketLabel: "TICKETS & INFO",
+    eventDateISO: "2026-08-02T19:00:00.000Z",
   },
   {
     slug: "sunset-sessions",
@@ -78,6 +81,7 @@ export const events: Event[] = [
     image: "/assets/attend-event/event-2.jpg",
     hasTickets: true,
     ticketLabel: "TICKETS & INFO",
+    eventDateISO: "2026-08-15T17:30:00.000Z",
   },
   {
     slug: "game-night",
@@ -93,6 +97,7 @@ export const events: Event[] = [
     image: "/assets/attend-event/event-3.jpg",
     hasTickets: true,
     ticketLabel: "TICKETS & INFO",
+    eventDateISO: "2026-08-22T18:00:00.000Z",
   },
   {
     slug: "summer-splash",
@@ -108,6 +113,7 @@ export const events: Event[] = [
     image: "/assets/attend-event/event-4.jpg",
     hasTickets: true,
     ticketLabel: "TICKETS & INFO",
+    eventDateISO: "2026-09-15T14:00:00.000Z",
   },
   {
     slug: "danyame-live",
@@ -123,6 +129,7 @@ export const events: Event[] = [
     image: "/assets/attend-event/event-5.jpg",
     hasTickets: false,
     ticketLabel: "INFO",
+    eventDateISO: "2026-09-21T19:30:00.000Z",
   },
   {
     slug: "friday-vibez",
@@ -138,6 +145,7 @@ export const events: Event[] = [
     image: "/assets/attend-event/event-6.jpg",
     hasTickets: false,
     ticketLabel: "INFO",
+    eventDateISO: "2026-10-02T20:00:00.000Z",
   },
 ];
 
@@ -151,11 +159,21 @@ export const featuredEvent: FeaturedEvent = (() => {
     description: event.description,
     dateCard: { month: "JUL", day: "26", time: "2PM" },
     hasTickets: event.hasTickets,
+    eventDateISO: event.eventDateISO,
   };
 })();
 
 export function getEventBySlug(slug: string): Event | undefined {
   return events.find((event) => event.slug === slug);
+}
+
+export function isEventPast(eventDateISO: string | undefined): boolean {
+  if (!eventDateISO) {
+    return false;
+  }
+
+  const eventDate = new Date(eventDateISO);
+  return !Number.isNaN(eventDate.getTime()) && eventDate.getTime() < Date.now();
 }
 
 export function getEventsByMonth(): { month: string; events: Event[] }[] {

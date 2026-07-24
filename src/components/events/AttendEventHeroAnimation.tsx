@@ -77,14 +77,6 @@ export default function AttendEventHeroAnimation({
           },
           0.62,
         );
-
-      gsap.to("[data-attend-date-card]", {
-        y: "+=10",
-        duration: 3.6,
-        ease: "sine.inOut",
-        repeat: -1,
-        yoyo: true,
-      });
     }, el);
 
     return () => {

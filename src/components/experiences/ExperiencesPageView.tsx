@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import CategorySection from "@/components/experiences/CategorySection";
 import ExperiencesHero from "@/components/experiences/ExperiencesHero";
 import ExperiencesScrollSetup from "@/components/experiences/ExperiencesScrollSetup";
@@ -8,6 +6,7 @@ import ExploreMoreSection from "@/components/experiences/ExploreMoreSection";
 import DecorDrift from "@/components/DecorDrift";
 import FadeUp from "@/components/FadeUp";
 import Footer from "@/components/Footer";
+import MagneticLink from "@/components/MagneticLink";
 import type { ExperiencesPageData } from "@/lib/pages/experiences";
 
 type ExperiencesPageViewProps = {
@@ -158,20 +157,20 @@ export default function ExperiencesPageView({ page }: ExperiencesPageViewProps) 
             {page.finalCta.body}
           </p>
           <div className="mt-6 flex flex-col gap-4 sm:flex-row lg:justify-end">
-            <Link
+            <MagneticLink
               href={page.finalCta.secondaryHref}
               className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-[rgba(208,63,80,0.1)] text-base font-medium text-ink transition-all duration-200 hover:-translate-y-0.5 hover:bg-[rgba(208,63,80,0.18)] active:translate-y-0 sm:w-[182px]"
               style={{ fontFamily: "var(--font-body)" }}
             >
               {page.finalCta.secondaryLabel}
-            </Link>
-            <Link
+            </MagneticLink>
+            <MagneticLink
               href={page.finalCta.primaryHref}
               className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-rust text-base font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-rust/90 active:translate-y-0 sm:w-[182px]"
               style={{ fontFamily: "var(--font-body)" }}
             >
               {page.finalCta.primaryLabel}
-            </Link>
+            </MagneticLink>
           </div>
         </FadeUp>
       </section>

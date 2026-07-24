@@ -6,7 +6,7 @@ export type GalleryImage = {
 export type GalleryRow = GalleryImage[];
 
 export type GallerySet = {
-  rows: [GalleryRow, GalleryRow, GalleryRow];
+  rows: GalleryRow[];
 };
 
 export type GalleryCategoryData = {
@@ -154,18 +154,27 @@ export const staticGalleryCategories: GalleryCategoryData[] = [
   },
 ];
 
+// Repeating row-size rhythm the mosaic layout renders (2 / 3 / 2 / 2 / 3 / 2 …),
+// so any image count — not just exactly 7 — produces a sensible grid.
+const ROW_PATTERN = [2, 3, 2];
+
 export function buildGallerySet(images: GalleryImage[]): GallerySet | null {
-  if (images.length < 7) {
+  if (images.length === 0) {
     return null;
   }
 
-  return {
-    rows: [
-      [images[0], images[1]],
-      [images[2], images[3], images[4]],
-      [images[5], images[6]],
-    ],
-  };
+  const rows: GalleryRow[] = [];
+  let index = 0;
+  let patternIndex = 0;
+
+  while (index < images.length) {
+    const size = ROW_PATTERN[patternIndex % ROW_PATTERN.length];
+    rows.push(images.slice(index, index + size));
+    index += size;
+    patternIndex += 1;
+  }
+
+  return { rows };
 }
 
 export function flattenGallerySet(set: GallerySet): GalleryImage[] {

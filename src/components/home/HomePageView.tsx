@@ -1,18 +1,25 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CategoryGrid from "@/components/CategoryGrid";
 import CountdownTicker from "@/components/home/CountdownTicker";
 import FadeUp from "@/components/FadeUp";
 import HeroAnimation from "@/components/home/HeroAnimation";
+import ScrollCue from "@/components/ScrollCue";
 import ParallaxImages from "@/components/ParallaxImages";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
+import ScrollProgressBar from "@/components/ScrollProgressBar";
+import MagneticLink from "@/components/MagneticLink";
+import TiltLink from "@/components/TiltLink";
+import ScrubReveal from "@/components/ScrubReveal";
+import HomeSectionNav from "@/components/home/HomeSectionNav";
+import FloatingCTA from "@/components/home/FloatingCTA";
 import type { EventCountdown, HomePageData } from "@/lib/pages/home";
 import type { FeaturedEvent } from "@/lib/events";
 import { getEventPath } from "@/lib/events";
 import { pages } from "@/lib/tokens";
+import { navCta } from "@/lib/navigation";
 
 type HomePageViewProps = {
   page: HomePageData;
@@ -57,6 +64,8 @@ export default function HomePageView({
   return (
     // <>
     <div className="bg-white overflow-x-hidden">
+      <ScrollProgressBar />
+      <HomeSectionNav />
       {/* ── Hero ── */}
       <HeroAnimation>
       <section className="relative min-h-[600px] w-full overflow-hidden text-white lg:h-[1014px]">
@@ -228,12 +237,14 @@ export default function HomePageView({
             </div>
           </div>
         </div>
+
+        <ScrollCue />
       </section>
       </HeroAnimation>
 
       {/* ── Everything You Need Section ── */}
       <section className="bg-white px-6 py-16 md:px-10 lg:px-[56px] lg:pb-[72px] lg:pt-[130px]">
-        <FadeUp
+        <ScrubReveal
           selector="[data-fade]"
           className="mx-auto flex max-w-[1328px] flex-col gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-0"
         >
@@ -251,15 +262,15 @@ export default function HomePageView({
             >
               {page.everythingYouNeed.body}
             </p>
-            <Link
+            <MagneticLink
               href={page.everythingYouNeed.ctaHref}
               className="flex h-[50px] w-[182px] items-center justify-center rounded-[100px] bg-rust text-[16px] font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-rust/90 active:translate-y-0"
               style={{ fontFamily: "var(--font-body)" }}
             >
               {page.everythingYouNeed.ctaLabel}
-            </Link>
+            </MagneticLink>
           </div>
-        </FadeUp>
+        </ScrubReveal>
       </section>
 
       {/* ── Category Grid Section ── */}
@@ -310,13 +321,13 @@ export default function HomePageView({
                 {page.aboutTeaser.body}
               </p>
             </div>
-            <Link
+            <MagneticLink
               href={page.aboutTeaser.ctaHref}
               className="flex h-[50px] w-fit items-center justify-center rounded-[100px] bg-rust px-[24px] text-[16px] font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-rust/90 active:translate-y-0"
               style={{ fontFamily: "var(--font-body)" }}
             >
               {page.aboutTeaser.ctaLabel}
-            </Link>
+            </MagneticLink>
           </div>
           <Image
             src={page.aboutTeaser.image}
@@ -330,7 +341,7 @@ export default function HomePageView({
       </section>
 
       {/* ── Upcoming Events Section ── */}
-      <section className="relative bg-white px-6 py-16 md:px-10 lg:h-[1245px] lg:px-[56px] lg:py-0">
+      <section id="events" className="relative bg-white px-6 py-16 md:px-10 lg:h-[1245px] lg:px-[56px] lg:py-0">
         {/* Section Header */}
         <div className="flex flex-col items-center gap-6 lg:absolute lg:left-1/2 lg:top-[130px] lg:-translate-x-1/2">
           <FadeUp className="flex flex-col items-center gap-6">
@@ -412,18 +423,18 @@ export default function HomePageView({
                 {page.events.metaVibes}
               </span>
             </div>
-            <Link
+            <MagneticLink
               href={page.events.registerHref}
               className="flex h-[50px] w-[171px] items-center justify-center rounded-[100px] bg-rust text-[16px] font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-rust/90 active:translate-y-0"
               style={{ fontFamily: "var(--font-body)" }}
             >
               {page.events.registerLabel}
-            </Link>
+            </MagneticLink>
           </div>
 
           {/* Featured Event */}
           {featuredEvent?.image ? (
-            <Link
+            <TiltLink
               href={featuredHref}
               className="group relative block h-[420px] w-full overflow-hidden rounded-[20px] bg-ink sm:h-[520px]"
               data-fade-m
@@ -457,7 +468,7 @@ export default function HomePageView({
                   {featuredEvent.dateCard.time}
                 </p>
               </div>
-            </Link>
+            </TiltLink>
           ) : null}
 
           {/* Countdown Card */}
@@ -476,13 +487,13 @@ export default function HomePageView({
               targetISO={countdownTarget}
               layout="row"
             />
-            <Link
+            <MagneticLink
               href={page.events.viewAllHref}
               className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-white text-[16px] font-medium text-subtext transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/90 active:translate-y-0"
               style={{ fontFamily: "var(--font-body)" }}
             >
               {page.events.viewAllLabel}
-            </Link>
+            </MagneticLink>
           </aside>
 
           {/* Planning an Event CTA Card */}
@@ -512,13 +523,13 @@ export default function HomePageView({
                   {page.planningEvent.body}
                 </p>
               </div>
-              <Link
+              <MagneticLink
                 href={page.planningEvent.ctaHref}
                 className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-white px-6 text-[16px] font-medium text-subtext transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/90 active:translate-y-0 sm:w-auto"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 {page.planningEvent.ctaLabel}
-              </Link>
+              </MagneticLink>
             </div>
           </div>
         </FadeUp>
@@ -588,13 +599,13 @@ export default function HomePageView({
                 </span>
               </div>
             </div>
-            <Link
+            <MagneticLink
               href={page.events.registerHref}
               className="mt-16 flex h-[50px] w-[171px] items-center justify-center rounded-[100px] bg-rust text-[16px] font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-rust/90 active:translate-y-0"
               style={{ fontFamily: "var(--font-body)" }}
             >
               {page.events.registerLabel}
-            </Link>
+            </MagneticLink>
           </FadeUp>
 
           {/* Featured Event + Countdown — featured sits immediately left of countdown */}
@@ -603,7 +614,7 @@ export default function HomePageView({
             className="absolute right-[56px] top-[355px] flex items-center gap-6"
           >
             {featuredEvent?.image ? (
-              <Link
+              <TiltLink
                 href={featuredHref}
                 className="group relative block h-[560px] w-[370px] overflow-hidden rounded-[20px] bg-ink shadow-[0_20px_50px_rgba(0,0,0,0.18)] transition-transform duration-300 hover:-translate-y-1"
                 data-fade
@@ -637,7 +648,7 @@ export default function HomePageView({
                     {featuredEvent.dateCard.time}
                   </p>
                 </div>
-              </Link>
+              </TiltLink>
             ) : null}
 
             <aside
@@ -655,13 +666,13 @@ export default function HomePageView({
                 targetISO={countdownTarget}
                 layout="column"
               />
-              <Link
+              <MagneticLink
                 href={page.events.viewAllHref}
                 className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-white text-[16px] font-medium text-subtext transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/90 active:translate-y-0"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 {page.events.viewAllLabel}
-              </Link>
+              </MagneticLink>
             </aside>
           </FadeUp>
 
@@ -689,20 +700,20 @@ export default function HomePageView({
                   {page.planningEvent.body}
                 </p>
               </div>
-              <Link
+              <MagneticLink
                 href={page.planningEvent.ctaHref}
                 className="flex h-[50px] items-center justify-center rounded-[100px] bg-white px-6 text-[16px] font-medium text-subtext transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/90 active:translate-y-0"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 {page.planningEvent.ctaLabel}
-              </Link>
+              </MagneticLink>
             </div>
           </FadeUp>
         </div>
       </section>
 
       {/* ── Moments at Danyame Section ── */}
-      <section className="bg-teal px-6 py-16 md:px-10 lg:px-[56px] lg:py-[130px]">
+      <section id="gallery" className="bg-teal px-6 py-16 md:px-10 lg:px-[56px] lg:py-[130px]">
         {/* Header */}
         <FadeUp className="text-white">
           <h2
@@ -942,13 +953,13 @@ export default function HomePageView({
 
         {/* View Full Gallery Button */}
         <FadeUp className="mt-10 lg:mt-16">
-          <Link
+          <MagneticLink
             href={page.gallery.ctaHref}
             className="flex h-[50px] w-[171px] items-center justify-center rounded-[100px] bg-white text-[16px] font-medium text-ink transition-transform duration-300 hover:-translate-y-0.5"
             style={{ fontFamily: "var(--font-body)" }}
           >
             {page.gallery.ctaLabel}
-          </Link>
+          </MagneticLink>
         </FadeUp>
       </section>
 
@@ -961,7 +972,7 @@ export default function HomePageView({
       {/* ── Ready For Your Next Experience Section ── */}
       <section className="relative bg-white px-6 py-16 md:px-10 lg:h-[796px] lg:px-14 lg:py-0 lg:pt-[130px]">
         {/* Heading with decorations */}
-        <FadeUp className="relative">
+        <ScrubReveal className="relative" start="top 95%" end="top 50%">
           <h2
             className="text-[48px] font-semibold uppercase leading-[1.1] text-ink md:text-[72px] lg:text-[122px]"
             style={{ fontFamily: "var(--font-heading)" }}
@@ -1014,11 +1025,12 @@ export default function HomePageView({
               </svg>
             </div>
           </div>
-        </FadeUp>
+        </ScrubReveal>
 
         {/* Right content — CTA */}
-        <FadeUp
-          delay={0.15}
+        <ScrubReveal
+          start="top 90%"
+          end="top 45%"
           className="mt-10 lg:absolute lg:right-14 lg:top-[463px] lg:mt-0 lg:w-[460px] lg:text-right"
         >
           <p
@@ -1028,25 +1040,26 @@ export default function HomePageView({
             {page.finalCta.body}
           </p>
           <div className="mt-6 flex flex-col gap-4 sm:flex-row lg:justify-end">
-            <Link
+            <MagneticLink
               href={page.finalCta.secondaryHref}
               className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-[rgba(208,63,80,0.1)] text-[16px] font-medium text-ink transition-all duration-200 hover:-translate-y-0.5 hover:bg-[rgba(208,63,80,0.18)] active:translate-y-0 sm:w-[182px]"
               style={{ fontFamily: "var(--font-body)" }}
             >
               {page.finalCta.secondaryLabel}
-            </Link>
-            <Link
+            </MagneticLink>
+            <MagneticLink
               href={page.finalCta.primaryHref}
               className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-rust text-[16px] font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-rust/90 active:translate-y-0 sm:w-[182px]"
               style={{ fontFamily: "var(--font-body)" }}
             >
               {page.finalCta.primaryLabel}
-            </Link>
+            </MagneticLink>
           </div>
-        </FadeUp>
+        </ScrubReveal>
       </section>
 
       <Footer />
+      <FloatingCTA href={navCta.href} label={navCta.label} />
     </div>
     // </>
   );

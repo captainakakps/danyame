@@ -1,4 +1,4 @@
-import Link from "next/link";
+import MagneticLink from "@/components/MagneticLink";
 
 type ButtonVariant = "primary" | "secondary" | "outline";
 
@@ -46,13 +46,13 @@ export default function Button({
 
   if ("href" in props && props.href) {
     return (
-      <Link
+      <MagneticLink
         href={props.href}
         className={classes}
         style={{ fontFamily: "var(--font-body)" }}
       >
         {children}
-      </Link>
+      </MagneticLink>
     );
   }
 

@@ -3,8 +3,13 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Link from "next/link";
 import Image from "next/image";
+import CountdownTicker from "@/components/home/CountdownTicker";
+import DriftDecor from "@/components/DriftDecor";
 import FadeUp from "@/components/FadeUp";
+import MagneticLink from "@/components/MagneticLink";
 import ParallaxImages from "@/components/ParallaxImages";
+import ScrollCue from "@/components/ScrollCue";
+import TiltCard from "@/components/TiltCard";
 import AttendEventHeroAnimation from "@/components/events/AttendEventHeroAnimation";
 import {
   getFeaturedEvent,
@@ -12,6 +17,8 @@ import {
   getEventPath,
 } from "@/lib/cms/events";
 import { getEventOgImagePath } from "@/lib/cms/event-og";
+import { isEventPast } from "@/lib/events";
+import { computeCountdown } from "@/lib/pages/home";
 import { buildSocialMetadata } from "@/lib/seo";
 import { pages } from "@/lib/tokens";
 
@@ -52,6 +59,14 @@ export default async function AttendEventPage() {
     ...events.filter((event) => event.slug !== featuredEventSlug),
   ];
 
+  const eventDate = featuredEvent.eventDateISO
+    ? new Date(featuredEvent.eventDateISO)
+    : null;
+  const countdown =
+    eventDate && !Number.isNaN(eventDate.getTime())
+      ? computeCountdown(eventDate)
+      : null;
+
   return (
     <div className="bg-white overflow-x-hidden">
       {/* ── Hero — Featured Event ── */}
@@ -83,6 +98,7 @@ export default async function AttendEventPage() {
             Featured Event
           </p>
 
+          <DriftDecor className="contents">
           <div
             className="mt-5 flex w-fit flex-col items-center gap-3 rounded-[20px] border border-white/25 bg-white/10 px-6 py-5 backdrop-blur-md sm:gap-4 sm:px-8 sm:py-6 lg:absolute lg:right-14 lg:top-4 lg:mt-0"
             data-attend-date-card
@@ -109,6 +125,7 @@ export default async function AttendEventPage() {
               {featuredEvent.dateCard.time}
             </span>
           </div>
+          </DriftDecor>
 
           <div className="mt-auto flex flex-col gap-5 sm:gap-6 lg:gap-8">
             <h1
@@ -119,24 +136,45 @@ export default async function AttendEventPage() {
               {featuredEvent.title}
             </h1>
 
+            {countdown ? (
+              <div
+                className="flex flex-col gap-2"
+                data-attend-hero-countdown
+              >
+                <span
+                  className="text-[13px] uppercase tracking-[0.25em] text-white/60"
+                  style={{ fontFamily: "var(--font-heading)" }}
+                >
+                  Starts in
+                </span>
+                <CountdownTicker
+                  initial={countdown}
+                  targetISO={featuredEvent.eventDateISO ?? null}
+                  layout="row"
+                />
+              </div>
+            ) : null}
+
             <div className="flex flex-col gap-3 sm:flex-row sm:gap-4" data-attend-hero-ctas>
-              <Link
+              <MagneticLink
                 href={ticketHref}
                 className="flex h-[54px] w-full items-center justify-center rounded-[100px] bg-rust text-base font-medium uppercase text-white shadow-[0_8px_24px_rgba(0,0,0,0.35)] transition-all duration-150 hover:-translate-y-0.5 hover:bg-rust/90 sm:w-[182px]"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 Buy Ticket
-              </Link>
-              <Link
+              </MagneticLink>
+              <MagneticLink
                 href={featuredEvent.slug ? getEventPath(featuredEvent.slug) : pages.contact}
                 className="flex h-[54px] w-full items-center justify-center rounded-[100px] border border-white/40 bg-white/10 text-base font-medium text-white backdrop-blur-md transition-all duration-150 hover:-translate-y-0.5 hover:bg-white hover:text-ink sm:w-[182px]"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 Learn More
-              </Link>
+              </MagneticLink>
             </div>
           </div>
         </div>
+
+        <ScrollCue />
       </section>
       </AttendEventHeroAnimation>
 
@@ -154,7 +192,7 @@ export default async function AttendEventPage() {
             >
               Event Lineup
             </h2>
-            <Link
+            <MagneticLink
               href={pages.calendar}
               className="flex h-[50px] w-full items-center justify-center gap-2 rounded-[100px] bg-white text-base font-medium text-ink transition-colors duration-150 hover:bg-white/90 sm:w-[182px]"
               style={{ fontFamily: "var(--font-body)" }}
@@ -164,32 +202,40 @@ export default async function AttendEventPage() {
                 <path d="M16 2v4M8 2v4M3 10h18" />
               </svg>
               Calendar
-            </Link>
+            </MagneticLink>
           </div>
 
           {/* Event grid */}
           <ParallaxImages selector="[data-attend-lineup-media]" range={6}>
             <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
-              {lineupEvents.map((event) => (
+              {lineupEvents.map((event) => {
+                const isPast = isEventPast(event.eventDateISO);
+
+                return (
                 <Link
                   key={event.slug}
                   href={getEventPath(event.slug)}
                   className="group flex flex-col gap-5 lg:gap-6"
                   data-attend-reveal
                 >
-                  <div className="relative h-[250px] w-full overflow-hidden rounded-[20px] sm:h-[300px] md:h-[350px] lg:h-[400px]">
+                  <TiltCard className="relative h-[250px] w-full overflow-hidden rounded-[20px] sm:h-[300px] md:h-[350px] lg:h-[400px]">
                     <Image
                       src={event.image}
                       alt={event.title}
                       fill
-                      className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                      className={`object-cover transition-transform duration-500 ease-out group-hover:scale-105 ${isPast ? "grayscale" : ""}`}
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       data-attend-lineup-media
                     />
                     <div className="absolute inset-0 bg-black/5 transition-colors duration-500 group-hover:bg-black/20" />
-                  </div>
+                    {isPast && (
+                      <span className="absolute left-4 top-4 rounded-[100px] bg-black/60 px-3 py-1 text-[12px] uppercase tracking-[0.15em] text-white/80">
+                        Past Event
+                      </span>
+                    )}
+                  </TiltCard>
 
-                  <div className="flex flex-col gap-3 lg:gap-4">
+                  <div className={`flex flex-col gap-3 lg:gap-4 ${isPast ? "opacity-60" : ""}`}>
                     <div className="flex items-center justify-between">
                       <h3
                         className="text-[18px] font-medium text-white sm:text-[20px] transition-colors duration-200 group-hover:text-[#f2d99b]"
@@ -219,7 +265,8 @@ export default async function AttendEventPage() {
                     </p>
                   </div>
                 </Link>
-              ))}
+                );
+              })}
             </div>
           </ParallaxImages>
         </FadeUp>

@@ -76,6 +76,7 @@ function mapPayloadEventToFeaturedEvent(doc: PayloadEvent): FeaturedEvent {
     },
     hasTickets: Boolean(doc.hasTickets),
     ticketUrl: doc.ticketUrl || undefined,
+    eventDateISO: doc.eventDate,
   };
 }
 
@@ -97,6 +98,7 @@ function mapEventToFeaturedEvent(event: Event): FeaturedEvent {
     },
     hasTickets: event.hasTickets,
     ticketUrl: event.ticketUrl,
+    eventDateISO: event.eventDateISO,
   };
 }
 

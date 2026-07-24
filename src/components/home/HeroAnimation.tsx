@@ -26,6 +26,8 @@ export default function HeroAnimation({ children }: { children: ReactNode }) {
       return;
     }
 
+    let cleanupPointer: (() => void) | undefined;
+
     const context = gsap.context(() => {
       const timeline = gsap.timeline({ defaults: { ease: "power3.out" } });
 
@@ -84,9 +86,33 @@ export default function HeroAnimation({ children }: { children: ReactNode }) {
         delay: 1.4,
         stagger: { each: 0.6 },
       });
+
+      // Cursor-reactive parallax on the decor — independent of the y drift
+      // above, so the two combine into one transform without fighting.
+      const decorEls = gsap.utils.toArray<HTMLElement>("[data-hero-decor]");
+      const quickXs = decorEls.map((elm) =>
+        gsap.quickTo(elm, "x", { duration: 0.6, ease: "power3.out" }),
+      );
+
+      const handlePointerMove = (event: PointerEvent) => {
+        if (window.innerWidth < 1024) {
+          return;
+        }
+
+        const relX = event.clientX / window.innerWidth - 0.5;
+
+        quickXs.forEach((setX, index) => {
+          const depth = 10 + index * 8;
+          setX(relX * depth);
+        });
+      };
+
+      window.addEventListener("pointermove", handlePointerMove);
+      cleanupPointer = () => window.removeEventListener("pointermove", handlePointerMove);
     }, el);
 
     return () => {
+      cleanupPointer?.();
       context.revert();
     };
   }, []);

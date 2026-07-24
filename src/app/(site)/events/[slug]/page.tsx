@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ShareLinkButton from "@/components/ShareLinkButton";
+import AddToCalendarLink from "@/components/AddToCalendarLink";
 import Button from "@/components/ui/Button";
 import EventMeta from "@/components/ui/EventMeta";
 import EventSingleAnimation from "@/components/events/EventSingleAnimation";
@@ -85,8 +86,14 @@ export default async function EventSinglePage({ params }: EventPageProps) {
                 sizes="(max-width: 640px) 100vw, 400px"
               />
               <div className="absolute inset-0 bg-black/10 transition-colors duration-500 group-hover:bg-black/20" />
-              <div className="absolute left-4 top-4 z-10">
+              <div className="absolute left-4 top-4 z-10 flex flex-col items-start gap-2">
                 <ShareLinkButton title={event.title} />
+                <AddToCalendarLink
+                  title={event.title}
+                  description={event.shortSummary}
+                  location={event.location}
+                  startISO={event.eventDateISO}
+                />
               </div>
             </div>
 

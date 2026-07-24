@@ -1,11 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import AboutHeroAnimation from "@/components/about/AboutHeroAnimation";
+import CursorParallax from "@/components/CursorParallax";
 import DriftDecor from "@/components/DriftDecor";
 import FadeUp from "@/components/FadeUp";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import ParallaxImages from "@/components/ParallaxImages";
+import ScrollCue from "@/components/ScrollCue";
+import ScrubReveal from "@/components/ScrubReveal";
+import TiltCard from "@/components/TiltCard";
 import type { AboutPageData } from "@/lib/pages/about";
 
 type AboutPageViewProps = {
@@ -90,6 +94,8 @@ export default function AboutPageView({ page }: AboutPageViewProps) {
             {page.hero.description}
           </p>
         </div>
+
+        <ScrollCue />
       </section>
       </AboutHeroAnimation>
 
@@ -175,12 +181,19 @@ export default function AboutPageView({ page }: AboutPageViewProps) {
             >
               {page.leadership.intro}
             </p>
-            <ImageCard
-              src={page.leadership.image}
-              alt={page.leadership.imageAlt}
-              className="aspect-[454/363] w-full lg:min-h-[363px] lg:flex-1"
-              imageClassName="object-cover object-top"
-            />
+            <TiltCard className="group relative aspect-[454/363] w-full overflow-hidden rounded-[20px] lg:min-h-[363px] lg:flex-1">
+              <Image
+                src={page.leadership.image}
+                alt={page.leadership.imageAlt}
+                fill
+                className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
+                sizes="(max-width: 768px) 100vw, 454px"
+              />
+              <div
+                className="absolute inset-0 rounded-[20px] bg-black/20 transition-colors duration-500 group-hover:bg-black/30"
+                aria-hidden
+              />
+            </TiltCard>
           </div>
 
           <div
@@ -219,7 +232,7 @@ export default function AboutPageView({ page }: AboutPageViewProps) {
 
       {/* Mission & Vision */}
       <section className="bg-white px-6 py-16 sm:px-8 md:px-10 lg:px-14 lg:py-[150px]">
-        <FadeUp
+        <ScrubReveal
           selector="[data-about-mission-item]"
           className="mx-auto flex max-w-[1328px] flex-col gap-16 lg:flex-row lg:gap-[120px]"
         >
@@ -259,11 +272,12 @@ export default function AboutPageView({ page }: AboutPageViewProps) {
               </div>
             ),
           )}
-        </FadeUp>
+        </ScrubReveal>
       </section>
 
       {/* Location */}
       <ParallaxImages selector="[data-about-location-bg]" range={6}>
+      <CursorParallax selector="[data-about-location-bg]" range={12}>
       <section className="relative w-full overflow-hidden">
         <Image
           src={page.location.backgroundImage}
@@ -295,6 +309,7 @@ export default function AboutPageView({ page }: AboutPageViewProps) {
           </div>
         </FadeUp>
       </section>
+      </CursorParallax>
       </ParallaxImages>
 
       {/* Map */}

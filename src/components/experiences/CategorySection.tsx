@@ -41,6 +41,12 @@ export default function CategorySection({
     const pills = section.querySelector<HTMLElement>("[data-category-pills]");
     const title = section.querySelector<HTMLElement>("[data-category-title]");
     const body = section.querySelector<HTMLElement>("[data-category-body]");
+    const counter = section.querySelector<HTMLElement>("[data-category-counter]");
+    const focusOverlay = section.querySelector<HTMLElement>(
+      "[data-category-focus-overlay]",
+    );
+
+    let cleanupPointer: (() => void) | undefined;
 
     const context = gsap.context(() => {
       if (image) {
@@ -71,6 +77,15 @@ export default function CategorySection({
           { opacity: 1, y: 0, duration: 0.6 },
           0.2,
         );
+
+      if (counter) {
+        entrance.fromTo(
+          counter,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.5 },
+          0.3,
+        );
+      }
 
       let kenBurns: gsap.core.Tween | null = null;
 
@@ -109,9 +124,55 @@ export default function CategorySection({
           kenBurns?.pause();
         },
       });
+
+      // Focus vignette — dims the panel while it's scrolling in/out and
+      // clears once it's centered, sharpening which section has attention.
+      if (focusOverlay) {
+        ScrollTrigger.create({
+          trigger: section,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true,
+          onUpdate: (self) => {
+            const focus = 1 - Math.abs(self.progress - 0.5) * 2;
+            gsap.set(focusOverlay, { opacity: (1 - focus) * 0.35 });
+          },
+        });
+      }
+
+      // Cursor-reactive parallax on the background image, layered on top
+      // of the Ken Burns zoom (separate transform properties, no conflict).
+      if (image) {
+        const quickX = gsap.quickTo(image, "x", {
+          duration: 0.6,
+          ease: "power3.out",
+        });
+        const quickY = gsap.quickTo(image, "y", {
+          duration: 0.6,
+          ease: "power3.out",
+        });
+
+        const handlePointerMove = (event: PointerEvent) => {
+          if (window.innerWidth < 1024) {
+            return;
+          }
+
+          const rect = section.getBoundingClientRect();
+          const px = (event.clientX - rect.left) / rect.width - 0.5;
+          const py = (event.clientY - rect.top) / rect.height - 0.5;
+
+          quickX(px * 24);
+          quickY(py * 16);
+        };
+
+        section.addEventListener("pointermove", handlePointerMove);
+        cleanupPointer = () =>
+          section.removeEventListener("pointermove", handlePointerMove);
+      }
     }, section);
 
     return () => {
+      cleanupPointer?.();
       context.revert();
     };
   }, []);
@@ -131,10 +192,24 @@ export default function CategorySection({
         data-category-img
       />
       <div className="absolute inset-0 bg-black/30" />
+      <div
+        className="pointer-events-none absolute inset-0 bg-black opacity-0"
+        data-category-focus-overlay
+        aria-hidden
+      />
 
       <div className="relative z-10 flex h-full min-h-0 flex-col px-6 pb-10 pt-6 sm:px-10 sm:pb-12 sm:pt-10 lg:px-14 lg:pb-[max(7rem,12vh)] lg:pt-[64px]">
-        <div data-category-pills>
-          <CategoryPills categories={categories} activeIndex={index} />
+        <div className="flex items-start justify-between">
+          <div data-category-pills>
+            <CategoryPills categories={categories} activeIndex={index} />
+          </div>
+          <p
+            className="hidden shrink-0 text-sm tracking-[0.2em] text-white/70 lg:block"
+            style={{ fontFamily: "var(--font-body)" }}
+            data-category-counter
+          >
+            {String(index + 1).padStart(2, "0")} / {String(categories.length).padStart(2, "0")}
+          </p>
         </div>
 
         <h2

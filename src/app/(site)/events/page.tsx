@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import Link from "next/link";
 import Image from "next/image";
 import EventsHeroAnimation from "@/components/events/EventsHeroAnimation";
 import FadeUp from "@/components/FadeUp";
+import MagneticLink from "@/components/MagneticLink";
+import ScrollCue from "@/components/ScrollCue";
 import { getEventsHubPage } from "@/lib/cms/pages";
 import { buildSocialMetadata } from "@/lib/seo";
 
@@ -68,24 +69,26 @@ export default async function EventsPage() {
               </p>
 
               <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
-                <Link
+                <MagneticLink
                   href={page.hero.hostCtaHref}
                   className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-rust text-base font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-rust/90 active:translate-y-0 sm:w-[182px]"
                   style={{ fontFamily: "var(--font-body)" }}
                 >
                   {page.hero.hostCtaLabel}
-                </Link>
-                <Link
+                </MagneticLink>
+                <MagneticLink
                   href={page.hero.attendCtaHref}
                   className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-white text-base font-medium text-ink transition-all duration-200 hover:-translate-y-0.5 hover:bg-white/90 active:translate-y-0 sm:w-[182px]"
                   style={{ fontFamily: "var(--font-body)" }}
                 >
                   {page.hero.attendCtaLabel}
-                </Link>
+                </MagneticLink>
               </div>
             </div>
           </div>
         </div>
+
+        <ScrollCue />
       </section>
       </EventsHeroAnimation>
 
@@ -140,13 +143,13 @@ export default async function EventsPage() {
                   </p>
                 </div>
               </div>
-              <Link
+              <MagneticLink
                 href={page.hostCard.ctaHref}
                 className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-rust text-base font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-rust/90 active:translate-y-0 sm:w-[182px]"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 {page.hostCard.ctaLabel}
-              </Link>
+              </MagneticLink>
             </div>
 
             <div
@@ -179,13 +182,13 @@ export default async function EventsPage() {
                   </p>
                 </div>
               </div>
-              <Link
+              <MagneticLink
                 href={page.attendCard.ctaHref}
                 className="flex h-[50px] w-full items-center justify-center rounded-[100px] bg-rust text-base font-medium text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-rust/90 active:translate-y-0 sm:w-[182px]"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 {page.attendCard.ctaLabel}
-              </Link>
+              </MagneticLink>
             </div>
           </div>
         </FadeUp>
