@@ -53,6 +53,10 @@ export const menuHeroStrip: {
   },
 ];
 
+/** Last-resort card image when CMS and presets have no artwork. */
+export const DEFAULT_MENU_CARD_IMAGE = "/assets/menu/cards/local-dishes.jpg";
+
+/** Static fallbacks for card image/description — CMS data takes priority. */
 export const menuLandingCategories: MenuLandingCategory[] = [
   {
     slug: "local-dishes",
@@ -144,6 +148,30 @@ export const menuLandingCategories: MenuLandingCategory[] = [
     cardDescription: "Refreshing beverages to pair with every meal.",
     cardImage: "/assets/menu/cards/drinks.jpg",
   },
+  {
+    slug: "sea-food",
+    name: "Sea food",
+    cardDescription: "Fresh seafood dishes prepared with bold coastal flavours.",
+    cardImage: "/assets/menu/cards/pan-and-grill.jpg",
+  },
+  {
+    slug: "fufu-konkonte",
+    name: "Fufu / Konkonte",
+    cardDescription: "Traditional fufu and konkonte served with hearty soups and stews.",
+    cardImage: "/assets/menu/cards/local-dishes.jpg",
+  },
+  {
+    slug: "regular",
+    name: "Regular",
+    cardDescription: "Everyday favourites from our regular menu selection.",
+    cardImage: DEFAULT_MENU_CARD_IMAGE,
+  },
+  {
+    slug: "assorted-dishes",
+    name: "Assorted Dishes",
+    cardDescription: "A varied selection of dishes to suit different tastes.",
+    cardImage: DEFAULT_MENU_CARD_IMAGE,
+  },
 ];
 
 const landingBySlug = new Map(
@@ -154,41 +182,44 @@ export function getLandingCategory(slug: string): MenuLandingCategory | undefine
   return landingBySlug.get(slug);
 }
 
-export function getLandingDisplayName(slug: string, fallback: string): string {
-  return landingBySlug.get(slug)?.name ?? fallback;
+export function getLandingDisplayName(_slug: string, fallback: string): string {
+  return fallback;
 }
 
 export function getLandingCardImage(slug: string): string | undefined {
   return landingBySlug.get(slug)?.cardImage;
 }
 
-export function getCategoryCardImage(
-  category: Pick<MenuCategory, "slug" | "image">,
-): string | undefined {
-  return category.image ?? getLandingCardImage(category.slug);
+function getCategoryCardDescription(category: MenuCategory): string {
+  const cmsDescription = category.description?.trim();
+  if (cmsDescription) {
+    return cmsDescription;
+  }
+
+  const preset = landingBySlug.get(category.slug);
+  if (preset?.cardDescription) {
+    return preset.cardDescription;
+  }
+
+  return "Explore dishes and flavours from our kitchen.";
+}
+
+export function getCategoryCardImage(category: MenuCategory): string {
+  return (
+    category.image ??
+    getLandingCardImage(category.slug) ??
+    category.items.find((item) => item.image)?.image ??
+    DEFAULT_MENU_CARD_IMAGE
+  );
 }
 
 export function buildLandingCategories(
   categories: MenuCategory[],
 ): MenuLandingCategory[] {
-  const categoryBySlug = new Map(
-    categories.map((category) => [category.slug, category]),
-  );
-
-  return menuLandingCategories
-    .filter((landing) => categoryBySlug.has(landing.slug))
-    .map((landing) => {
-      const cmsCategory = categoryBySlug.get(landing.slug)!;
-
-      return {
-        ...landing,
-        name: getLandingDisplayName(landing.slug, cmsCategory.name),
-        cardDescription:
-          cmsCategory.description?.trim() || landing.cardDescription,
-        cardImage: getCategoryCardImage(cmsCategory),
-      };
-    })
-    .filter((category): category is MenuLandingCategory =>
-      Boolean(category.cardImage),
-    );
+  return categories.map((category) => ({
+    slug: category.slug,
+    name: category.name,
+    cardDescription: getCategoryCardDescription(category),
+    cardImage: getCategoryCardImage(category),
+  }));
 }

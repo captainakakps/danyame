@@ -2,12 +2,11 @@ import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 
 import MenuCategoryPageClient from "./MenuCategoryPageClient";
-import { getMenuCategoryBySlug } from "@/lib/cms/menu";
+import { getMenuCategoryBySlug, getMenuPageData } from "@/lib/cms/menu";
 import {
   getLandingCardImage,
   getLandingDisplayName,
 } from "@/lib/menu-landing";
-import { staticMenuCategories } from "@/lib/menu";
 import { getSiteSettings } from "@/lib/cms/site-settings";
 import { buildSocialMetadata } from "@/lib/seo";
 
@@ -20,7 +19,8 @@ export const viewport: Viewport = {
 };
 
 export async function generateStaticParams() {
-  return staticMenuCategories.map((category) => ({ slug: category.slug }));
+  const { categories } = await getMenuPageData();
+  return categories.map((category) => ({ slug: category.slug }));
 }
 
 export async function generateMetadata({
