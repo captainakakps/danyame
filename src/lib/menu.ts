@@ -11,6 +11,7 @@ export type MenuItem = {
   name: string;
   description?: string;
   price: number | string;
+  vipPrice?: number;
   image?: string;
   isAvailable: boolean;
   isFeatured: boolean;
@@ -1255,4 +1256,15 @@ export function formatMenuPrice(price: number | string, currency: string): strin
 
 export function formatMenuDisplayPrice(price: number | string, currency: string): string {
   return formatMenuPrice(price, currency).replace(/^GH₵/, "GHS ");
+}
+
+export function getMenuItemDisplayPrice(
+  item: Pick<MenuItem, "price" | "vipPrice">,
+  tier: "Regular" | "VIP",
+): number | string {
+  if (tier === "VIP" && item.vipPrice != null) {
+    return item.vipPrice;
+  }
+
+  return item.price;
 }

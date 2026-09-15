@@ -1,6 +1,7 @@
 import * as migration_20260715_140605_initial from './20260715_140605_initial';
 import * as migration_20260716_113046_experiences_explore_more_modal from './20260716_113046_experiences_explore_more_modal';
 import * as migration_20260719_100900_menu_category_images from './20260719_100900_menu_category_images';
+import * as migration_20260915_120000_menu_item_vip_price from './20260915_120000_menu_item_vip_price';
 
 export const migrations = [
   {
@@ -17,5 +18,10 @@ export const migrations = [
     up: migration_20260719_100900_menu_category_images.up,
     down: migration_20260719_100900_menu_category_images.down,
     name: '20260719_100900_menu_category_images',
+  },
+  {
+    up: migration_20260915_120000_menu_item_vip_price.up,
+    down: migration_20260915_120000_menu_item_vip_price.down,
+    name: '20260915_120000_menu_item_vip_price',
   },
 ];

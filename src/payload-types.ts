@@ -291,9 +291,13 @@ export interface MenuItem {
   category: number | MenuCategory;
   description?: string | null;
   /**
-   * Enter price in Ghana cedis.
+   * Regular menu price in Ghana cedis.
    */
   price: number;
+  /**
+   * VIP menu price in Ghana cedis. Leave empty to use the regular price on the VIP tab.
+   */
+  vipPrice?: number | null;
   image?: (number | null) | Media;
   /**
    * Unavailable items can be hidden on the public menu.
@@ -606,6 +610,7 @@ export interface MenuItemsSelect<T extends boolean = true> {
   category?: T;
   description?: T;
   price?: T;
+  vipPrice?: T;
   image?: T;
   isAvailable?: T;
   isFeatured?: T;

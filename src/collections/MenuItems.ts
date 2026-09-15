@@ -8,7 +8,7 @@ export const MenuItems: CollectionConfig = {
   slug: "menu-items",
   admin: {
     useAsTitle: "name",
-    defaultColumns: ["name", "category", "price", "isAvailable", "isFeatured"],
+    defaultColumns: ["name", "category", "price", "vipPrice", "isAvailable", "isFeatured"],
     group: "Menu",
   },
   versions: {
@@ -43,7 +43,16 @@ export const MenuItems: CollectionConfig = {
       required: true,
       min: 0,
       admin: {
-        description: "Enter price in Ghana cedis.",
+        description: "Regular menu price in Ghana cedis.",
+      },
+    },
+    {
+      name: "vipPrice",
+      type: "number",
+      min: 0,
+      admin: {
+        description:
+          "VIP menu price in Ghana cedis. Leave empty to use the regular price on the VIP tab.",
       },
     },
     {

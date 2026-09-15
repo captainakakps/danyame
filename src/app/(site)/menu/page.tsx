@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from "next";
 
-import MenuLandingPage from "./MenuLandingPage";
+import MenuPageLayout from "@/components/menu/MenuPageLayout";
 import { getMenuPageData } from "@/lib/cms/menu";
+import { resolveDefaultMenuCategory } from "@/lib/menu-landing";
 import { buildSocialMetadata } from "@/lib/seo";
 
 const menuDescription =
@@ -24,7 +25,13 @@ export const viewport: Viewport = {
 };
 
 export default async function MenuPage() {
-  const { categories } = await getMenuPageData();
+  const { categories, settings } = await getMenuPageData();
 
-  return <MenuLandingPage categories={categories} />;
+  return (
+    <MenuPageLayout
+      categories={categories}
+      initialSlug={resolveDefaultMenuCategory(categories)?.slug ?? null}
+      settings={settings}
+    />
+  );
 }

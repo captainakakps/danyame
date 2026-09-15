@@ -7,51 +7,24 @@ export type MenuLandingCategory = {
   cardImage: string;
 };
 
-export const menuLandingIntro = {
-  title: "Discover Our Menu",
-  description:
-    "From authentic Ghanaian favourites to grilled specialties, seafood, refreshing drinks, and sweet treats, explore everything our kitchen has prepared for you.",
-};
-
 export const menuHeroTitle = "What are you craving today?";
 
-export const menuHeroStrip: {
-  slug: string;
-  label: string;
-  image: string;
-  tall: boolean;
-}[] = [
-  {
-    slug: "vegan-corner",
-    label: "Vegan Corner",
-    image: "/assets/menu/hero/vegan-corner.jpg",
-    tall: true,
-  },
-  {
-    slug: "dessert",
-    label: "Dessert",
-    image: "/assets/menu/hero/dessert.jpg",
-    tall: false,
-  },
-  {
-    slug: "pizza",
-    label: "Pizza",
-    image: "/assets/menu/hero/pizza.jpg",
-    tall: true,
-  },
-  {
-    slug: "local-dishes",
-    label: "Local Dishes",
-    image: "/assets/menu/hero/local-dishes.jpg",
-    tall: false,
-  },
-  {
-    slug: "spag-and-pas",
-    label: "Spag and Pasta",
-    image: "/assets/menu/hero/spag-pasta.jpg",
-    tall: true,
-  },
-];
+export const menuPopularSubtitle = "Explore our popular categories";
+
+/** The three categories highlighted under the hero. */
+export const menuPopularCategorySlugs = [
+  "local-dishes",
+  "pizza",
+  "sauces",
+] as const;
+
+export const menuServiceTiers = ["Regular", "VIP"] as const;
+export type MenuServiceTier = (typeof menuServiceTiers)[number];
+
+export const menuSortLabel = "Recommended";
+
+/** Category shown when the visitor lands on /menu without picking one. */
+export const menuDefaultCategorySlug = "pizza";
 
 /** Last-resort card image when CMS and presets have no artwork. */
 export const DEFAULT_MENU_CARD_IMAGE = "/assets/menu/cards/local-dishes.jpg";
@@ -190,18 +163,32 @@ export function getLandingCardImage(slug: string): string | undefined {
   return landingBySlug.get(slug)?.cardImage;
 }
 
-function getCategoryCardDescription(category: MenuCategory): string {
-  const cmsDescription = category.description?.trim();
-  if (cmsDescription) {
-    return cmsDescription;
+/**
+ * Full-bleed photography. Card and item artwork is a circular crop on a flat
+ * background, so the rectangular panels in the menu design prefer these.
+ */
+const menuCategoryPhotos: Record<string, string> = {
+  dessert: "/assets/menu/hero/dessert.jpg",
+  "local-dishes": "/assets/menu/hero/local-dishes.jpg",
+  pizza: "/assets/menu/hero/pizza.jpg",
+  "spag-and-pas": "/assets/menu/hero/spag-pasta.jpg",
+  "vegan-corner": "/assets/menu/hero/vegan-corner.jpg",
+};
+
+export type MenuCategoryPhoto = {
+  src: string;
+  /** True when the source is a circular crop and needs zooming past the ring. */
+  isCircularCrop: boolean;
+};
+
+export function getCategoryPhoto(category: MenuCategory): MenuCategoryPhoto {
+  const photo = menuCategoryPhotos[category.slug];
+
+  if (photo) {
+    return { src: photo, isCircularCrop: false };
   }
 
-  const preset = landingBySlug.get(category.slug);
-  if (preset?.cardDescription) {
-    return preset.cardDescription;
-  }
-
-  return "Explore dishes and flavours from our kitchen.";
+  return { src: getCategoryCardImage(category), isCircularCrop: true };
 }
 
 export function getCategoryCardImage(category: MenuCategory): string {
@@ -213,13 +200,12 @@ export function getCategoryCardImage(category: MenuCategory): string {
   );
 }
 
-export function buildLandingCategories(
+export function resolveDefaultMenuCategory(
   categories: MenuCategory[],
-): MenuLandingCategory[] {
-  return categories.map((category) => ({
-    slug: category.slug,
-    name: category.name,
-    cardDescription: getCategoryCardDescription(category),
-    cardImage: getCategoryCardImage(category),
-  }));
+): MenuCategory | null {
+  return (
+    categories.find((category) => category.slug === menuDefaultCategorySlug) ??
+    categories[0] ??
+    null
+  );
 }

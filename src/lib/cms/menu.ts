@@ -40,6 +40,7 @@ function mapPayloadMenuItem(doc: PayloadMenuItem): MenuItem {
     name: doc.name,
     description: doc.description || undefined,
     price: doc.price,
+    vipPrice: doc.vipPrice ?? undefined,
     image: getMediaUrl(doc.image),
     isAvailable: Boolean(doc.isAvailable),
     isFeatured: Boolean(doc.isFeatured),

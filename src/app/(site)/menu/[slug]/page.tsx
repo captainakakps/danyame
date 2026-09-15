@@ -1,13 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 
-import MenuCategoryPageClient from "./MenuCategoryPageClient";
-import { getMenuCategoryBySlug, getMenuPageData } from "@/lib/cms/menu";
+import MenuPageLayout from "@/components/menu/MenuPageLayout";
+import { getMenuPageData } from "@/lib/cms/menu";
 import {
   getLandingCardImage,
   getLandingDisplayName,
 } from "@/lib/menu-landing";
-import { getSiteSettings } from "@/lib/cms/site-settings";
 import { buildSocialMetadata } from "@/lib/seo";
 
 type MenuCategoryPageProps = {
@@ -15,7 +14,7 @@ type MenuCategoryPageProps = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#e97d25",
+  themeColor: "#e87d26",
 };
 
 export async function generateStaticParams() {
@@ -27,24 +26,22 @@ export async function generateMetadata({
   params,
 }: MenuCategoryPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const categoryData = await getMenuCategoryBySlug(slug);
+  const { categories } = await getMenuPageData();
+  const category = categories.find((entry) => entry.slug === slug);
 
-  if (!categoryData) {
+  if (!category) {
     return { title: "Menu Category Not Found" };
   }
 
-  const name = getLandingDisplayName(
-    categoryData.category.slug,
-    categoryData.category.name,
-  );
+  const name = getLandingDisplayName(category.slug, category.name);
   const description = `Browse ${name.toLowerCase()} at Danyame Recreational Village.`;
 
   // Prefer public static card assets for share previews — more reliable for
   // WhatsApp/Facebook crawlers than Payload /api/media/file URLs.
   const image =
-    getLandingCardImage(categoryData.category.slug) ??
-    categoryData.category.image ??
-    categoryData.category.items.find((item) => item.image)?.image;
+    getLandingCardImage(category.slug) ??
+    category.image ??
+    category.items.find((item) => item.image)?.image;
 
   return {
     title: name,
@@ -54,7 +51,7 @@ export async function generateMetadata({
       description,
       image,
       imageAlt: name,
-      path: `/menu/${categoryData.category.slug}`,
+      path: `/menu/${category.slug}`,
     }),
   };
 }
@@ -63,22 +60,18 @@ export default async function MenuCategoryPage({
   params,
 }: Readonly<MenuCategoryPageProps>) {
   const { slug } = await params;
-  const [categoryData, site] = await Promise.all([
-    getMenuCategoryBySlug(slug),
-    getSiteSettings(),
-  ]);
+  const { categories, settings } = await getMenuPageData();
+  const activeCategory = categories.find((entry) => entry.slug === slug);
 
-  if (!categoryData) {
+  if (!activeCategory) {
     notFound();
   }
 
-  const { category, settings } = categoryData;
-
   return (
-    <MenuCategoryPageClient
-      category={category}
+    <MenuPageLayout
+      categories={categories}
+      initialSlug={activeCategory.slug}
       settings={settings}
-      site={site}
     />
   );
 }
