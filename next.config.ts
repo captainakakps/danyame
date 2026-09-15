@@ -7,8 +7,16 @@ const __filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(__filename);
 
 const nextConfig: NextConfig = {
-  // Keep sharp out of the serverless trace for image routes (native binary).
   serverExternalPackages: ["sharp"],
+  // sharp's addon loads libvips through a relative RPATH rather than a
+  // require(), so file tracing cannot discover it. Without these the function
+  // ships the .node binary but not the .so it links against.
+  outputFileTracingIncludes: {
+    "/**": [
+      "node_modules/@img/sharp-linux-x64/**/*",
+      "node_modules/@img/sharp-libvips-linux-x64/**/*",
+    ],
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
